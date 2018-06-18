@@ -5,12 +5,12 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 size = 30
-va = 0
+va = .3
 vb = -va
-p = 1 * np.pi / 6
+p = 3 * np.pi / 6
 t = -1
-t2 = 0
-h = np.zeros((2*size,2*size))
+t2 = -.25
+h = np.zeros((2*size,2*size), complex)
 
 kvals = np.linspace(0, 2 * np.pi, 50, True)
 k = []
