@@ -92,4 +92,8 @@ ax = fig2.add_subplot(111, projection = '3d')
 ax.plot_surface(k1smesh, k2smesh, e1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 ax.plot_surface(k1smesh, k2smesh, e2, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 
+fig3 = plt.figure()
+ax = fig3.add_subplot(111, projection = '3d')
+ax.plot_surface(k1smesh, k2smesh, fn(k1smesh, k2smesh), cmap=cm.coolwarm, linewidth=0, antialiased=False)
+
 plt.show()
