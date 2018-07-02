@@ -12,15 +12,15 @@ path = '/Users/jonathanmichala/All Documents/DOMath 2018/' + video_name
 
 
 '''Parameters'''
-topology = 1
-defect = True
-showmatrix = False
-animate = True
+topology = 0
+defect = False
+showmatrix = True
+animate = False
 end = 40
 frames = 20
 title = 'defect4'
 
-localize = True
+localize = False
 mu=float(14)
 sig=float(10)
 kindex = 18
@@ -67,10 +67,10 @@ for k1 in kvals:
                 hn[i,(j+2) % (2*m)]= t21 * (np.exp(1j*(-p))+np.exp(1j*(p-k1)))
                 hn[(i+2) % (2*m), j] = t21 * (np.exp(1j*(-p))+np.exp(1j*(p-k1)))
                 hn[(i-2) % (2*m), j] = t21 * (np.exp(1j*(p))+np.exp(1j*(-p+k1)))
+            elif i in center and topology == 0:
+                hn[i,j]= -va0
             else:
-                if topology == 0:
-                    hn[i,j]= 3 * va0
-                else: hn[i,j]= va0 #because t20 = 0
+                hn[i,j]= va0 #because t20 = 0
             hn[i,(j-1) % (2*m)]= t
             hn[i,(j+1) % (2*m)]= t * (1+np.exp(1j*(-k1)))
             
@@ -81,10 +81,10 @@ for k1 in kvals:
                 hn[i,(j+2) % (2*m)]= t21 * (np.exp(1j*(p))+np.exp(1j*(-p-k1)))
                 hn[(i+2) % (2*m), j]= t21 * (np.exp(1j*(p))+np.exp(1j*(-p-k1)))
                 hn[(i-2) % (2*m), j]= t21 * (np.exp(1j*(-p))+np.exp(1j*(p+k1)))
+            elif i in center and topology == 0:
+                hn[i,j]= -vb0
             else:
-                if topology == 0:
-                    hn[i,j]= 3 * vb0
-                else: hn[i,j]= vb0 #because t20 = 0
+                hn[i,j]= vb0 #because t20 = 0
             hn[i,(j-1) % (2*m)]= t * (1+np.exp(1j*(k1)))
             hn[i,(j+1) % (2*m)]= t
              
@@ -99,6 +99,9 @@ for k1 in kvals:
         evalue = evalues[i].real
         e.append(evalue)
     count += 1
+
+if showmatrix:
+    plt.matshow(hn.real)
 
 #make H
 va = va1
