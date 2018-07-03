@@ -12,20 +12,21 @@ path = '/Users/jonathanmichala/All Documents/DOMath 2018/' + video_name
 
 
 '''Parameters'''
-topology = 1
+topology = 0
 defect = True
 showmatrix = False
-animate = False
-end = 40
-frames = 20
+animate = True
+end = 200
+frames = 50
 el = 90.1
-title = 'topological_defect_-b-b_inside_wall'
+title = 'projection_trivial_defect2'
 
 localize = True
 mu=float(14)
 sig=float(10)
 kindex = 18
 
+projection = True
 printek = False
 
 n = 30
@@ -39,7 +40,7 @@ va0 = 1
 vb0 = -va0
 va1 = 0
 vb1 = -va1
-p = 1
+p = np.pi / 2
 t = 1
 t20 = 0
 t21 = .1
@@ -116,7 +117,7 @@ if topology == 0:
     t2 = 0
 for i in range(size):
     if i%2==0:
-        if defect and i/(2*m) in [3*n/4, 3*n/4 + 1] and i%(2*m) in [center[0]-2] and False:
+        if defect and i/(2*m) in [3*n/4, 3*n/4 + 1] and i%(2*m) in [center[0]]:
             defects.append((i%(2*m), i/(2*m)))
             h[i,i] = 1000
         else: h[i,i]=va
@@ -209,7 +210,8 @@ for i in range(size):
                 h[i-1,i] = h[(i+2*m-1)%size,i] = h[i-2*m+1,i] = t
                 h[i-2*m+2,i] = h[(i+2*m-2)%size,i] = h[(i-2*m)%size,i] = t2*np.exp(1j*p)
                 h[i-2,i] = h[(i-4*m+2)%size,i] = h[(i+2*m)%size,i] = t2*np.exp(-1j*p)
-
+if projection:
+    ens, psins = np.linalg.eigh(h)
 
 if showmatrix:
     plt.matshow(h.real)
@@ -246,7 +248,12 @@ plt.savefig(path + '/img00.png')
 if animate:
     num = 1
     for time in np.linspace(.1,end,frames):
-        statet = np.matmul(expm(-1j*time*h), state0)
+        if projection:
+            statet = [complex(0)]*len(psins[0])
+            for i in range(len(ens)):
+                statet += np.exp(-1j*ens[i]*time) * np.vdot(psins[:, i],state0) * psins[:, i]
+        else:
+            statet = np.matmul(expm(-1j*time*h), state0)
         E = statet.real
         E = E.reshape(n,2*m)
         fig2 = plt.figure()
