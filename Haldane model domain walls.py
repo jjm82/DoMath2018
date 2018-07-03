@@ -12,15 +12,16 @@ path = '/Users/jonathanmichala/All Documents/DOMath 2018/' + video_name
 
 
 '''Parameters'''
-topology = 0
-defect = False
-showmatrix = True
+topology = 1
+defect = True
+showmatrix = False
 animate = False
 end = 40
 frames = 20
-title = 'defect4'
+el = 90.1
+title = 'topological_defect_-b-b_inside_wall'
 
-localize = False
+localize = True
 mu=float(14)
 sig=float(10)
 kindex = 18
@@ -38,7 +39,7 @@ va0 = 1
 vb0 = -va0
 va1 = 0
 vb1 = -va1
-p = np.pi / 2
+p = 1
 t = 1
 t20 = 0
 t21 = .1
@@ -103,6 +104,8 @@ for k1 in kvals:
 if showmatrix:
     plt.matshow(hn.real)
 
+defects = []
+
 #make H
 va = va1
 vb = vb1
@@ -113,7 +116,8 @@ if topology == 0:
     t2 = 0
 for i in range(size):
     if i%2==0:
-        if defect and i/(2*m) in [3*n/4, 3*n/4 + 1] and i%(2*m) == center[0]:
+        if defect and i/(2*m) in [3*n/4, 3*n/4 + 1] and i%(2*m) in [center[0]-2] and False:
+            defects.append((i%(2*m), i/(2*m)))
             h[i,i] = 1000
         else: h[i,i]=va
         if i%(2*m)!=0 and i%(2*m)!=(2*m)-1 and i%(2*m)!=1 and i%(2*m)!=(2*m)-2:
@@ -128,7 +132,8 @@ for i in range(size):
             h[i,(i+2)%size]=t2*np.exp(-1j*p)
 
     else:
-        if defect and i/(2*m) in [3*n/4, 3*n/4 + 1] and i%(2*m) == center[0]:
+        if defect and i/(2*m) in [3*n/4] and i%(2*m) in [center[1], center[3]]:
+            defects.append((i%(2*m), i/(2*m)))
             h[i,i] = 1000
         else: h[i,i]=vb
         if i%(2*m)!=0 and i%(2*m)!=2*m-1 and i%(2*m)!=1 and i%(2*m)!=2*m-2:
@@ -150,7 +155,8 @@ t2 = t20
 for i in range(size):
     if i%(2*m) not in center:
         if i%2==0:
-            h[i,i]=va
+            if h[i,i] != 1000:
+                h[i,i]=va
             if i%(2*m)!=0 and i%(2*m)!=(2*m)-1 and i%(2*m)!=1 and i%(2*m)!=(2*m)-2:
                 h[i,(i-2*m+1)%size] = h[i,(i-1)%size] = h[i,(i+1)%size] = t
                 h[i,(i+2*m)%size] = h[i,(i-2*m+2)%size] = h[i,(i-2)%size] = t2*np.exp(1j*p)
@@ -176,8 +182,9 @@ for i in range(size):
                 h[i-2,i] = h[(i+2*m)%size,i] = h[(i-4*m+2)%size,i] = t2*np.exp(1j*p)
                 h[i-2*m+2,i] = h[(i-2*m)%size,i] = h[(i+2*m-2)%size,i] = t2*np.exp(-1j*p)
 
-        else: 
-            h[i,i]=vb
+        else:
+            if h[i,i] != 1000: 
+                h[i,i]=vb
             if i%(2*m)!=0 and i%(2*m)!=2*m-1 and i%(2*m)!=1 and i%(2*m)!=2*m-2:
                 h[i,(i+2*m-1)%size] = h[i,(i-1)%size] = h[i,(i+1)%size] = t
                 h[i,(i+2*m)%size] = h[i,(i-2*m+2)%size] = h[i,(i-2)%size] = t2*np.exp(-1j*p)
@@ -227,9 +234,12 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection = '3d')
 ax.set_zlim(-.03,.03)
 ax.azim = -.1
-ax.elev = 90.1
+ax.elev = el
 ax.dist = 8
-ax.plot_surface(X, Y, E, cmap=cm.RdBu, linewidth=0, antialiased=False)
+ax.plot_surface(X, Y, E, cmap=cm.RdBu, linewidth=0, antialiased=False, zorder = 2)
+defectsX = [x for (x,y) in defects]
+defectsY = [y for (x,y) in defects]
+ax.scatter(defectsX, defectsY, [0.01]*len(defectsX), s=10, c='black', zorder = 1)
 plt.savefig(path + '/img00.png')
 
 
@@ -243,7 +253,7 @@ if animate:
         ax = fig2.add_subplot(111, projection = '3d')
         ax.set_zlim(-.03,.03)
         ax.azim = -.1
-        ax.elev = 90.1
+        ax.elev = el
         ax.dist = 8
         ax.plot_surface(X, Y, E, cmap=cm.RdBu, linewidth=0, antialiased=False)
         plt.savefig(path + '/img' + str(num).zfill(2) + '.jpg', format='jpg')
