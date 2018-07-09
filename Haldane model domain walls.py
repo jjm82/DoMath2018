@@ -12,19 +12,31 @@ path = '/Users/jonathanmichala/All Documents/DOMath 2018/' + video_name
 
 
 '''Parameters'''
-topology = 0
-defect = True
+topology = 1
+defect = False
 showmatrix = False
-animate = True
-end = 200
+
+animate = False
+end = 250
 frames = 50
 el = 90.1
-title = 'projection_trivial_defect2'
+title = 'nonlinear initial state with propagation'
 
 localize = True
 mu=float(14)
 sig=float(10)
-kindex = 18
+kindex = 16
+
+nonlin = True
+before = True
+after = not before
+dt = .5
+kappa = -.01
+iterations = 500
+l2diff = 0
+evaldiff = 1
+constindex = 2
+comparison = constindex
 
 projection = True
 printek = False
@@ -33,7 +45,7 @@ n = 30
 m = 20 #both in number of cells
 top = m
 bottom = m-1
-edgest = bottom
+edgest = top
 
 size = 2*n*m
 va0 = 1
@@ -55,6 +67,61 @@ for kval in kvals:
     for i in range(2*m):
         k.append(kval)
 e = []
+
+def findstate(linstate0,Hk,kap,iter,eigv,ind):
+    state = np.copy(linstate0)
+    eig = eigv
+    minvals = []
+    iterX = []
+    newevalsY = []
+    plt.subplot(211)
+    for x in range(iter):
+        Hknew = Hk
+        for i in range(len(linstate0)):
+            Hknew[i,i] += kap * np.vdot(state[i],state[i])
+        
+        newevals, newestates = np.linalg.eigh(Hknew)
+        for neweval in newevals:
+            iterX.append(x)
+            newevalsY.append(neweval)
+        
+        if comparison == evaldiff:
+            minval = abs(newevals[0] - eig)
+            for i in range(len(newevals)):
+                diff = abs(newevals[i] - eig)
+                if diff <= minval:
+                    minval = diff
+                    foundstate = newestates[:, i]
+                    foundeval = newevals[i]
+                    if x == iter - 1:
+                        foundstate = newestates[:, i+1]
+                    
+        if comparison == l2diff:
+            for i in range(len(newestates)):
+                diff = 0
+                possiblestate = newestates[:, i]
+                for j in range(len(newestates[0])):
+                    diff += np.vdot((possiblestate[j] - state[j]),(possiblestate[j] - state[j]))
+                if i == 0:
+                    minval = diff
+                if diff < minval:
+                    minval = diff
+                    foundstate = possiblestate
+                    foundeval = newevals[i]
+        
+        if comparison == constindex:
+            foundstate = newestates[:, ind]
+            foundeval = newevals[ind]
+            minval = 0
+            #laststate = newestates[:, ind + 1]
+        eig = foundeval
+        plt.scatter([x],[foundeval], color='red', zorder=3, marker='.')
+        state = foundstate
+        minvals.append(minval)
+    plt.scatter(iterX, newevalsY, zorder=1, marker='.')
+    plt.subplot(212)
+    plt.plot(range(iter), minvals)
+    return state
 
 #make Hn
 count = 0
@@ -93,6 +160,7 @@ for k1 in kvals:
 
     evalues, evectors = np.linalg.eigh(hn)
     if count == kindex:
+        hngood = np.copy(hn)
         evalue = evalues[edgest].real
         state0 = evectors[:, edgest]
         statek = [k1]
@@ -216,9 +284,17 @@ if projection:
 if showmatrix:
     plt.matshow(h.real)
 
+if nonlin and before:
+    newstate = findstate(state0,hngood,kappa,iterations,stateeval,edgest)
+    state0 = newstate
+
 state0firstrow = state0
 for i in range(1,n):
     state0 = np.append(state0, np.exp(1j*statek[0]*i) * state0firstrow)
+
+if nonlin and after:
+    newstate = findstate(state0,h,kappa,iterations,stateeval,edgest)
+    state0 = newstate
 
 if localize:
     s=state0
@@ -234,21 +310,46 @@ Y = range(n)
 X, Y = np.meshgrid(X,Y)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection = '3d')
-ax.set_zlim(-.03,.03)
+#ax.set_zlim(-.03,.03)
 ax.azim = -.1
 ax.elev = el
-ax.dist = 8
+#ax.dist = 8
 ax.plot_surface(X, Y, E, cmap=cm.RdBu, linewidth=0, antialiased=False, zorder = 2)
 defectsX = [x for (x,y) in defects]
 defectsY = [y for (x,y) in defects]
 ax.scatter(defectsX, defectsY, [0.01]*len(defectsX), s=10, c='black', zorder = 1)
 plt.savefig(path + '/img00.png')
 
+def strang(psi0, ens, psins, dt, t, kappa, prin):
+    statet = np.copy(psi0)
+    for _ in np.linspace(0,t,int(t/dt)):
+
+        statedt4 = [complex(0)]*len(psins[0])
+        for i in range(len(ens)):
+            statedt4 += np.exp(-1j*ens[i]*dt/4) * np.vdot(psins[:, i],statet) * psins[:, i]
+        
+        state3dt4 = [complex(0)]*len(psins[0])
+        for i in range(len(state3dt4)):
+            state3dt4[i] = np.exp(-1j*kappa*dt*np.vdot(statedt4[i],statedt4[i])/2) * statedt4[i]
+        
+        statedt = [complex(0)]*len(psins[0])
+        for i in range(len(ens)):
+            statedt += np.exp(-1j*ens[i]*dt/4) * np.vdot(psins[:, i],state3dt4) * psins[:, i]
+        
+        statet = np.copy(statedt)
+    
+    return np.asarray(statet)
 
 if animate:
     num = 1
-    for time in np.linspace(.1,end,frames):
-        if projection:
+    statet = np.copy(state0)
+    timestamp = 0
+    for time in np.linspace(0,end,frames):
+        if nonlin:
+            statetdt = strang(statet,ens,psins,dt,time - timestamp, kappa, num)
+            timestamp = time
+            statet = np.copy(statetdt)
+        elif projection:
             statet = [complex(0)]*len(psins[0])
             for i in range(len(ens)):
                 statet += np.exp(-1j*ens[i]*time) * np.vdot(psins[:, i],state0) * psins[:, i]
@@ -258,10 +359,10 @@ if animate:
         E = E.reshape(n,2*m)
         fig2 = plt.figure()
         ax = fig2.add_subplot(111, projection = '3d')
-        ax.set_zlim(-.03,.03)
+        #ax.set_zlim(-.03,.03)
         ax.azim = -.1
         ax.elev = el
-        ax.dist = 8
+        #ax.dist = 8
         ax.plot_surface(X, Y, E, cmap=cm.RdBu, linewidth=0, antialiased=False)
         plt.savefig(path + '/img' + str(num).zfill(2) + '.jpg', format='jpg')
         plt.close(fig2)
