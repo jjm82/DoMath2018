@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from scipy.linalg import expm
+from scipy.sparse.linalg import eigsh
 import cv2
 import os
 
@@ -12,27 +13,34 @@ path = '/Users/jonathanmichala/All Documents/DOMath 2018/' + video_name
 
 
 '''Parameters'''
-topology = 1
+l1 = 5 #lamda_1
+l2 = 5
+l3 = 0
+eps = .001 #epsilon
+
+topology = 0
 defect = False
 showmatrix = False
 
 animate = False
-end = 250
-frames = 50
+end = 60
+frames = 9
 el = 90.1
-title = 'nonlinear initial state with propagation'
+title = 'writeup4'
+colormap = True
 
-localize = True
+localize = False
 mu=float(14)
 sig=float(10)
-kindex = 16
+kindex = 35
 
-nonlin = True
-before = True
+nonlin = False
+before = False
 after = not before
 dt = .5
-kappa = -.01
-iterations = 500
+kappa = -.1
+strangkappa = -.1
+iterations = 50
 l2diff = 0
 evaldiff = 1
 constindex = 2
@@ -41,18 +49,19 @@ comparison = constindex
 projection = True
 printek = False
 
-n = 30
-m = 20 #both in number of cells
+n = 10
+m = 10 #both in number of cells
 top = m
 bottom = m-1
-edgest = top
+edgest = bottom
 
 size = 2*n*m
 va0 = 1
 vb0 = -va0
 va1 = 0
 vb1 = -va1
-p = np.pi / 2
+ppos = np.pi / 3 #phi
+pneg = -ppos
 t = 1
 t20 = 0
 t21 = .1
@@ -61,14 +70,17 @@ h = np.zeros((size,size), complex)
 center = range(m/2 - m/4, m/2 + m/4)
 center = range(center[0] * 2, center[-1]*2)
 
-kvals = np.linspace(0, 2 * np.pi, 50, True)
+kvals = np.linspace(0, 2 * np.pi, 100, True)
 k = []
 for kval in kvals:
     for i in range(2*m):
         k.append(kval)
 e = []
 
-def findstate(linstate0,Hk,kap,iter,eigv,ind):
+def cell2ind(M,m,n,a):
+    return 2*M*n + 2*m + a
+
+def findstate(linstate0,Hk,kap,iter,eigv,ind,dim=1):
     state = np.copy(linstate0)
     eig = eigv
     minvals = []
@@ -80,7 +92,11 @@ def findstate(linstate0,Hk,kap,iter,eigv,ind):
         for i in range(len(linstate0)):
             Hknew[i,i] += kap * np.vdot(state[i],state[i])
         
-        newevals, newestates = np.linalg.eigh(Hknew)
+        if dim == 2:
+            newevals, newestates = eigsh(Hknew, k=2, which='SM')
+        else:
+            newevals, newestates = np.linalg.eigh(Hknew)
+
         for neweval in newevals:
             iterX.append(x)
             newevalsY.append(neweval)
@@ -110,25 +126,219 @@ def findstate(linstate0,Hk,kap,iter,eigv,ind):
                     foundeval = newevals[i]
         
         if comparison == constindex:
+            if dim == 2:
+                if newevals[0] > newevals[1]:
+                    ind = 0
+                else:
+                    ind = 1
             foundstate = newestates[:, ind]
             foundeval = newevals[ind]
             minval = 0
-            #laststate = newestates[:, ind + 1]
+
+        #compute l2 difference between (H + |psi|^2)psi and E psi
+        Hkpsi2 = Hk
+        for i in range(len(foundstate)):
+            Hkpsi2[i,i] += kap * np.vdot(foundstate[i],foundstate[i])
+        LHS = np.matmul(Hkpsi2, foundstate)
+        RHS = foundeval * foundstate
+        diff2 = 0
+        for j in range(len(foundstate)):
+            diff2 += np.vdot((LHS[j] - RHS[j]),(LHS[j] - RHS[j]))
+        if diff2 < .00000000000001:
+            print diff2
+            break
+
         eig = foundeval
         plt.scatter([x],[foundeval], color='red', zorder=3, marker='.')
         state = foundstate
-        minvals.append(minval)
+        minvals.append(diff2)
     plt.scatter(iterX, newevalsY, zorder=1, marker='.')
     plt.subplot(212)
-    plt.plot(range(iter), minvals)
+    plt.plot(range(len(minvals)), minvals)
     return state
 
+def makeH(m,n,va1,va0,t,t20,t21,ppos,edges=0,topology=0,defect=0):
+    vb1 = -va1
+    vb0 = -va0
+    size = 2*m*n
+    pneg = -ppos
+    center = range((m/2 - m/4)*2, (m/2 + m/4)*2)
+    h = np.zeros((size,size), complex)
+    defects = []
+
+    #make H
+    #we count with priority on m
+    #so for ordered pair (m,n) we fill a vector: [(1,1),(2,1),...,(1,2),(2,2),...]
+    #i/(2*m) = n and i%(2*m) = m, more or less
+    va = va1
+    vb = vb1
+    t2 = t21
+    p = ppos
+    if topology == 0:
+        va = -va0
+        vb = -vb0
+        t2 = 0
+    for i in range(size):
+        if i%2==0:
+            if defect and i/(2*m) in [3*n/4, 3*n/4 + 1] and i%(2*m) in [center[0]]:
+                print 'a:', i/(2*m)
+                print 'b:', i%(2*m)
+                defects.append((i%(2*m), i/(2*m)))
+                h[i,i] = 1000
+            else: h[i,i]=va
+            if i%(2*m)!=0 and i%(2*m)!=(2*m)-1 and i%(2*m)!=1 and i%(2*m)!=(2*m)-2:
+                if edges:
+                    if i-2*m+1 in range(size): h[i,(i-2*m+1)]=t
+                    if i-1 in range(size): h[i,(i-1)]=t
+                    if i+1 in range(size): h[i,(i+1)]=t
+                    if i+2*m in range(size): h[i,(i+2*m)]=t2*np.exp(1j*p)
+                    if i-2*m+2 in range(size): h[i,(i-2*m+2)]=t2*np.exp(1j*p)
+                    if i-2 in range(size): h[i,(i-2)]=t2*np.exp(1j*p)
+                    if i-2*m in range(size): h[i,(i-2*m)]=t2*np.exp(-1j*p)
+                    if i+2*m-2 in range(size): h[i,(i+2*m-2)]=t2*np.exp(-1j*p)
+                    if i+2 in range(size): h[i,(i+2)]=t2*np.exp(-1j*p)
+                else:
+                    h[i,(i-2*m+1)%size]=t
+                    h[i,(i-1)%size]=t
+                    h[i,(i+1)%size]=t
+                    h[i,(i+2*m)%size]=t2*np.exp(1j*p)
+                    h[i,(i-2*m+2)%size]=t2*np.exp(1j*p)
+                    h[i,(i-2)%size]=t2*np.exp(1j*p)
+                    h[i,(i-2*m)%size]=t2*np.exp(-1j*p)
+                    h[i,(i+2*m-2)%size]=t2*np.exp(-1j*p)
+                    h[i,(i+2)%size]=t2*np.exp(-1j*p)
+
+        else:
+            if defect and i/(2*m) in [3*n/4] and i%(2*m) in [center[1], center[3]]:
+                print 'c:', i/(2*m)
+                print 'd:', i%(2*m)
+                defects.append((i%(2*m), i/(2*m)))
+                h[i,i] = 1000
+            else: h[i,i]=vb
+            if i%(2*m)!=0 and i%(2*m)!=2*m-1 and i%(2*m)!=1 and i%(2*m)!=2*m-2:
+                if edges:
+                    if i+2*m-1 in range(size): h[i,(i+2*m-1)]=t
+                    if i-1 in range(size): h[i,(i-1)]=t
+                    if i+1 in range(size): h[i,(i+1)]=t
+                    if i+2*m in range(size): h[i,(i+2*m)]=t2*np.exp(-1j*p)
+                    if i-2*m+2 in range(size): h[i,(i-2*m+2)]=t2*np.exp(-1j*p)
+                    if i-2 in range(size): h[i,(i-2)]=t2*np.exp(-1j*p)
+                    if i-2*m in range(size): h[i,(i-2*m)]=t2*np.exp(1j*p)
+                    if i+2*m-2 in range(size): h[i,(i+2*m-2)]=t2*np.exp(1j*p)
+                    if i+2 in range(size): h[i,(i+2)]=t2*np.exp(1j*p)
+                else:
+                    h[i,(i+2*m-1)%size]=t
+                    h[i,(i-1)%size]=t
+                    h[i,(i+1)%size]=t
+                    h[i,(i+2*m)%size]=t2*np.exp(-1j*p)
+                    h[i,(i-2*m+2)%size]=t2*np.exp(-1j*p)
+                    h[i,(i-2)%size]=t2*np.exp(-1j*p)
+                    h[i,(i-2*m)%size]=t2*np.exp(1j*p)
+                    h[i,(i+2*m-2)%size]=t2*np.exp(1j*p)
+                    h[i,(i+2)%size]=t2*np.exp(1j*p)
+
+    #continue making H
+    #fill sites outside walls with chern number 0 entries
+    va = va0
+    vb = vb0
+    t2 = t20
+    p = pneg
+    for i in range(size):
+        if i%(2*m) not in center:
+            if i%2==0:
+                if h[i,i] != 1000:
+                    h[i,i]=va
+                if i%(2*m)!=0 and i%(2*m)!=(2*m)-1 and i%(2*m)!=1 and i%(2*m)!=(2*m)-2:
+                    h[i,(i-2*m+1)%size] = h[i,(i-1)%size] = h[i,(i+1)%size] = t
+                    h[i,(i+2*m)%size] = h[i,(i-2*m+2)%size] = h[i,(i-2)%size] = t2*np.exp(1j*p)
+                    h[i,(i-2*m)%size] = h[i,(i+2*m-2)%size] = h[i,(i+2)%size] = t2*np.exp(-1j*p)
+                    #fill the same across the diagonal
+                    h[(i-2*m+1)%size,i] = h[(i-1)%size,i] = h[(i+1)%size,i] = t
+                    h[(i+2*m)%size,i] = h[(i-2*m+2)%size,i] = h[(i-2)%size,i] = t2*np.exp(1j*p)
+                    h[(i-2*m)%size,i] = h[(i+2*m-2)%size,i] = h[(i+2)%size,i] = t2*np.exp(-1j*p)
+                if i%(2*m) == 0:
+                    h[i,(i-2*m+1)%size] = h[i,i+1] = h[i,i+2*m-1] = t
+                    h[i,(i+2*m)%size] = h[i,i+2*m-2] = h[i,(i-2*m+2)%size] = t2*np.exp(1j*p)
+                    h[i,(i-2*m)%size] = h[i,(i+4*m-2)%size] = h[i,i+2] = t2*np.exp(-1j*p)
+                    #fill the same across the diagonal
+                    h[(i-2*m+1)%size,i] = h[i+1,i] = h[i+2*m-1,i] = t
+                    h[(i+2*m)%size,i] = h[i+2*m-2,i] = h[(i-2*m+2)%size,i] = t2*np.exp(1j*p)
+                    h[(i-2*m)%size,i] = h[(i+4*m-2)%size,i] = h[i+2,i] = t2*np.exp(-1j*p)
+                if i%(2*m) == (2*m)-2:
+                    h[i,i-1] = h[i,(i-2*m+1)%size] = h[i,i+1] = t
+                    h[i,i-2] = h[i,(i+2*m)%size] = h[i,(i-4*m+2)%size] = t2*np.exp(1j*p)
+                    h[i,i-2*m+2] = h[i,(i-2*m)%size] = h[i,(i+2*m-2)%size] = t2*np.exp(-1j*p)
+                    #fill the same across the diagonal
+                    h[i-1,i] = h[(i-2*m+1)%size,i] = h[i+1,i] = t
+                    h[i-2,i] = h[(i+2*m)%size,i] = h[(i-4*m+2)%size,i] = t2*np.exp(1j*p)
+                    h[i-2*m+2,i] = h[(i-2*m)%size,i] = h[(i+2*m-2)%size,i] = t2*np.exp(-1j*p)
+
+            else:
+                if h[i,i] != 1000: 
+                    h[i,i]=vb
+                if i%(2*m)!=0 and i%(2*m)!=2*m-1 and i%(2*m)!=1 and i%(2*m)!=2*m-2:
+                    h[i,(i+2*m-1)%size] = h[i,(i-1)%size] = h[i,(i+1)%size] = t
+                    h[i,(i+2*m)%size] = h[i,(i-2*m+2)%size] = h[i,(i-2)%size] = t2*np.exp(-1j*p)
+                    h[i,(i-2*m)%size] = h[i,(i+2*m-2)%size] = h[i,(i+2)%size] = t2*np.exp(1j*p)
+                    #fill the same across the diagonal
+                    h[(i+2*m-1)%size,i] = h[(i-1)%size,i] = h[(i+1)%size,i] = t
+                    h[(i+2*m)%size,i] = h[(i-2*m+2)%size,i] = h[(i-2)%size,i] = t2*np.exp(-1j*p)
+                    h[(i-2*m)%size,i] = h[(i+2*m-2)%size,i] = h[(i+2)%size,i] = t2*np.exp(1j*p)
+                if i%(2*m) == 1:
+                    h[i,i-1] = h[i,(i+2*m-1)%size] = h[i,i+1] = t
+                    h[i,i+2] = h[i,(i+4*m-2)%size] = h[i,(i-2*m)%size] = t2*np.exp(1j*p)
+                    h[i,i+2*m-2] = h[i,(i-2*m+2)%size] = h[i,(i+2*m)%size] = t2*np.exp(-1j*p)
+                    #fill the same across the diagonal
+                    h[i-1,i] = h[(i+2*m-1)%size,i] = h[i+1,i] = t
+                    h[i+2,i] = h[(i+4*m-2)%size,i] = h[(i-2*m)%size,i] = t2*np.exp(1j*p)
+                    h[i+2*m-2,i] = h[(i-2*m+2)%size,i] = h[(i+2*m)%size,i] = t2*np.exp(-1j*p)
+                if i%(2*m) == 2*m-1:
+                    h[i,i-1] = h[i,(i+2*m-1)%size] = h[i,i-2*m+1] = t
+                    h[i,i-2*m+2] = h[i,(i+2*m-2)%size] = h[i,(i-2*m)%size] = t2*np.exp(1j*p)
+                    h[i,i-2] = h[i,(i-4*m+2)%size] = h[i,(i+2*m)%size] = t2*np.exp(-1j*p)
+                    #fill the same across the diagonal
+                    h[i-1,i] = h[(i+2*m-1)%size,i] = h[i-2*m+1,i] = t
+                    h[i-2*m+2,i] = h[(i+2*m-2)%size,i] = h[(i-2*m)%size,i] = t2*np.exp(1j*p)
+                    h[i-2,i] = h[(i-4*m+2)%size,i] = h[(i+2*m)%size,i] = t2*np.exp(-1j*p)
+    return h, defects
+
+'''Psuedo Eigenspectra Section'''
+def B(a,b,c):
+    left = np.concatenate((c,a - np.multiply(1j,b)), axis=0)
+    right = np.concatenate((a + np.multiply(1j,b),-c), axis=0)
+    return np.concatenate((left,right),axis=1)
+
+def inpseudo(x,y,h,l1,l2,l3,e):
+    #Takes square matrices of equivalent size X,Y,H and scalars l1,l2,l3,e 
+    #returns 1 if lamdas in psuedospectrum, 0 if not
+    #i.e. if B(x-l1,y-l2,h-l3) has an eigenvalue < e
+    for i in range(x.shape[0]):
+        x[i,i] -= l1
+        y[i,i] -= l2
+        h[i,i] -= l3
+    B0 = B(x,y,h)
+    B0evals, _ = eigsh(B0, k=1, which='SM')
+    return B0evals[0] #taking this line out gives bott index
+    print B0evals[0]
+    if abs(B0evals[0]) < e:
+        return 1
+    return 0
+
+def pseudospectra(l3,eps,X,Y,h):
+    l1mesh, l2mesh = np.meshgrid(range(2*m),range(n))
+    l3mesh = np.zeros((n,2*m))
+    for l2 in range(n):
+        for l1 in range(2*m):
+            l3mesh[l2,l1] = inpseudo(X,Y,h,l1,l2,l3,eps)
+    plt.pcolor(l1mesh,l2mesh,l3mesh,cmap=cm.RdBu)
+
 #make Hn
+p = ppos
 count = 0
 for k1 in kvals:
     for i in range(2*m):
         j = i
-
+        p = ppos
         if i%2==0:
             if i in center and topology != 0:
                 hn[i,j]= va1 + t21 * (np.exp(1j*(p+k1))+np.exp(1j*(-p-k1)))
@@ -137,9 +347,14 @@ for k1 in kvals:
                 hn[(i+2) % (2*m), j] = t21 * (np.exp(1j*(-p))+np.exp(1j*(p-k1)))
                 hn[(i-2) % (2*m), j] = t21 * (np.exp(1j*(p))+np.exp(1j*(-p+k1)))
             elif i in center and topology == 0:
-                hn[i,j]= -va0
+                hn[i,j]= -va0 
             else:
-                hn[i,j]= va0 #because t20 = 0
+                p = pneg
+                hn[i,j]= va0 + t20 * (np.exp(1j*(p+k1))+np.exp(1j*(-p-k1)))
+                hn[i,(j-2) % (2*m)]= t20 * (np.exp(1j*(p))+np.exp(1j*(-p+k1)))
+                hn[i,(j+2) % (2*m)]= t20 * (np.exp(1j*(-p))+np.exp(1j*(p-k1)))
+                hn[(i+2) % (2*m), j] = t20 * (np.exp(1j*(-p))+np.exp(1j*(p-k1)))
+                hn[(i-2) % (2*m), j] = t20 * (np.exp(1j*(p))+np.exp(1j*(-p+k1)))
             hn[i,(j-1) % (2*m)]= t
             hn[i,(j+1) % (2*m)]= t * (1+np.exp(1j*(-k1)))
             
@@ -153,7 +368,12 @@ for k1 in kvals:
             elif i in center and topology == 0:
                 hn[i,j]= -vb0
             else:
-                hn[i,j]= vb0 #because t20 = 0
+                p = pneg
+                hn[i,j]= vb0 + t20 * (np.exp(1j*(p-k1))+np.exp(1j*(-p+k1)))
+                hn[i,(j-2) % (2*m)]= t20 * (np.exp(1j*(-p))+np.exp(1j*(p+k1)))
+                hn[i,(j+2) % (2*m)]= t20 * (np.exp(1j*(p))+np.exp(1j*(-p-k1)))
+                hn[(i+2) % (2*m), j]= t20 * (np.exp(1j*(p))+np.exp(1j*(-p-k1)))
+                hn[(i-2) % (2*m), j]= t20 * (np.exp(1j*(-p))+np.exp(1j*(p+k1)))
             hn[i,(j-1) % (2*m)]= t * (1+np.exp(1j*(k1)))
             hn[i,(j+1) % (2*m)]= t
              
@@ -175,111 +395,19 @@ if showmatrix:
 
 defects = []
 
-#make H
-va = va1
-vb = vb1
-t2 = t21
-if topology == 0:
-    va = -va0
-    vb = -vb0
-    t2 = 0
+#make X which along the diagonal goes 1,2,...,2m,1,2,...,2m,1,2,...
+#make Y which along the diagonal goes 1,1,...,2,2,...,2m,2m,...
+X = np.zeros((size,size), complex)
+Y = np.zeros((size,size), complex)
 for i in range(size):
-    if i%2==0:
-        if defect and i/(2*m) in [3*n/4, 3*n/4 + 1] and i%(2*m) in [center[0]]:
-            defects.append((i%(2*m), i/(2*m)))
-            h[i,i] = 1000
-        else: h[i,i]=va
-        if i%(2*m)!=0 and i%(2*m)!=(2*m)-1 and i%(2*m)!=1 and i%(2*m)!=(2*m)-2:
-            h[i,(i-2*m+1)%size]=t
-            h[i,(i-1)%size]=t
-            h[i,(i+1)%size]=t
-            h[i,(i+2*m)%size]=t2*np.exp(1j*p)
-            h[i,(i-2*m+2)%size]=t2*np.exp(1j*p)
-            h[i,(i-2)%size]=t2*np.exp(1j*p)
-            h[i,(i-2*m)%size]=t2*np.exp(-1j*p)
-            h[i,(i+2*m-2)%size]=t2*np.exp(-1j*p)
-            h[i,(i+2)%size]=t2*np.exp(-1j*p)
+    X[i,i] = i%(2*m) + 1
+    Y[i,i] = i/(2*m) + 1
 
-    else:
-        if defect and i/(2*m) in [3*n/4] and i%(2*m) in [center[1], center[3]]:
-            defects.append((i%(2*m), i/(2*m)))
-            h[i,i] = 1000
-        else: h[i,i]=vb
-        if i%(2*m)!=0 and i%(2*m)!=2*m-1 and i%(2*m)!=1 and i%(2*m)!=2*m-2:
-            h[i,(i+2*m-1)%size]=t
-            h[i,(i-1)%size]=t
-            h[i,(i+1)%size]=t
-            h[i,(i+2*m)%size]=t2*np.exp(-1j*p)
-            h[i,(i-2*m+2)%size]=t2*np.exp(-1j*p)
-            h[i,(i-2)%size]=t2*np.exp(-1j*p)
-            h[i,(i-2*m)%size]=t2*np.exp(1j*p)
-            h[i,(i+2*m-2)%size]=t2*np.exp(1j*p)
-            h[i,(i+2)%size]=t2*np.exp(1j*p)
+h, defects = makeH(m,n,va1,va0,t,t20,t21,ppos,topology=0,defect=0)
 
-#continue making H
-#fill sites outside walls with chern number 0 entries
-va = va0
-vb = vb0
-t2 = t20
-for i in range(size):
-    if i%(2*m) not in center:
-        if i%2==0:
-            if h[i,i] != 1000:
-                h[i,i]=va
-            if i%(2*m)!=0 and i%(2*m)!=(2*m)-1 and i%(2*m)!=1 and i%(2*m)!=(2*m)-2:
-                h[i,(i-2*m+1)%size] = h[i,(i-1)%size] = h[i,(i+1)%size] = t
-                h[i,(i+2*m)%size] = h[i,(i-2*m+2)%size] = h[i,(i-2)%size] = t2*np.exp(1j*p)
-                h[i,(i-2*m)%size] = h[i,(i+2*m-2)%size] = h[i,(i+2)%size] = t2*np.exp(-1j*p)
-                #fill the same across the diagonal
-                h[(i-2*m+1)%size,i] = h[(i-1)%size,i] = h[(i+1)%size,i] = t
-                h[(i+2*m)%size,i] = h[(i-2*m+2)%size,i] = h[(i-2)%size,i] = t2*np.exp(1j*p)
-                h[(i-2*m)%size,i] = h[(i+2*m-2)%size,i] = h[(i+2)%size,i] = t2*np.exp(-1j*p)
-            if i%(2*m) == 0:
-                h[i,(i-2*m+1)%size] = h[i,i+1] = h[i,i+2*m-1] = t
-                h[i,(i+2*m)%size] = h[i,i+2*m-2] = h[i,(i-2*m+2)%size] = t2*np.exp(1j*p)
-                h[i,(i-2*m)%size] = h[i,(i+4*m-2)%size] = h[i,i+2] = t2*np.exp(-1j*p)
-                #fill the same across the diagonal
-                h[(i-2*m+1)%size,i] = h[i+1,i] = h[i+2*m-1,i] = t
-                h[(i+2*m)%size,i] = h[i+2*m-2,i] = h[(i-2*m+2)%size,i] = t2*np.exp(1j*p)
-                h[(i-2*m)%size,i] = h[(i+4*m-2)%size,i] = h[i+2,i] = t2*np.exp(-1j*p)
-            if i%(2*m) == (2*m)-2:
-                h[i,i-1] = h[i,(i-2*m+1)%size] = h[i,i+1] = t
-                h[i,i-2] = h[i,(i+2*m)%size] = h[i,(i-4*m+2)%size] = t2*np.exp(1j*p)
-                h[i,i-2*m+2] = h[i,(i-2*m)%size] = h[i,(i+2*m-2)%size] = t2*np.exp(-1j*p)
-                #fill the same across the diagonal
-                h[i-1,i] = h[(i-2*m+1)%size,i] = h[i+1,i] = t
-                h[i-2,i] = h[(i+2*m)%size,i] = h[(i-4*m+2)%size,i] = t2*np.exp(1j*p)
-                h[i-2*m+2,i] = h[(i-2*m)%size,i] = h[(i+2*m-2)%size,i] = t2*np.exp(-1j*p)
-
-        else:
-            if h[i,i] != 1000: 
-                h[i,i]=vb
-            if i%(2*m)!=0 and i%(2*m)!=2*m-1 and i%(2*m)!=1 and i%(2*m)!=2*m-2:
-                h[i,(i+2*m-1)%size] = h[i,(i-1)%size] = h[i,(i+1)%size] = t
-                h[i,(i+2*m)%size] = h[i,(i-2*m+2)%size] = h[i,(i-2)%size] = t2*np.exp(-1j*p)
-                h[i,(i-2*m)%size] = h[i,(i+2*m-2)%size] = h[i,(i+2)%size] = t2*np.exp(1j*p)
-                #fill the same across the diagonal
-                h[(i+2*m-1)%size,i] = h[(i-1)%size,i] = h[(i+1)%size,i] = t
-                h[(i+2*m)%size,i] = h[(i-2*m+2)%size,i] = h[(i-2)%size,i] = t2*np.exp(-1j*p)
-                h[(i-2*m)%size,i] = h[(i+2*m-2)%size,i] = h[(i+2)%size,i] = t2*np.exp(1j*p)
-            if i%(2*m) == 1:
-                h[i,i-1] = h[i,(i+2*m-1)%size] = h[i,i+1] = t
-                h[i,i+2] = h[i,(i+4*m-2)%size] = h[i,(i-2*m)%size] = t2*np.exp(1j*p)
-                h[i,i+2*m-2] = h[i,(i-2*m+2)%size] = h[i,(i+2*m)%size] = t2*np.exp(-1j*p)
-                #fill the same across the diagonal
-                h[i-1,i] = h[(i+2*m-1)%size,i] = h[i+1,i] = t
-                h[i+2,i] = h[(i+4*m-2)%size,i] = h[(i-2*m)%size,i] = t2*np.exp(1j*p)
-                h[i+2*m-2,i] = h[(i-2*m+2)%size,i] = h[(i+2*m)%size,i] = t2*np.exp(-1j*p)
-            if i%(2*m) == 2*m-1:
-                h[i,i-1] = h[i,(i+2*m-1)%size] = h[i,i-2*m+1] = t
-                h[i,i-2*m+2] = h[i,(i+2*m-2)%size] = h[i,(i-2*m)%size] = t2*np.exp(1j*p)
-                h[i,i-2] = h[i,(i-4*m+2)%size] = h[i,(i+2*m)%size] = t2*np.exp(-1j*p)
-                #fill the same across the diagonal
-                h[i-1,i] = h[(i+2*m-1)%size,i] = h[i-2*m+1,i] = t
-                h[i-2*m+2,i] = h[(i+2*m-2)%size,i] = h[(i-2*m)%size,i] = t2*np.exp(1j*p)
-                h[i-2,i] = h[(i-4*m+2)%size,i] = h[(i+2*m)%size,i] = t2*np.exp(-1j*p)
-if projection:
-    ens, psins = np.linalg.eigh(h)
+pseudospectra(0,50,X,Y,h)
+'''I think we'll be able to turn down epsilon once we use the lattice
+with edges but no domain walls'''
 
 if showmatrix:
     plt.matshow(h.real)
@@ -293,7 +421,7 @@ for i in range(1,n):
     state0 = np.append(state0, np.exp(1j*statek[0]*i) * state0firstrow)
 
 if nonlin and after:
-    newstate = findstate(state0,h,kappa,iterations,stateeval,edgest)
+    newstate = findstate(state0,h,kappa,iterations,stateeval,edgest,dim=2)
     state0 = newstate
 
 if localize:
@@ -305,20 +433,25 @@ if localize:
 
 E = state0.real
 E = E.reshape(n,2*m)
-X = range(2*m)
-Y = range(n)
-X, Y = np.meshgrid(X,Y)
+Xrange = range(2*m)
+Yrange = range(n)
+Xrange, Yrange = np.meshgrid(Xrange,Yrange)
 fig = plt.figure()
-ax = fig.add_subplot(111, projection = '3d')
-#ax.set_zlim(-.03,.03)
-ax.azim = -.1
-ax.elev = el
-#ax.dist = 8
-ax.plot_surface(X, Y, E, cmap=cm.RdBu, linewidth=0, antialiased=False, zorder = 2)
-defectsX = [x for (x,y) in defects]
-defectsY = [y for (x,y) in defects]
-ax.scatter(defectsX, defectsY, [0.01]*len(defectsX), s=10, c='black', zorder = 1)
-plt.savefig(path + '/img00.png')
+if colormap:
+    plt.pcolor(Yrange,Xrange,E,cmap=cm.RdBu)
+    plt.text(25,35,'$t = 0.00$')
+    plt.ylim(39,0)
+else:
+    ax = fig.add_subplot(111, projection = '3d')
+    #ax.set_zlim(-.03,.03)
+    ax.azim = -.1
+    ax.elev = el
+    #ax.dist = 8
+    ax.plot_surface(Xrange, Yrange, E, cmap=cm.RdBu, linewidth=0, antialiased=False, zorder = 2)
+    defectsX = [x for (x,y) in defects]
+    defectsY = [y for (x,y) in defects]
+    ax.scatter(defectsX, defectsY, [0.01]*len(defectsX), s=10, c='black', zorder = 1)
+plt.savefig(path + '/img00.png', format='png')
 
 def strang(psi0, ens, psins, dt, t, kappa, prin):
     statet = np.copy(psi0)
@@ -346,7 +479,7 @@ if animate:
     timestamp = 0
     for time in np.linspace(0,end,frames):
         if nonlin:
-            statetdt = strang(statet,ens,psins,dt,time - timestamp, kappa, num)
+            statetdt = strang(statet,ens,psins,dt,time - timestamp, strangkappa, num)
             timestamp = time
             statet = np.copy(statetdt)
         elif projection:
@@ -358,18 +491,23 @@ if animate:
         E = statet.real
         E = E.reshape(n,2*m)
         fig2 = plt.figure()
-        ax = fig2.add_subplot(111, projection = '3d')
-        #ax.set_zlim(-.03,.03)
-        ax.azim = -.1
-        ax.elev = el
-        #ax.dist = 8
-        ax.plot_surface(X, Y, E, cmap=cm.RdBu, linewidth=0, antialiased=False)
-        plt.savefig(path + '/img' + str(num).zfill(2) + '.jpg', format='jpg')
+        if colormap:
+            plt.pcolor(Yrange,Xrange,E,cmap=cm.RdBu)
+            plt.text(25,35,'$t = %03.2f$' % time)
+            plt.ylim(39,0)
+        else:
+            ax = fig2.add_subplot(111, projection = '3d')
+            #ax.set_zlim(-.03,.03)
+            ax.azim = -.1
+            ax.elev = el
+            #ax.dist = 8
+            ax.plot_surface(Xrange, Yrange, E, cmap=cm.RdBu, linewidth=0, antialiased=False)
+        plt.savefig(path + '/img' + str(num).zfill(2) + '.png', format='png')
         plt.close(fig2)
 
         num += 1
 
-    images = [cv2.imread(os.path.join(path, img)) for img in os.listdir(path) if img.endswith(".jpg")]
+    images = [cv2.imread(os.path.join(path, img)) for img in os.listdir(path) if img.endswith(".png")]
     height,width,layers = images[0].shape
 
     video = cv2.VideoWriter(path + '/' + title + '.mp4',-1,15,(width,height))
@@ -381,8 +519,12 @@ if animate:
     video.release()
 
 fig = plt.figure()
+plt.title('Eigenvalues of (-1,1,-1) Case')
+plt.xlabel('k (wavenumber)')
+plt.ylabel('Eigenvalue / Energy')
 plt.scatter(k,e)
 plt.scatter(statek, stateeval, color='red')
+
 if printek:
     print 'E: ', stateeval[0]
     print 'k: ', statek[0]
