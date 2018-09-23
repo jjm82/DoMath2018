@@ -9,6 +9,9 @@ import cv2
 import os
 
 def B(a,b,c):
+    '''
+    Returns the matrix B(X,Y,Z)
+    '''
     left = np.concatenate((c,a - np.multiply(1j,b)), axis=0)
     right = np.concatenate((a + np.multiply(1j,b),-c), axis=0)
     return np.concatenate((left,right),axis=1)
@@ -78,11 +81,18 @@ def site_analysis(x,y,h,l1,l2,l3,e,check_psuedo=True,check_loring=False):
     return ret
 
 def cell_to_ind(m,x,y,site):
-    '''site = 0 => A site
-       site = 1 => B site'''
+    '''
+    converts cell ordered pair to matrix index
+    site = 0 -> A site
+    site = 1 -> B site
+    '''
     return 2*m*y + 2*x + site
 
-def hamiltonian(m,n,va,t,t2=0,phi=0):
+def hamiltonian(m,n,va,t,t2=0,phi=np.pi/2):
+    '''
+    Returns the hamiltonian of a hexagonal lattice
+    with the given length, width, and hopping amplitudes 
+    '''
     vb = -va
     size = 2*m*n
     t2pos = t2*np.exp(1j*phi)
@@ -123,25 +133,40 @@ def hamiltonian(m,n,va,t,t2=0,phi=0):
     return h
 
 def X_Y(m,n):
+    '''
+    Returns X and Y matrices in an ordered pair X,Y
+    '''
     x = np.diag((sorted(range(m)*2)*n))
     y = np.diag(sorted(range(n)*2*m))
     return x,y
 
-m = 10
-n = 10
-H = hamiltonian(m,n,0,1,.5,np.pi/2)
-X,Y = X_Y(m,n)
+def graph_low_evals_of_B(m,n,va,t,t2,l3,phi=np.pi/2):
+    '''
+    Returns a 3d figure of the lowest eigenvalues of B(X-l1,Y-l2,H-l3)
+    for different values of l1 and l2
+    '''
+    H = hamiltonian(m,n,va,t,t2,phi)
+    X,Y = X_Y(m,n)
 
-if True:
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     xs = [i for i in range(m) for _ in range(n)]
     ys = range(n) * m
-    zs = [site_analysis(X,Y,H,x,y,3,1)[0] for x,y in zip(xs,ys)]
+    zs = [site_analysis(X,Y,H,x,y,l3,.19)[0] for x,y in zip(xs,ys)]
 
+    ax.set_zlim(-.7,.7)
+    ax.azim = -.1
+    ax.elev = 0
     ax.scatter(xs, ys, zs)
+    ax.text(0,0,.8,'$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f}, $\lambda_3$ = {:.2f}'.format(va,t,t2,l3))
+    ax.set_xlabel('$\lambda_1$')
+    ax.set_ylabel('$\lambda_2$')
+    ax.set_zlabel('$E$')
 
-if False:
+    return fig
+
+def graph_loring(m,n,va,t,t2,l3,phi=np.pi/2):
+    H = hamiltonian(m,n,va,t,t2,phi)
     fig = plt.figure()
     ax = fig.add_subplot(111)
     x0 = []
@@ -158,11 +183,30 @@ if False:
                 y0.append(y)
     li0 = plt.scatter(x0,y0,facecolors='',edgecolors='black')
     li1 = plt.scatter(x1,y1,c='black')
-    plt.legend((li0,li1),('Loring index = 0','Loring index = 1'),bbox_to_anchor=(1.05, 1), loc=2)
+    plt.legend((li0,li1),('Loring index = 0','Loring index = 1'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
     plt.xlabel('$\lambda_1$')
     plt.ylabel('$\lambda_2$')
-    plt.title('Loring Index on Edged Lattice')
-    plt.text(11,3, '$V_a = 0$\n$t = 1$\n$t\'=.5$\n$\phi = \pi / 2$\n$\lambda_3 = 0$')
+    plt.title('Loring Index on Edged Lattice\n'
+                '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},'
+                ' $\lambda_3$ = {:.2f}'.format(va,t,t2,l3), loc='left', fontsize='medium')
+
+    return fig
+
+m = 10
+n = 10
+va = 0
+t = 1
+t2 = 1
+l3 = 0
+H = hamiltonian(m,n,va,t,t2)
+X,Y = X_Y(m,n)
+num = 1
+
+for l3 in np.linspace(0,3,20):
+    fig = graph_low_evals_of_B(m,n,va,t,t2,l3)
+    plt.savefig('/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images/img' + str(num).zfill(2) + '.png', format='png')
+    plt.close(fig)
+    num += 1
 
 print 'DONE'
 plt.show()
