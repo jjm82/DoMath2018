@@ -193,7 +193,8 @@ def graph_loring(m,n,va,t,t2,l3,phi=np.pi/2):
     return fig
 
 def graph_state(vect,m,n,ax=None):
-    state = vect.reshape(n,2*m)
+    realvect = vect.real
+    state = realvect.reshape(n,2*m)
     if ax == None:
         fig = plt.figure()
         plt.imshow(state,cmap=cm.RdBu)
@@ -223,8 +224,46 @@ def graph_eigen_state(h,m,n,ind,va,t,t2,l3):
     plt.tight_layout()
     return fig
 
-m = 10
-n = 10
+def propagate(h,m,n,va,t,t2,l3,state,end,frames,title,loc=True):
+    path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
+    num = 1
+    statet = np.copy(state)
+    for time in np.linspace(0,end,frames):
+        statet = np.matmul(expm(-1j*time*h), state)
+        fig = graph_state(statet,m,n)
+        plt.xlabel('$m$')
+        plt.ylabel('$n$')
+        plt.title('State after time {:.2f}\n'
+                '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},'
+                ' $\lambda_3$ = {:.2f}'.format(time,va,t,t2,l3))
+        plt.savefig(path + '/img' + str(num).zfill(2) + '.png', format='png')
+        plt.close(fig)
+
+        num += 1
+
+    images = [cv2.imread(os.path.join(path, img)) for img in os.listdir(path) if img.endswith(".png")]
+    height,width,layers = images[0].shape
+
+    video = cv2.VideoWriter(path + '/' + title + '.mp4',-1,15,(width,height))
+
+    for j in range(len(images)):
+        video.write(images[j])
+
+    cv2.destroyAllWindows()
+    video.release()
+
+def localize(state,m,n,mu,sig):
+    s=state
+    state0 = np.zeros(len(state), complex)
+    state1 = np.zeros(len(state), complex)
+    for i in range(len(state)):
+        state0[i] = s[i]/(sig*np.sqrt(2*np.pi)) * np.exp(-1/2*(((i/(2*m))-mu)/sig)**2)
+    for i in range(len(state)):
+        state1[i] = state0[i] / (i%(2*m)+1)
+    return state1
+
+m = 20
+n = 20
 va = 0
 t = 1
 t2 = 1
@@ -232,8 +271,13 @@ l3 = 0
 H = hamiltonian(m,n,va,t,t2)
 X,Y = X_Y(m,n)
 num = 1
+hevals,hevects = eigsh(H,k=1,which='SM')
 
-if True:
+
+state = localize(hevects[:,0],m,n,9,4)
+propagate(H,m,n,va,t,t2,l3,state,40,30,'propagation 6')
+
+if False:
     for ind in range(len(H)/2-5,len(H)/2+5):
         H = hamiltonian(m,n,va,t,t2)
         fig = graph_eigen_state(H,m,n,ind,va,t,t2,l3)
