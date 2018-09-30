@@ -1,0 +1,43 @@
+import numpy as np
+import matplotlib as mp
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from scipy.linalg import expm
+from scipy.sparse.linalg import eigsh
+import cv2
+import os
+
+video_name = 'Haldane-model-animation'
+
+Xrange = range(2*m)
+Yrange = range(n)
+Xrange, Yrange = np.meshgrid(Xrange,Yrange)
+
+def propagate(state,end,frames):
+    num = 1
+    statet = np.copy(state)
+    for time in np.linspace(0,end,frames):
+        statet = np.matmul(expm(-1j*time*h), state)
+        E = statet.real
+        E = E.reshape(n,2*m)
+        fig2 = plt.figure()
+        ax = fig2.add_subplot(111, projection = '3d')
+        ax.azim = -.1
+        ax.elev = el
+        ax.plot_surface(Xrange, Yrange, E, cmap=cm.RdBu, linewidth=0, antialiased=False)
+        plt.savefig(path + '/img' + str(num).zfill(2) + '.png', format='png')
+        plt.close(fig2)
+
+        num += 1
+
+    images = [cv2.imread(os.path.join(path, img)) for img in os.listdir(path) if img.endswith(".png")]
+    height,width,layers = images[0].shape
+
+    video = cv2.VideoWriter(path + '/' + title + '.mp4',-1,15,(width,height))
+
+    for j in range(len(images)):
+        video.write(images[j])
+
+    cv2.destroyAllWindows()
+    video.release()
