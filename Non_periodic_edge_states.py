@@ -192,6 +192,37 @@ def graph_loring(m,n,va,t,t2,l3,phi=np.pi/2):
 
     return fig
 
+def graph_state(vect,m,n,ax=None):
+    state = vect.reshape(n,2*m)
+    if ax == None:
+        fig = plt.figure()
+        plt.imshow(state,cmap=cm.RdBu)
+        plt.gca().invert_yaxis()
+        return fig
+    else:
+        ax.imshow(state,cmap=cm.RdBu)
+        ax.invert_yaxis()
+        return ax
+
+def graph_eigen_state(h,m,n,ind,va,t,t2,l3):
+    Hevals, Hevects = np.linalg.eigh(h)
+    fig = plt.figure()
+    ax0 = plt.subplot2grid((1, 4), (0, 0), colspan=3)
+    ax1 = plt.subplot2grid((1, 4), (0, 3))
+    plt.suptitle('Eigenstate and Eigenvectors\n'
+                '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},'
+                ' $\lambda_3$ = {:.2f}'.format(va,t,t2,l3))
+    graph_state(Hevects[:,ind].real,m,n,ax=ax0)
+    ax1.scatter([0]*len(Hevals),Hevals,c='black')
+    ax1.scatter(0,Hevals[ind],c='red')
+    ax0.set_xlabel('$m$')
+    ax0.set_ylabel('$n$')
+    ax1.set_ylabel('eigenvalue')
+    ax1.set_xticklabels([])
+    ax1.set_xticks([])
+    plt.tight_layout()
+    return fig
+
 m = 10
 n = 10
 va = 0
@@ -202,11 +233,13 @@ H = hamiltonian(m,n,va,t,t2)
 X,Y = X_Y(m,n)
 num = 1
 
-for l3 in np.linspace(0,3,20):
-    fig = graph_low_evals_of_B(m,n,va,t,t2,l3)
-    plt.savefig('/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images/img' + str(num).zfill(2) + '.png', format='png')
-    plt.close(fig)
-    num += 1
+if True:
+    for ind in range(len(H)/2-5,len(H)/2+5):
+        H = hamiltonian(m,n,va,t,t2)
+        fig = graph_eigen_state(H,m,n,ind,va,t,t2,l3)
+        plt.savefig('/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images/img' + str(num).zfill(2) + '.png', format='png')
+        plt.close(fig)
+        num += 1
 
 print 'DONE'
 plt.show()
