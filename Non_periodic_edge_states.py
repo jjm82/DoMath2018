@@ -7,6 +7,7 @@ from scipy.linalg import expm
 from scipy.sparse.linalg import eigsh
 import cv2
 import os
+from numpy.random import uniform
 
 def B(a,b,c):
     '''
@@ -88,24 +89,24 @@ def cell_to_ind(m,x,y,site):
     '''
     return 2*m*y + 2*x + site
 
-def hamiltonian(m,n,va,t,t2=0,phi=np.pi/2):
+def hamiltonian(m,n,va,t,t2=0,phi=np.pi/2,disorder=0):
     '''
     Returns the hamiltonian of a hexagonal lattice
     with the given length, width, and hopping amplitudes 
     '''
-    vb = -va
     size = 2*m*n
     t2pos = t2*np.exp(1j*phi)
     t2neg = t2*np.exp(-1j*phi)
     h = np.zeros((size,size), complex)
-    
+
     for i in range(m):
         for j in range(n):
             #A site
             a_ind = cell_to_ind(m,i,j,0)
             b_ind = a_ind + 1
-            h[a_ind,a_ind] = va
-            h[b_ind,b_ind] = vb
+            dis = disorder * uniform(-.5,.5)
+            h[a_ind,a_ind] = va + dis
+            h[b_ind,b_ind] = -va - dis
             h[a_ind,b_ind] = t
             h[b_ind,a_ind] = t
             if i-1 in range(m):
@@ -165,8 +166,8 @@ def graph_low_evals_of_B(m,n,va,t,t2,l3,phi=np.pi/2):
 
     return fig
 
-def graph_loring(m,n,va,t,t2,l3,phi=np.pi/2):
-    H = hamiltonian(m,n,va,t,t2,phi)
+def graph_loring(m,n,va,t,t2,l3,phi=np.pi/2,disorder=0):
+    H = hamiltonian(m,n,va,t,t2,phi,disorder=disorder)
     fig = plt.figure()
     ax = fig.add_subplot(111)
     x0 = []
@@ -262,8 +263,8 @@ def localize(state,m,n,mu,sig):
         state1[i] = state0[i] / (i%(2*m)+1)
     return state1
 
-m = 20
-n = 20
+m = 10
+n = 10
 va = 0
 t = 1
 t2 = 1
@@ -275,10 +276,11 @@ hevals,hevects = eigsh(H,k=1,which='SM')
 
 
 state = localize(hevects[:,0],m,n,9,4)
-propagate(H,m,n,va,t,t2,l3,state,40,30,'propagation 6')
+#propagate(H,m,n,va,t,t2,l3,state,60,40,'propagation 7')
+graph_loring(m,n,va,t,t2,l3,disorder=6)
 
 if False:
-    for ind in range(len(H)/2-5,len(H)/2+5):
+    for ind in range(len(H)/2-10,len(H)/2+10):
         H = hamiltonian(m,n,va,t,t2)
         fig = graph_eigen_state(H,m,n,ind,va,t,t2,l3)
         plt.savefig('/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images/img' + str(num).zfill(2) + '.png', format='png')
