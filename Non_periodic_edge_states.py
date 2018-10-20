@@ -8,16 +8,35 @@ from scipy.sparse.linalg import eigsh
 import cv2
 import os
 from numpy.random import uniform
+import matplotlib.patches as mpatches
+
+'''
+Global Variables
+'''
+
+m = 3
+n = 3
+va = 0
+t = 1
+t2 = 1
+phi = np.pi/2
+l3 = 0
+e = .39
+disorder = 0
+
+'''
+Functions
+'''
 
 def B(a,b,c):
     '''
-    Returns the matrix B(X,Y,Z)
+    Returns the matrix B(A,B,C)
     '''
     left = np.concatenate((c,a - np.multiply(1j,b)), axis=0)
     right = np.concatenate((a + np.multiply(1j,b),-c), axis=0)
     return np.concatenate((left,right),axis=1)
 
-def site_analysis(x,y,h,l1,l2,l3,e,check_psuedo=True,check_loring=False):
+def site_analysis(x,y,h,l1,l2):
     '''
     x,y,h should be square numpy matrices of equivalent size
     l1,l2,l3,e are scalars
@@ -34,23 +53,19 @@ def site_analysis(x,y,h,l1,l2,l3,e,check_psuedo=True,check_loring=False):
 
     Return a list of the above return values.
     '''
-    ret = [-10,-10,[]]
+    global l3, e
+    ret = None
 
     B0 = B(x - (np.diag(len(x)*[l1])),
            y - (np.diag(len(y)*[l2])),
            h - (np.diag(len(h)*[l3])))
 
-    if check_psuedo:
-        in_psuedo = 0
-        B0eval, _ = eigsh(B0, k=1, which='SM')
-        if abs(B0eval[0]) < e:
-            in_psuedo = 1
-        ret[0] = in_psuedo
-        ret[0] = B0eval[0]
+    B0eval, _ = eigsh(B0, k=1, which='SM')
+    if abs(B0eval[0]) < e:
+        ret = 'in_psuedo'
     
-    if check_loring:
+    else:
         B0evals, _ = np.linalg.eigh(B0)
-        ret[2] = B0evals
         sz = len(B0evals)
         loring = 0
         if sz % 2 == 0:
@@ -77,8 +92,7 @@ def site_analysis(x,y,h,l1,l2,l3,e,check_psuedo=True,check_loring=False):
                 while B0evals[i] < 0:
                     loring -= 1
                     i += 1
-        ret[1] = loring
-    
+        ret = loring
     return ret
 
 def cell_to_ind(m,x,y,site):
@@ -89,11 +103,12 @@ def cell_to_ind(m,x,y,site):
     '''
     return 2*m*y + 2*x + site
 
-def hamiltonian(m,n,va,t,t2=0,phi=np.pi/2,disorder=0):
+def hamiltonian():
     '''
     Returns the hamiltonian of a hexagonal lattice
     with the given length, width, and hopping amplitudes 
     '''
+    global m,n,va,t,t2,phi,disorder
     size = 2*m*n
     t2pos = t2*np.exp(1j*phi)
     t2neg = t2*np.exp(-1j*phi)
@@ -101,7 +116,6 @@ def hamiltonian(m,n,va,t,t2=0,phi=np.pi/2,disorder=0):
 
     for i in range(m):
         for j in range(n):
-            #A site
             a_ind = cell_to_ind(m,i,j,0)
             b_ind = a_ind + 1
             dis = disorder * uniform(-.5,.5)
@@ -126,11 +140,11 @@ def hamiltonian(m,n,va,t,t2=0,phi=np.pi/2,disorder=0):
                 h[b_ind,cell_to_ind(m,i,j+1,1)] = t2neg
                 h[a_ind,cell_to_ind(m,i,j+1,0)] = t2pos
             if i-1 in range(m) and j+1 in range(n):
-                h[a_ind,cell_to_ind(m,i-1,j+1,0)] = t2pos
-                h[b_ind,cell_to_ind(m,i-1,j+1,1)] = t2neg
+                h[a_ind,cell_to_ind(m,i-1,j+1,0)] = t2neg
+                h[b_ind,cell_to_ind(m,i-1,j+1,1)] = t2pos
             if i+1 in range(m) and j-1 in range(n):
-                h[a_ind,cell_to_ind(m,i+1,j-1,0)] = t2neg
-                h[b_ind,cell_to_ind(m,i+1,j-1,1)] = t2pos
+                h[a_ind,cell_to_ind(m,i+1,j-1,0)] = t2pos
+                h[b_ind,cell_to_ind(m,i+1,j-1,1)] = t2neg
     return h
 
 def X_Y(m,n):
@@ -141,19 +155,27 @@ def X_Y(m,n):
     y = np.diag(sorted(range(n)*2*m))
     return x,y
 
-def graph_low_evals_of_B(m,n,va,t,t2,l3,phi=np.pi/2):
+def graph_low_evals_of_B():
+    global m,n,va,t,t2,l3,phi
     '''
+    NEED TO FIX
     Returns a 3d figure of the lowest eigenvalues of B(X-l1,Y-l2,H-l3)
     for different values of l1 and l2
     '''
-    H = hamiltonian(m,n,va,t,t2,phi)
+    H = hamiltonian()
     X,Y = X_Y(m,n)
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     xs = [i for i in range(m) for _ in range(n)]
     ys = range(n) * m
-    zs = [site_analysis(X,Y,H,x,y,l3,.19)[0] for x,y in zip(xs,ys)]
+    zs = []
+    for x,y in zip(xs,ys):
+        B0 = B(X - (np.diag(len(X)*[x])),
+           Y - (np.diag(len(Y)*[y])),
+           H - (np.diag(len(H)*[l3])))
+        evals, _ = eigsh(B0,k=1,which='SM')
+        zs.append(evals[0])
 
     ax.set_zlim(-.7,.7)
     ax.azim = -.1
@@ -166,30 +188,32 @@ def graph_low_evals_of_B(m,n,va,t,t2,l3,phi=np.pi/2):
 
     return fig
 
-def graph_loring(m,n,va,t,t2,l3,phi=np.pi/2,disorder=0):
-    H = hamiltonian(m,n,va,t,t2,phi,disorder=disorder)
+def graph_loring():
+    global m,n,va,t,t2,l3,phi,e
+    H = hamiltonian()
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    x0 = []
-    y0 = []
-    x1 = []
-    y1 = []
+    leg1 = leg2 = leg3 = None
+    X,Y = X_Y(m,n)
     for x in range(m):
         for y in range(n):
-            if site_analysis(X,Y,H,x,y,0,1,check_loring=True)[1] == 1:
-                x1.append(x)
-                y1.append(y)
-            else:
-                x0.append(x)
-                y0.append(y)
-    li0 = plt.scatter(x0,y0,facecolors='',edgecolors='black')
-    li1 = plt.scatter(x1,y1,c='black')
-    plt.legend((li0,li1),('Loring index = 0','Loring index = 1'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
+            analysis = site_analysis(X,Y,H,x,y)
+            if analysis == 'in_psuedo':
+                plt.scatter(x,y,c='red')
+                if leg1 == None: leg1 = plt.scatter(x,y,c='red')
+            elif analysis == 1:
+                plt.scatter(x,y,c='black')
+                if leg2 == None: leg2 = plt.scatter(x,y,c='black')
+            elif analysis == 0:
+                plt.scatter(x,y,facecolors='',edgecolors='black')
+                if leg3 == None: leg3 = plt.scatter(x,y,facecolors='',edgecolors='black')
+            else: plt.text(x,y,analysis)
+    plt.legend((leg1,leg2,leg3),('In psuedospec','Loring index = 1','Loring index = 0'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
     plt.xlabel('$\lambda_1$')
     plt.ylabel('$\lambda_2$')
     plt.title('Loring Index on Edged Lattice\n'
-                '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},'
-                ' $\lambda_3$ = {:.2f}'.format(va,t,t2,l3), loc='left', fontsize='medium')
+                '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},\n'
+                ' $\lambda_3$ = {:.2f}, dis = {}, e = {}'.format(va,t,t2,l3,disorder,e), loc='left', fontsize='medium')
 
     return fig
 
@@ -263,29 +287,34 @@ def localize(state,m,n,mu,sig):
         state1[i] = state0[i] / (i%(2*m)+1)
     return state1
 
-m = 10
-n = 10
-va = 0
-t = 1
-t2 = 1
-l3 = 0
-H = hamiltonian(m,n,va,t,t2)
-X,Y = X_Y(m,n)
-num = 1
-hevals,hevects = eigsh(H,k=1,which='SM')
-
-
-state = localize(hevects[:,0],m,n,9,4)
-#propagate(H,m,n,va,t,t2,l3,state,60,40,'propagation 7')
-graph_loring(m,n,va,t,t2,l3,disorder=6)
-
-if False:
-    for ind in range(len(H)/2-10,len(H)/2+10):
-        H = hamiltonian(m,n,va,t,t2)
-        fig = graph_eigen_state(H,m,n,ind,va,t,t2,l3)
-        plt.savefig('/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images/img' + str(num).zfill(2) + '.png', format='png')
+def loring_over_e(start,end,frames,title):
+    global e
+    path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
+    num = 1
+    for etemp in np.linspace(start,end,frames):
+        e = etemp
+        fig = graph_loring()
+        plt.savefig(path + '/img' + str(num).zfill(2) + '.png', format='png')
         plt.close(fig)
         num += 1
+    
+    images = [cv2.imread(os.path.join(path, img)) for img in os.listdir(path) if img.endswith(".png")]
+    height,width,layers = images[0].shape
+
+    video = cv2.VideoWriter(path + '/' + title + '.mp4',-1,15,(width,height))
+
+    for j in range(len(images)):
+        video.write(images[j])
+
+    cv2.destroyAllWindows()
+    video.release()
+
+H = hamiltonian()
+X,Y = X_Y(m,n)
+B0 = B(X - (np.diag(len(X)*[0])),
+           Y - (np.diag(len(Y)*[0])),
+           H - (np.diag(len(H)*[l3])))
+plt.imshow(B0.real)
 
 print 'DONE'
 plt.show()
