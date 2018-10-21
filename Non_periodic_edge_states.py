@@ -9,13 +9,14 @@ import cv2
 import os
 from numpy.random import uniform
 import matplotlib.patches as mpatches
+from scipy.sparse import csc_matrix
 
 '''
 Global Variables
 '''
 
-m = 3
-n = 3
+m = 10
+n = 10
 va = 0
 t = 1
 t2 = 1
@@ -23,6 +24,7 @@ phi = np.pi/2
 l3 = 0
 e = .39
 disorder = 0
+periodic = True
 
 '''
 Functions
@@ -105,10 +107,14 @@ def cell_to_ind(m,x,y,site):
 
 def hamiltonian():
     '''
+    NEED TO DO:
+    redo this using scipy.sparse.spdiags
+    '''
+    '''
     Returns the hamiltonian of a hexagonal lattice
     with the given length, width, and hopping amplitudes 
     '''
-    global m,n,va,t,t2,phi,disorder
+    global m,n,va,t,t2,phi,disorder,periodic
     size = 2*m*n
     t2pos = t2*np.exp(1j*phi)
     t2neg = t2*np.exp(-1j*phi)
@@ -123,42 +129,62 @@ def hamiltonian():
             h[b_ind,b_ind] = -va - dis
             h[a_ind,b_ind] = t
             h[b_ind,a_ind] = t
-            if i-1 in range(m):
-                h[a_ind,cell_to_ind(m,i-1,j,1)] = t
-                h[a_ind,cell_to_ind(m,i-1,j,0)] = t2pos
-                h[b_ind,cell_to_ind(m,i-1,j,1)] = t2neg
-            if j-1 in range(n):
-                h[a_ind,cell_to_ind(m,i,j-1,1)] = t
-                h[a_ind,cell_to_ind(m,i,j-1,0)] = t2neg
-                h[b_ind,cell_to_ind(m,i,j-1,1)] = t2pos
-            if i+1 in range(m):
-                h[b_ind,cell_to_ind(m,i+1,j,0)] = t
-                h[b_ind,cell_to_ind(m,i+1,j,1)] = t2pos
-                h[a_ind,cell_to_ind(m,i+1,j,0)] = t2neg
-            if j+1 in range(n):
-                h[b_ind,cell_to_ind(m,i,j+1,0)] = t
-                h[b_ind,cell_to_ind(m,i,j+1,1)] = t2neg
-                h[a_ind,cell_to_ind(m,i,j+1,0)] = t2pos
-            if i-1 in range(m) and j+1 in range(n):
-                h[a_ind,cell_to_ind(m,i-1,j+1,0)] = t2neg
-                h[b_ind,cell_to_ind(m,i-1,j+1,1)] = t2pos
-            if i+1 in range(m) and j-1 in range(n):
-                h[a_ind,cell_to_ind(m,i+1,j-1,0)] = t2pos
-                h[b_ind,cell_to_ind(m,i+1,j-1,1)] = t2neg
+            if periodic:
+                h[a_ind,cell_to_ind(m,(i-1)%m,j,1)] = t
+                h[a_ind,cell_to_ind(m,(i-1)%m,j,0)] = t2pos
+                h[b_ind,cell_to_ind(m,(i-1)%m,j,1)] = t2neg
+                h[a_ind,cell_to_ind(m,i,(j-1)%n,1)] = t
+                h[a_ind,cell_to_ind(m,i,(j-1)%n,0)] = t2neg
+                h[b_ind,cell_to_ind(m,i,(j-1)%n,1)] = t2pos
+                h[b_ind,cell_to_ind(m,(i+1)%m,j,0)] = t
+                h[b_ind,cell_to_ind(m,(i+1)%m,j,1)] = t2pos
+                h[a_ind,cell_to_ind(m,(i+1)%m,j,0)] = t2neg
+                h[b_ind,cell_to_ind(m,i,(j+1)%n,0)] = t
+                h[b_ind,cell_to_ind(m,i,(j+1)%n,1)] = t2neg
+                h[a_ind,cell_to_ind(m,i,(j+1)%n,0)] = t2pos
+                h[a_ind,cell_to_ind(m,(i-1)%m,(j+1)%n,0)] = t2neg
+                h[b_ind,cell_to_ind(m,(i-1)%m,(j+1)%n,1)] = t2pos
+                h[a_ind,cell_to_ind(m,(i+1)%m,(j-1)%m,0)] = t2pos
+                h[b_ind,cell_to_ind(m,(i+1)%m,(j-1)%m,1)] = t2neg
+            else:
+                if i-1 in range(m):
+                    h[a_ind,cell_to_ind(m,i-1,j,1)] = t
+                    h[a_ind,cell_to_ind(m,i-1,j,0)] = t2pos
+                    h[b_ind,cell_to_ind(m,i-1,j,1)] = t2neg
+                if j-1 in range(n):
+                    h[a_ind,cell_to_ind(m,i,j-1,1)] = t
+                    h[a_ind,cell_to_ind(m,i,j-1,0)] = t2neg
+                    h[b_ind,cell_to_ind(m,i,j-1,1)] = t2pos
+                if i+1 in range(m):
+                    h[b_ind,cell_to_ind(m,i+1,j,0)] = t
+                    h[b_ind,cell_to_ind(m,i+1,j,1)] = t2pos
+                    h[a_ind,cell_to_ind(m,i+1,j,0)] = t2neg
+                if j+1 in range(n):
+                    h[b_ind,cell_to_ind(m,i,j+1,0)] = t
+                    h[b_ind,cell_to_ind(m,i,j+1,1)] = t2neg
+                    h[a_ind,cell_to_ind(m,i,j+1,0)] = t2pos
+                if i-1 in range(m) and j+1 in range(n):
+                    h[a_ind,cell_to_ind(m,i-1,j+1,0)] = t2neg
+                    h[b_ind,cell_to_ind(m,i-1,j+1,1)] = t2pos
+                if i+1 in range(m) and j-1 in range(n):
+                    h[a_ind,cell_to_ind(m,i+1,j-1,0)] = t2pos
+                    h[b_ind,cell_to_ind(m,i+1,j-1,1)] = t2neg
+    
+    #h2 = csc_matrix(h)
+
     return h
 
 def X_Y(m,n):
     '''
     Returns X and Y matrices in an ordered pair X,Y
     '''
-    x = np.diag((sorted(range(m)*2)*n))
-    y = np.diag(sorted(range(n)*2*m))
+    x = np.diag([i+0j for i in (sorted(range(m)*2)*n)])
+    y = np.diag([i+0j for i in sorted(range(n)*2*m)])
     return x,y
 
 def graph_low_evals_of_B():
-    global m,n,va,t,t2,l3,phi
+    global m,n,va,t,t2,l3,phi,periodic
     '''
-    NEED TO FIX
     Returns a 3d figure of the lowest eigenvalues of B(X-l1,Y-l2,H-l3)
     for different values of l1 and l2
     '''
@@ -173,11 +199,12 @@ def graph_low_evals_of_B():
     for x,y in zip(xs,ys):
         B0 = B(X - (np.diag(len(X)*[x])),
            Y - (np.diag(len(Y)*[y])),
-           H - (np.diag(len(H)*[l3])))
+           H - (np.diag(len(X)*[l3])))
+        B0 = csc_matrix(B0)
         evals, _ = eigsh(B0,k=1,which='SM')
         zs.append(evals[0])
 
-    ax.set_zlim(-.7,.7)
+    #ax.set_zlim(-.7,.7)
     ax.azim = -.1
     ax.elev = 0
     ax.scatter(xs, ys, zs)
@@ -188,8 +215,37 @@ def graph_low_evals_of_B():
 
     return fig
 
+def graph_all_evals_of_B():
+    global m,n,va,t,t2,l3,phi,periodic
+    '''
+    Returns a 3d figure of the lowest eigenvalues of B(X-l1,Y-l2,H-l3)
+    for different values of l1 and l2
+    '''
+    H = hamiltonian()
+    plt.imshow(H.real)
+    plt.show()
+    X,Y = X_Y(m,n)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    xs = [i for i in range(m) for _ in range(n)]
+    ys = range(n) * m
+    for x,y in zip(xs,ys):
+        B0 = B(X - (np.diag(len(X)*[x])),
+           Y - (np.diag(len(Y)*[y])),
+           H - (np.diag(len(X)*[l3])))
+        evals, _ = np.linalg.eig(B0)
+        ax.scatter([x]*len(B0),[y]*len(B0),evals.real)
+
+    ax.text(0,0,.8,'$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f}, $\lambda_3$ = {:.2f}'.format(va,t,t2,l3))
+    ax.set_xlabel('$\lambda_1$')
+    ax.set_ylabel('$\lambda_2$')
+    ax.set_zlabel('$E$')
+
+    return fig
+
 def graph_loring():
-    global m,n,va,t,t2,l3,phi,e
+    global m,n,va,t,t2,l3,phi,e,periodic
     H = hamiltonian()
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -309,12 +365,29 @@ def loring_over_e(start,end,frames,title):
     cv2.destroyAllWindows()
     video.release()
 
-H = hamiltonian()
-X,Y = X_Y(m,n)
-B0 = B(X - (np.diag(len(X)*[0])),
-           Y - (np.diag(len(Y)*[0])),
-           H - (np.diag(len(H)*[l3])))
-plt.imshow(B0.real)
+def loring_over_va(start,end,frames,title):
+    global va
+    path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
+    num = 1
+    for vatemp in np.linspace(start,end,frames):
+        va = vatemp
+        fig = graph_loring()
+        plt.savefig(path + '/img' + str(num).zfill(2) + '.png', format='png')
+        plt.close(fig)
+        num += 1
+    
+    images = [cv2.imread(os.path.join(path, img)) for img in os.listdir(path) if img.endswith(".png")]
+    height,width,layers = images[0].shape
+
+    video = cv2.VideoWriter(path + '/' + title + '.mp4',-1,15,(width,height))
+
+    for j in range(len(images)):
+        video.write(images[j])
+
+    cv2.destroyAllWindows()
+    video.release()
+
+
 
 print 'DONE'
 plt.show()
