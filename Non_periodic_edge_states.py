@@ -19,8 +19,8 @@ import pylab as pl
 Global Variables
 '''
 path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
-m = 10
-n = 10
+m = 30
+n = 30
 va = 0
 t = 1
 t2 = 1
@@ -30,13 +30,17 @@ e = .1
 disorder = 0
 periodic = False
 
-mu = 1
+mu = 2
 t = 1
 d = 1 #delta
 posdis = 0
 
 '''
 Functions
+ab x   cx
+cd y = cy
+ax + by = cx
+cx + dy = cy
 '''
 
 def shift(H,x,y,m,n):
@@ -56,18 +60,16 @@ def shift(H,x,y,m,n):
             Hnew[newind+1,newind+1] = H[oldind+1,oldind+1]
     return Hnew
 
-def sig(d):
+def sig(bd):
     '''
-    Find the signature of a diagonal matrix
+    Find the signature of a 2-by-2 block diagonal complex matrix
     '''
-    pcount = 0
-    ncount = 0
-    for i in d.diagonal():
-        if i > 0:
-            pcount += 1
-        else:
-            ncount += 1
-    return (pcount - ncount) / 2
+    sig = 0
+    for i in range(0,len(bd),2):
+        det = bd[i,i]*bd[i+1,i+1] - bd[i,i+1]*bd[i+1,i]
+        if det > 0:
+            sig += 1
+    return 0
 
 def B(a,b,c):
     '''
@@ -387,9 +389,14 @@ def graph_loring_periodic():
 
     return fig
 
-def graph_state(vect,m,n,ax=None):
-    realvect = vect.real
-    state = realvect.reshape(n,2*m)
+def graph_state(vect,ax=None):
+    global m,n
+    absvect = abs(vect)
+    state = np.zeros((m,n))
+    for i in range(m):
+        for j in range(n):
+            ind = cell_to_ind(m,i,j,0)
+            state[i,j] = absvect[ind] + absvect[ind+1]
     if ax == None:
         fig = plt.figure()
         plt.imshow(state,cmap=cm.RdBu)
@@ -426,7 +433,7 @@ def propagate(h,state,end,frames,title,loc=True):
     statet = np.copy(state)
     for time in np.linspace(0,end,frames):
         statet = np.matmul(expm(-1j*time*h), state)
-        fig = graph_state(statet,m,n)
+        fig = graph_state(statet)
         plt.xlabel('$m$')
         plt.ylabel('$n$')
         plt.title('State after time {:.2f}\n'
@@ -642,8 +649,8 @@ def grid_graph_loring(H,points):
     for i in range(len(X)):
         X[i,i] = points[i/2][0]
         Y[i,i] = points[i/2][1]
-    for x in np.linspace(0,m - 1,30):
-        for y in np.linspace(0,n - 1,30):
+    for x in np.linspace(0,m - 1,15):
+        for y in np.linspace(0,n - 1,15):
             analysis = site_analysis(X,Y,H,x,y)
             if analysis == 'in_psuedo':
                 plt.scatter(x,y,c='red')
@@ -719,12 +726,23 @@ def grid_graph_loring_periodic(H,points):
     return fig
 
 '''LDL^T Test'''
-H = hamiltonian()
+'''H = hamiltonian()
 X,Y = X_Y(m,n)
 B0 = B(X - (np.diag(len(X)*[5])),
            Y - (np.diag(len(Y)*[5])),
            H - (np.diag(len(Y)*[l3])))
+_, Bdia, _ = ldl(B0)
+plt.imshow(Bdia.imag)'''
 
+points, _, edge_vert_inds = grid_pointset()
+H = grid_hamiltonian(points,edge_vert_inds)
+#grid_graph_loring(H,points)
+#grid_graph_eigen_state(H,len(H)/2)
+Hevals, Hevects = np.linalg.eigh(H)
+state = Hevects[:,len(H)/2]
+state = localize(state,15,7)
+#graph_state(state)
+propagate(H,state,100,10,'test6')
 
 print 'DONE'
 plt.show()
