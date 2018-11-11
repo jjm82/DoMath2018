@@ -3,18 +3,22 @@ import matplotlib as mp
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
-from scipy.linalg import expm
+from scipy.linalg import expm, ldl
 from scipy.sparse.linalg import eigsh
 import cv2
 import os
 from numpy.random import uniform
 import matplotlib.patches as mpatches
 from scipy.sparse import csc_matrix
+from sklearn.neighbors import KDTree
+from scipy.spatial import Voronoi, voronoi_plot_2d, distance_matrix
+from matplotlib import collections  as mc
+import pylab as pl
 
 '''
 Global Variables
 '''
-
+path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
 m = 10
 n = 10
 va = 0
@@ -22,13 +26,48 @@ t = 1
 t2 = 1
 phi = np.pi/2
 l3 = 0
-e = .39
+e = .1
 disorder = 0
-periodic = True
+periodic = False
+
+mu = 1
+t = 1
+d = 1 #delta
+posdis = 0
 
 '''
 Functions
 '''
+
+def shift(H,x,y,m,n):
+    '''
+    shifts H to new center x,y
+    '''
+    Hnew = np.copy(H)
+    xshift = x - m/2
+    yshift = y - n/2
+    for i in range(m):
+        for j in range(n):
+            oldi = (i + xshift) % m
+            oldj = (j + yshift) % n
+            oldind = cell_to_ind(m,oldi,oldj,0)
+            newind = cell_to_ind(m,i,j,0)
+            Hnew[newind,newind] = H[oldind,oldind]
+            Hnew[newind+1,newind+1] = H[oldind+1,oldind+1]
+    return Hnew
+
+def sig(d):
+    '''
+    Find the signature of a diagonal matrix
+    '''
+    pcount = 0
+    ncount = 0
+    for i in d.diagonal():
+        if i > 0:
+            pcount += 1
+        else:
+            ncount += 1
+    return (pcount - ncount) / 2
 
 def B(a,b,c):
     '''
@@ -36,6 +75,15 @@ def B(a,b,c):
     '''
     left = np.concatenate((c,a - np.multiply(1j,b)), axis=0)
     right = np.concatenate((a + np.multiply(1j,b),-c), axis=0)
+    return np.concatenate((left,right),axis=1)
+
+def newB(X,Y,H,l1,l2):
+    global m,n,l3
+    X = np.exp(2j*np.pi*(1/float(m)) * X)
+    Y = np.exp(2j*np.pi*(1/float(n)) * Y)
+    H = H - (np.diag((2*m*n)*[l3]))
+    left = np.concatenate((H,X - np.exp(2j*np.pi*l1/float(m)) - np.multiply(1j,Y - np.exp(2j*np.pi*l2/float(n)))), axis=0)
+    right = np.concatenate((X - np.exp(2j*np.pi*l1/float(m)) + np.multiply(1j,Y - np.exp(2j*np.pi*l2/float(n))),-H), axis=0)
     return np.concatenate((left,right),axis=1)
 
 def site_analysis(x,y,h,l1,l2):
@@ -57,16 +105,32 @@ def site_analysis(x,y,h,l1,l2):
     '''
     global l3, e
     ret = None
+    pcount = 0
+    ncount = 0
 
     B0 = B(x - (np.diag(len(x)*[l1])),
            y - (np.diag(len(y)*[l2])),
            h - (np.diag(len(h)*[l3])))
 
+    '''_, Bdia, _ = ldl(B0)
+    print Bdia
+    for i in Bdia.diagonal():
+        print i
+        if abs(i.real) < e:
+            return 'in_psuedo'
+        if i > 0:
+            pcount += 1
+        else:
+            ncount += 1
+    return (pcount - ncount) / 2'''
+
     B0eval, _ = eigsh(B0, k=1, which='SM')
     if abs(B0eval[0]) < e:
         ret = 'in_psuedo'
-    
+
     else:
+        #_, Bdia, _ = ldl(B0)
+        #B0evals = sorted(Bdia.diagonal().real)
         B0evals, _ = np.linalg.eigh(B0)
         sz = len(B0evals)
         loring = 0
@@ -178,8 +242,8 @@ def X_Y(m,n):
     '''
     Returns X and Y matrices in an ordered pair X,Y
     '''
-    x = np.diag([i+0j for i in (sorted(range(m)*2)*n)])
-    y = np.diag([i+0j for i in sorted(range(n)*2*m)])
+    x = np.diag([i for i in (sorted(range(m)*2)*n)])
+    y = np.diag([i for i in sorted(range(n)*2*m)])
     return x,y
 
 def graph_low_evals_of_B():
@@ -191,24 +255,36 @@ def graph_low_evals_of_B():
     H = hamiltonian()
     X,Y = X_Y(m,n)
 
+    '''fig1 = plt.figure()
+    plt.imshow(X)
+    plt.colorbar()
+    plt.title('X normal')
+    fig2 = plt.figure()
+    plt.imshow(Y)
+    plt.colorbar()
+    plt.title('Y normal')'''
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     xs = [i for i in range(m) for _ in range(n)]
     ys = range(n) * m
     zs = []
     for x,y in zip(xs,ys):
-        B0 = B(X - (np.diag(len(X)*[x])),
+        '''B0 = B(X - (np.diag(len(X)*[x])),
            Y - (np.diag(len(Y)*[y])),
-           H - (np.diag(len(X)*[l3])))
-        B0 = csc_matrix(B0)
-        evals, _ = eigsh(B0,k=1,which='SM')
-        zs.append(evals[0])
+           H - (np.diag(len(X)*[l3])))'''
+        B0 = newB(X,Y,H,x,y)
+        #B0 = csc_matrix(B0)
+        evals, _ = eigsh(B0,k=1,which='SM',maxiter=5000)
+        #evals, _ = np.linalg.eig(B0)
+        #print sorted(evals.real)[9]
+        zs.append(sorted(evals.real)[0])
 
-    #ax.set_zlim(-.7,.7)
-    ax.azim = -.1
-    ax.elev = 0
+    #ax.set_zlim(-1.5,1.5)
+    ax.azim = -20
+    ax.elev = 20
     ax.scatter(xs, ys, zs)
-    ax.text(0,0,.8,'$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f}, $\lambda_3$ = {:.2f}'.format(va,t,t2,l3))
+    ax.text(0,0,1.5,'Normal, $V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f}, $\lambda_3$ = {:.2f}'.format(va,t,t2,l3))
     ax.set_xlabel('$\lambda_1$')
     ax.set_ylabel('$\lambda_2$')
     ax.set_zlabel('$E$')
@@ -222,8 +298,6 @@ def graph_all_evals_of_B():
     for different values of l1 and l2
     '''
     H = hamiltonian()
-    plt.imshow(H.real)
-    plt.show()
     X,Y = X_Y(m,n)
 
     fig = plt.figure()
@@ -231,12 +305,17 @@ def graph_all_evals_of_B():
     xs = [i for i in range(m) for _ in range(n)]
     ys = range(n) * m
     for x,y in zip(xs,ys):
-        B0 = B(X - (np.diag(len(X)*[x])),
+        '''B0 = B(X - (np.diag(len(X)*[x])),
            Y - (np.diag(len(Y)*[y])),
-           H - (np.diag(len(X)*[l3])))
+           H - (np.diag(len(X)*[l3])))'''
+        B0 = newB(X,Y,H,x,y)
         evals, _ = np.linalg.eig(B0)
-        ax.scatter([x]*len(B0),[y]*len(B0),evals.real)
+        for e in evals:
+            if e > -1 and e < 1:
+                ax.scatter(x,y)
+        #ax.scatter([x]*len(B0),[y]*len(B0),evals.real)
 
+    ax.set_zlim(-1,1)
     ax.text(0,0,.8,'$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f}, $\lambda_3$ = {:.2f}'.format(va,t,t2,l3))
     ax.set_xlabel('$\lambda_1$')
     ax.set_ylabel('$\lambda_2$')
@@ -251,8 +330,8 @@ def graph_loring():
     ax = fig.add_subplot(111)
     leg1 = leg2 = leg3 = None
     X,Y = X_Y(m,n)
-    for x in range(m):
-        for y in range(n):
+    for x in np.linspace(0,m):
+        for y in np.linspace(0,n):
             analysis = site_analysis(X,Y,H,x,y)
             if analysis == 'in_psuedo':
                 plt.scatter(x,y,c='red')
@@ -267,9 +346,44 @@ def graph_loring():
     plt.legend((leg1,leg2,leg3),('In psuedospec','Loring index = 1','Loring index = 0'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
     plt.xlabel('$\lambda_1$')
     plt.ylabel('$\lambda_2$')
-    plt.title('Loring Index on Edged Lattice\n'
+    if periodic:
+        latticeType = 'Periodic'
+    else:
+        latticeType = 'Edged'
+    plt.title('Loring Index on {} Lattice\n'
+                '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},\n'
+                ' $\lambda_3$ = {:.2f}, dis = {}, e = {}'.format(latticeType,va,t,t2,l3,disorder,e), loc='left', fontsize='medium')
+    
+
+    return fig
+
+def graph_loring_periodic():
+    global m,n,va,t,t2,l3,phi,e,periodic
+    H = hamiltonian()
+    fig = plt.figure()
+    leg1 = leg2 = leg3 = None
+    X,Y = X_Y(m,n)
+    for x in np.linspace(0,m):
+        for y in np.linspace(0,n):
+            Hnew = shift(H,int(x),int(y),m,n)
+            analysis = site_analysis(X,Y,Hnew,m/2 + x - int(x),n/2 + y - int(y))
+            if analysis == 'in_psuedo':
+                plt.scatter(x,y,c='red')
+                if leg1 == None: leg1 = plt.scatter(x,y,c='red')
+            elif analysis == 1:
+                plt.scatter(x,y,c='black')
+                if leg2 == None: leg2 = plt.scatter(x,y,c='black')
+            elif analysis == 0:
+                plt.scatter(x,y,facecolors='',edgecolors='black')
+                if leg3 == None: leg3 = plt.scatter(x,y,facecolors='',edgecolors='black')
+            else: plt.text(x,y,analysis)
+    plt.legend((leg1,leg2,leg3),('In psuedospec','Loring index = 1','Loring index = 0'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
+    plt.xlabel('$\lambda_1$')
+    plt.ylabel('$\lambda_2$')
+    plt.title('Loring Index on Periodic Lattice\n'
                 '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},\n'
                 ' $\lambda_3$ = {:.2f}, dis = {}, e = {}'.format(va,t,t2,l3,disorder,e), loc='left', fontsize='medium')
+    
 
     return fig
 
@@ -305,7 +419,8 @@ def graph_eigen_state(h,m,n,ind,va,t,t2,l3):
     plt.tight_layout()
     return fig
 
-def propagate(h,m,n,va,t,t2,l3,state,end,frames,title,loc=True):
+def propagate(h,state,end,frames,title,loc=True):
+    global m,n,mu,t,d,l3
     path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
     num = 1
     statet = np.copy(state)
@@ -315,8 +430,8 @@ def propagate(h,m,n,va,t,t2,l3,state,end,frames,title,loc=True):
         plt.xlabel('$m$')
         plt.ylabel('$n$')
         plt.title('State after time {:.2f}\n'
-                '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},'
-                ' $\lambda_3$ = {:.2f}'.format(time,va,t,t2,l3))
+                '$\mu$ = {:.2f}, $t$ = {:.2f}, $\Delta$ = {:.2f},'
+                ' $\lambda_3$ = {:.2f}'.format(time,mu,t,d,l3))
         plt.savefig(path + '/img' + str(num).zfill(2) + '.png', format='png')
         plt.close(fig)
 
@@ -333,12 +448,13 @@ def propagate(h,m,n,va,t,t2,l3,state,end,frames,title,loc=True):
     cv2.destroyAllWindows()
     video.release()
 
-def localize(state,m,n,mu,sig):
+def localize(state,mean,sig):
+    global m,n
     s=state
     state0 = np.zeros(len(state), complex)
     state1 = np.zeros(len(state), complex)
     for i in range(len(state)):
-        state0[i] = s[i]/(sig*np.sqrt(2*np.pi)) * np.exp(-1/2*(((i/(2*m))-mu)/sig)**2)
+        state0[i] = s[i]/(sig*np.sqrt(2*np.pi)) * np.exp(-1/2*(((i/(2*m))-mean)/sig)**2)
     for i in range(len(state)):
         state1[i] = state0[i] / (i%(2*m)+1)
     return state1
@@ -387,6 +503,227 @@ def loring_over_va(start,end,frames,title):
     cv2.destroyAllWindows()
     video.release()
 
+def angle(p1,p2):
+    v = [p2[0]-p1[0],p2[1]-p1[1]]
+    return np.arccos(np.dot(v,[1,0])/(np.sqrt(v[0]**2 + v[1]**2)))
+
+def vhamiltonian(points):
+    '''
+    Returns Hamiltonian of a given Nx2 matrix of N sites
+    A site hops to its k nearest neighbors
+    '''
+    v = Voronoi(points)
+    fig1 = voronoi_plot_2d(v)
+    sites = v.vertices
+    ridge_verts = v.ridge_vertices
+    H = np.zeros((2*len(sites),2*len(sites)),complex)
+    for i in range(len(sites)):
+        H[2*i,2*i] = -mu
+        H[2*i+1,2*i+1] = mu
+    
+    for vert_pair in ridge_verts:
+        if vert_pair[0] != -1:
+            i = vert_pair[0]
+            j = vert_pair[1]
+            alpha = angle(sites[i],sites[j])
+            H[2*i,2*j] = -t
+            H[2*i,2*j+1] = -.5*d*(1j*np.cos(alpha) + np.sin(alpha))
+            H[2*i+1,2*j] = -.5*d*(1j*np.cos(alpha) - np.sin(alpha))
+            H[2*i+1,2*j+1] = t
+            alpha2 = alpha + np.pi
+            H[2*j,2*i] = -t
+            H[2*j,2*i+1] = -.5*d*(1j*np.cos(alpha2) + np.sin(alpha2))
+            H[2*j+1,2*i] = -.5*d*(1j*np.cos(alpha2) - np.sin(alpha2))
+            H[2*j+1,2*i+1] = t
+            
+    return H
+
+def v_graph_loring():
+    global m,n,va,t,t2,l3,phi,e,periodic
+    points = []
+    for x in range(2*m):
+        for y in range(n):
+            randomness = uniform(-.5,.5,2)
+            points.append([x+randomness[0],y+randomness[1]])
+
+    points_array = np.array(points)
+    H = vhamiltonian(points_array)
+    fig = plt.figure()
+    leg1 = leg2 = leg3 = None
+    X,Y = X_Y(m,n)
+    for x in np.linspace(0,m):
+        for y in np.linspace(0,n):
+            Hnew = shift(H,int(x),int(y),m,n)
+            analysis = site_analysis(X,Y,Hnew,m/2 + x - int(x),n/2 + y - int(y))
+            if analysis == 'in_psuedo':
+                plt.scatter(x,y,c='red')
+                if leg1 == None: leg1 = plt.scatter(x,y,c='red')
+            elif analysis == 1:
+                plt.scatter(x,y,c='black')
+                if leg2 == None: leg2 = plt.scatter(x,y,c='black')
+            elif analysis == 0:
+                plt.scatter(x,y,facecolors='',edgecolors='black')
+                if leg3 == None: leg3 = plt.scatter(x,y,facecolors='',edgecolors='black')
+            else: plt.text(x,y,analysis)
+    plt.legend((leg1,leg2,leg3),('In psuedospec','Loring index = 1','Loring index = 0'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
+    plt.xlabel('$\lambda_1$')
+    plt.ylabel('$\lambda_2$')
+    plt.title('Loring Index on Periodic Lattice\n'
+                '$V_a$ = {:.2f}, $t$ = {:.2f}, $t\'$ = {:.2f},\n'
+                ' $\lambda_3$ = {:.2f}, dis = {}, e = {}'.format(va,t,t2,l3,disorder,e), loc='left', fontsize='medium')
+    
+
+    return fig
+
+def grid_pointset(graph=False):
+    global m,n,posdis,disorder
+    points = []
+    for i in range(n):
+        for j in range(m):
+            points.append((uniform(j-posdis,j+posdis),uniform(i-posdis,i+posdis)))
+    edges = []
+    edge_vert_inds = []
+    for i in range(len(points)):
+        if (i+1)%m != 0:
+            edges.append([points[i],points[i+1]])
+            edge_vert_inds.append([i,i+1])
+        if i+n in range(len(points)):
+            edges.append([points[i],points[i+n]])
+            edge_vert_inds.append([i,i+n])
+        
+    if graph:
+        _, ax = pl.subplots()
+        lc = mc.LineCollection(edges, linewidths=2)
+        ax.add_collection(lc)
+        ax.autoscale()
+        ax.margins(0.1)
+        plt.scatter([p[0] for p in points],[p[1] for p in points],zorder=10)
+    return points, edges, edge_vert_inds
+
+def grid_hamiltonian(points,edge_vert_inds):
+    '''
+    Returns Hamiltonian of a given Nx2 matrix of N sites
+    A site hops to its k nearest neighbors
+    '''
+    global disorder
+    H = np.zeros((2*len(points),2*len(points)),complex)
+    for i in range(len(points)):
+        r = uniform(-.5,.5)
+        dis = disorder * r
+        H[2*i,2*i] = -mu - dis
+        H[2*i+1,2*i+1] = mu + dis
+        if dis < 0:
+            plt.scatter(points[i][0],points[i][1],s=-100*dis,c='orange',zorder=11)
+        else:
+            plt.scatter(points[i][0],points[i][1],s=100*dis,c='lime',zorder=11)
+    
+    for vert_ind_pair in edge_vert_inds:
+        i = vert_ind_pair[0]
+        j = vert_ind_pair[1]
+        alpha = angle(points[i],points[j])
+        H[2*i,2*j] = -t
+        H[2*i,2*j+1] = -.5*d*(1j*np.cos(alpha) + np.sin(alpha))
+        H[2*i+1,2*j] = -.5*d*(1j*np.cos(alpha) - np.sin(alpha))
+        H[2*i+1,2*j+1] = t
+        alpha2 = alpha + np.pi
+        H[2*j,2*i] = -t
+        H[2*j,2*i+1] = -.5*d*(1j*np.cos(alpha2) + np.sin(alpha2))
+        H[2*j+1,2*i] = -.5*d*(1j*np.cos(alpha2) - np.sin(alpha2))
+        H[2*j+1,2*i+1] = t
+            
+    return H
+
+def grid_graph_loring(H,points):
+    global m,n,mu,t,d,l3,phi,e,periodic,posdis
+    #fig = plt.figure()
+    leg1 = leg2 = leg3 = None
+    X = np.zeros((len(H),len(H)),complex)
+    Y = np.zeros((len(H),len(H)),complex)
+    for i in range(len(X)):
+        X[i,i] = points[i/2][0]
+        Y[i,i] = points[i/2][1]
+    for x in np.linspace(0,m - 1,30):
+        for y in np.linspace(0,n - 1,30):
+            analysis = site_analysis(X,Y,H,x,y)
+            if analysis == 'in_psuedo':
+                plt.scatter(x,y,c='red')
+                if leg1 == None: leg1 = plt.scatter(x,y,c='red')
+            elif analysis == 1:
+                plt.scatter(x,y,c='black')
+                if leg2 == None: leg2 = plt.scatter(x,y,c='black')
+            elif analysis == 0:
+                plt.scatter(x,y,facecolors='',edgecolors='black')
+                if leg3 == None: leg3 = plt.scatter(x,y,facecolors='',edgecolors='black')
+            else: plt.text(x,y,analysis)
+    plt.legend((leg1,leg2,leg3),('In psuedospec','Loring index = 1','Loring index = 0'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
+    plt.xlabel('$\lambda_1$')
+    plt.ylabel('$\lambda_2$')
+    plt.title('Loring Index on Edged Lattice\n'
+                '$\mu$ = {:.2f}, $t$ = {:.2f}, $\Delta$ = {:.2f},\n'
+                ' $\lambda_3$ = {:.2f}, pos_dis = {:.2f}, $\mu$_dis = {}, e = {}'.format(mu,t,d,l3,posdis,disorder,e), loc='left', fontsize='medium')
+    
+
+    return None
+
+def grid_graph_eigen_state(h,ind):
+    global m,n,mu,t,d,l3
+    Hevals, Hevects = np.linalg.eigh(h)
+    fig = plt.figure()
+    ax0 = plt.subplot2grid((1, 4), (0, 0), colspan=3)
+    ax1 = plt.subplot2grid((1, 4), (0, 3))
+    plt.suptitle('Eigenstate and Eigenvectors\n'
+                '$\mu$ = {:.2f}, $t$ = {:.2f}, $\Delta$ = {:.2f},'
+                ' $\lambda_3$ = {:.2f}'.format(mu,t,d,l3))
+    graph_state(Hevects[:,ind].real,m,n,ax=ax0)
+    ax1.scatter([0]*len(Hevals),Hevals,c='black')
+    ax1.scatter(0,Hevals[ind],c='red')
+    ax0.set_xlabel('$m$')
+    ax0.set_ylabel('$n$')
+    ax1.set_ylabel('eigenvalue')
+    ax1.set_xticklabels([])
+    ax1.set_xticks([])
+    plt.tight_layout()
+    return fig
+
+def grid_graph_loring_periodic(H,points):
+    global m,n,mu,t,d,l3,phi,e,periodic,disorder
+    fig = plt.figure()
+    leg1 = leg2 = leg3 = None
+    X = np.zeros((len(H),len(H)),complex)
+    Y = np.zeros((len(H),len(H)),complex)
+    for i in range(len(X)):
+        X[i,i] = points[i/2][0]
+        Y[i,i] = points[i/2][1]
+    for x in np.linspace(0,m):
+        for y in np.linspace(0,n):
+            Hnew = shift(H,int(x),int(y),m,n)
+            analysis = site_analysis(X,Y,Hnew,m/2 + x - int(x),n/2 + y - int(y))
+            if analysis == 'in_psuedo':
+                plt.scatter(x,y,c='red')
+                if leg1 == None: leg1 = plt.scatter(x,y,c='red')
+            elif analysis == 1:
+                plt.scatter(x,y,c='black')
+                if leg2 == None: leg2 = plt.scatter(x,y,c='black')
+            elif analysis == 0:
+                plt.scatter(x,y,facecolors='',edgecolors='black')
+                if leg3 == None: leg3 = plt.scatter(x,y,facecolors='',edgecolors='black')
+            else: plt.text(x,y,analysis)
+    plt.legend((leg1,leg2,leg3),('In psuedospec','Loring index = 1','Loring index = 0'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
+    plt.xlabel('$\lambda_1$')
+    plt.ylabel('$\lambda_2$')
+    plt.title('Loring Index on Periodic Lattice\n'
+                '$\mu$ = {:.2f}, $t$ = {:.2f}, $\Delta$ = {:.2f},\n'
+                ' $\lambda_3$ = {:.2f}, $\mu$_dis = {}, e = {}'.format(mu,t,d,l3,disorder,e), loc='left', fontsize='medium')
+    
+
+    return fig
+
+'''LDL^T Test'''
+H = hamiltonian()
+X,Y = X_Y(m,n)
+B0 = B(X - (np.diag(len(X)*[5])),
+           Y - (np.diag(len(Y)*[5])),
+           H - (np.diag(len(Y)*[l3])))
 
 
 print 'DONE'
