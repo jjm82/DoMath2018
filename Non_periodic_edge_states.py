@@ -701,14 +701,6 @@ def grid_graph_loring(H,points):
     #fig = plt.figure()
     leg1 = leg2 = leg3 = None
     X,Y = X_Y(m,n)
-    if False:
-        for i in np.linspace(0,m - 1,10):
-            for j in np.linspace(0,n - 1,10):
-                in_psuedo = check_psuedo(X,Y,H,i,j)
-                if in_psuedo:
-                    plt.scatter(i,j,c='red')
-                    if leg1 == None: leg1 = plt.scatter(i,j,c='red')
-        print 'psuedo done'
     for i in np.linspace(1,m-2,30):
         for j in np.linspace(1,n-2,30):
             analysis = index(X,Y,H,i,j)
