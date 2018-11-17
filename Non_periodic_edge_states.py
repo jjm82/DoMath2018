@@ -19,15 +19,15 @@ import pylab as pl
 Global Variables
 '''
 path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
-m = 10
-n = 10
+m = 15
+n = 15
 va = 0
 t = 1
 t2 = 1
 phi = np.pi/2
 l3 = 0
 e = .1
-disorder = 0
+disorder = 5
 periodic = False
 
 mu = 2
@@ -65,15 +65,13 @@ def sig(bd):
     Find the signature of a 2-by-2 block diagonal complex matrix
     '''
     sig = 0
-    for i in range(0,len(bd),2):
-        det = bd[i,i]*bd[i+1,i+1] - bd[i,i+1]*bd[i+1,i]
-        trace = bd[i,i] + bd[i+1,i+1]
-        e1 = trace / 2 + np.sqrt(trace**2/(4-det))
-        if det > 0:
-            if e1 > 0:
-                sig += 1
-            elif e1 < 0:
-                sig -= 1
+    i = 0
+    while i < len(bd):
+        if i == len(bd)-1 or bd[i,i+1] == 0 and bd[i+1,i] == 0:
+            if bd[i,i] > 0: sig += .5
+            else: sig -= .5
+            i += 1
+        else: i += 2
     return sig
 
 def B(a,b,c):
@@ -193,10 +191,32 @@ def ldl_site_analysis(x,y,h,l1,l2):
     _, BD, _ = ldl(B0)
     ret = sig(BD)
 
-    B0eval, _ = eigsh(B0, k=1, which='SM')
+    B0eval, _ = eigsh(BD, k=1, which='SM')
     if abs(B0eval[0]) < e:
         ret = 'in_psuedo'
     return ret
+
+def check_psuedo(x,y,h,l1,l2):
+    '''Only returns whether or not l1,l2 is in the pusedo spectrum'''
+    global l3, e
+    B0 = B(x - (np.diag(len(x)*[l1])),
+           y - (np.diag(len(y)*[l2])),
+           h - (np.diag(len(h)*[l3])))
+    B0eval, _ = eigsh(B0, k=1, which='SM')
+    if abs(B0eval[0]) < e:
+        return True
+    return False
+
+def index(x,y,h,l1,l2):
+    '''returns only the loring index.
+    Used when l1,l2 is not in the psuedospectrum'''
+    global l3, e
+    B0 = B(x - (np.diag(len(x)*[l1])),
+           y - (np.diag(len(y)*[l2])),
+           h - (np.diag(len(h)*[l3])))
+
+    _, BD, _ = ldl(B0)
+    return sig(BD)
 
 def cell_to_ind(m,x,y,site):
     '''
@@ -642,7 +662,7 @@ def grid_pointset(graph=False):
         plt.scatter([p[0] for p in points],[p[1] for p in points],zorder=10)
     return points, edges, edge_vert_inds
 
-def grid_hamiltonian(points,edge_vert_inds):
+def grid_hamiltonian(points,edge_vert_inds,graph=False):
     '''
     Returns Hamiltonian of a given Nx2 matrix of N sites
     A site hops to its k nearest neighbors
@@ -654,10 +674,11 @@ def grid_hamiltonian(points,edge_vert_inds):
         dis = disorder * r
         H[2*i,2*i] = -mu - dis
         H[2*i+1,2*i+1] = mu + dis
-        if dis < 0:
-            plt.scatter(points[i][0],points[i][1],s=-100*dis,c='orange',zorder=11)
-        else:
-            plt.scatter(points[i][0],points[i][1],s=100*dis,c='lime',zorder=11)
+        if graph:
+            if dis < 0:
+                plt.scatter(points[i][0],points[i][1],s=-100*dis,c='orange',zorder=11)
+            else:
+                plt.scatter(points[i][0],points[i][1],s=100*dis,c='lime',zorder=11)
     
     for vert_ind_pair in edge_vert_inds:
         i = vert_ind_pair[0]
@@ -679,24 +700,25 @@ def grid_graph_loring(H,points):
     global m,n,mu,t,d,l3,phi,e,periodic,posdis
     #fig = plt.figure()
     leg1 = leg2 = leg3 = None
-    X = np.zeros((len(H),len(H)),complex)
-    Y = np.zeros((len(H),len(H)),complex)
-    for i in range(len(X)):
-        X[i,i] = points[i/2][0]
-        Y[i,i] = points[i/2][1]
-    for x in np.linspace(0,m - 1,15):
-        for y in np.linspace(0,n - 1,15):
-            analysis = site_analysis(X,Y,H,x,y)
-            if analysis == 'in_psuedo':
-                plt.scatter(x,y,c='red')
-                if leg1 == None: leg1 = plt.scatter(x,y,c='red')
-            elif analysis == 1:
-                plt.scatter(x,y,c='black')
-                if leg2 == None: leg2 = plt.scatter(x,y,c='black')
+    X,Y = X_Y(m,n)
+    if False:
+        for i in np.linspace(0,m - 1,10):
+            for j in np.linspace(0,n - 1,10):
+                in_psuedo = check_psuedo(X,Y,H,i,j)
+                if in_psuedo:
+                    plt.scatter(i,j,c='red')
+                    if leg1 == None: leg1 = plt.scatter(i,j,c='red')
+        print 'psuedo done'
+    for i in np.linspace(1,m-2,30):
+        for j in np.linspace(1,n-2,30):
+            analysis = index(X,Y,H,i,j)
+            if analysis == 1:
+                plt.scatter(i,j,c='black')
+                if leg2 == None: leg2 = plt.scatter(i,j,c='black')
             elif analysis == 0:
-                plt.scatter(x,y,facecolors='',edgecolors='black')
-                if leg3 == None: leg3 = plt.scatter(x,y,facecolors='',edgecolors='black')
-            else: plt.text(x,y,analysis)
+                plt.scatter(i,j,facecolors='',edgecolors='black')
+                if leg3 == None: leg3 = plt.scatter(i,j,facecolors='',edgecolors='black')
+            else: plt.text(i,j,analysis)
     plt.legend((leg1,leg2,leg3),('In psuedospec','Loring index = 1','Loring index = 0'),bbox_to_anchor=(1,1), loc=4, fontsize='small')
     plt.xlabel('$\lambda_1$')
     plt.ylabel('$\lambda_2$')
@@ -760,6 +782,9 @@ def grid_graph_loring_periodic(H,points):
 
     return fig
 
+points, _, edge_vert_inds = grid_pointset()
+H = grid_hamiltonian(points, edge_vert_inds)
+grid_graph_loring(H,points)
 
 print 'DONE'
 plt.show()
