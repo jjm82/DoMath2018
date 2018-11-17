@@ -19,8 +19,8 @@ import pylab as pl
 Global Variables
 '''
 path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
-m = 30
-n = 30
+m = 10
+n = 10
 va = 0
 t = 1
 t2 = 1
@@ -67,9 +67,14 @@ def sig(bd):
     sig = 0
     for i in range(0,len(bd),2):
         det = bd[i,i]*bd[i+1,i+1] - bd[i,i+1]*bd[i+1,i]
+        trace = bd[i,i] + bd[i+1,i+1]
+        e1 = trace / 2 + np.sqrt(trace**2/(4-det))
         if det > 0:
-            sig += 1
-    return 0
+            if e1 > 0:
+                sig += 1
+            elif e1 < 0:
+                sig -= 1
+    return sig
 
 def B(a,b,c):
     '''
@@ -107,8 +112,6 @@ def site_analysis(x,y,h,l1,l2):
     '''
     global l3, e
     ret = None
-    pcount = 0
-    ncount = 0
 
     B0 = B(x - (np.diag(len(x)*[l1])),
            y - (np.diag(len(y)*[l2])),
@@ -161,6 +164,38 @@ def site_analysis(x,y,h,l1,l2):
                     loring -= 1
                     i += 1
         ret = loring
+    return ret
+
+def ldl_site_analysis(x,y,h,l1,l2):
+    '''
+    x,y,h should be square numpy matrices of equivalent size
+    l1,l2,l3,e are scalars
+    corresponding to lamda1,2,3, and epsilon.
+    We compute the eigenvalues of B(x-l1,y-l2,h-l3).
+
+    check_psuedo:
+    If the eigenvalue of least magnitude is less than e
+    then this site is in the psuedospectrum and we return 1.
+    If not we return 0.
+
+    check_loring:
+    We return the loring index = (#evals>0)-(#evals<0)/2
+
+    Return a list of the above return values.
+    '''
+    global l3, e
+    ret = None
+
+    B0 = B(x - (np.diag(len(x)*[l1])),
+           y - (np.diag(len(y)*[l2])),
+           h - (np.diag(len(h)*[l3])))
+
+    _, BD, _ = ldl(B0)
+    ret = sig(BD)
+
+    B0eval, _ = eigsh(B0, k=1, which='SM')
+    if abs(B0eval[0]) < e:
+        ret = 'in_psuedo'
     return ret
 
 def cell_to_ind(m,x,y,site):
@@ -725,24 +760,6 @@ def grid_graph_loring_periodic(H,points):
 
     return fig
 
-'''LDL^T Test'''
-'''H = hamiltonian()
-X,Y = X_Y(m,n)
-B0 = B(X - (np.diag(len(X)*[5])),
-           Y - (np.diag(len(Y)*[5])),
-           H - (np.diag(len(Y)*[l3])))
-_, Bdia, _ = ldl(B0)
-plt.imshow(Bdia.imag)'''
-
-points, _, edge_vert_inds = grid_pointset()
-H = grid_hamiltonian(points,edge_vert_inds)
-#grid_graph_loring(H,points)
-#grid_graph_eigen_state(H,len(H)/2)
-Hevals, Hevects = np.linalg.eigh(H)
-state = Hevects[:,len(H)/2]
-state = localize(state,15,7)
-#graph_state(state)
-propagate(H,state,100,10,'test6')
 
 print 'DONE'
 plt.show()
