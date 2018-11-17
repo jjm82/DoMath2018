@@ -27,7 +27,7 @@ t2 = 1
 phi = np.pi/2
 l3 = 0
 e = .1
-disorder = 5
+disorder = 3
 periodic = False
 
 mu = 2
@@ -59,6 +59,12 @@ def shift(H,x,y,m,n):
             Hnew[newind,newind] = H[oldind,oldind]
             Hnew[newind+1,newind+1] = H[oldind+1,oldind+1]
     return Hnew
+
+def normalize(v):
+    norm = np.linalg.norm(v)
+    if norm == 0: 
+       return v
+    return v / norm
 
 def sig(bd):
     '''
@@ -462,6 +468,19 @@ def graph_state(vect,ax=None):
         ax.invert_yaxis()
         return ax
 
+def grid_graph_state(vect,points,ax=None):
+    global m,n
+    absvect = abs(vect)
+    state = [0]*(len(absvect)/2)
+    for i in range(len(absvect)/2):
+        state[i] = absvect[2*i] + absvect[2*i+1]
+    fig = plt.figure()
+    for i in range(m):
+        for j in range(n):
+            ind = cell_to_ind(m,i,j,0)/2
+            plt.scatter(points[ind][0],points[ind][1],c='red',s=10*((state[ind]+1)**10-1))
+    return fig
+
 def graph_eigen_state(h,m,n,ind,va,t,t2,l3):
     Hevals, Hevects = np.linalg.eigh(h)
     fig = plt.figure()
@@ -510,6 +529,37 @@ def propagate(h,state,end,frames,title,loc=True):
     cv2.destroyAllWindows()
     video.release()
 
+def grid_propagate(h,points,state,end,frames,title,loc=True):
+    global m,n,mu,t,d,l3
+    path = '/Users/jonathanmichala/All Documents/Independent Study Fall 2018/images'
+    num = 1
+    statet = np.copy(state)
+    for time in np.linspace(0,end,frames):
+        statet = np.matmul(expm(-1j*time*h), state)
+        fig = grid_graph_state(statet,points)
+        plt.xlim(-1,m)
+        plt.ylim(-1,n)
+        plt.xlabel('$x$')
+        plt.ylabel('$y$')
+        plt.title('State after time {:.2f}\n'
+                '$\mu$ = {:.2f}, $t$ = {:.2f}, $\Delta$ = {:.2f},'
+                ' $\lambda_3$ = {:.2f}'.format(time,mu,t,d,l3))
+        plt.savefig(path + '/img' + str(num).zfill(2) + '.png', format='png')
+        plt.close(fig)
+
+        num += 1
+
+    images = [cv2.imread(os.path.join(path, img)) for img in os.listdir(path) if img.endswith(".png")]
+    height,width,layers = images[0].shape
+
+    video = cv2.VideoWriter(path + '/' + title + '.mp4',-1,15,(width,height))
+
+    for j in range(len(images)):
+        video.write(images[j])
+
+    cv2.destroyAllWindows()
+    video.release()
+
 def localize(state,mean,sig):
     global m,n
     s=state
@@ -520,6 +570,34 @@ def localize(state,mean,sig):
     for i in range(len(state)):
         state1[i] = state0[i] / (i%(2*m)+1)
     return state1
+
+def grid_localize(state,points,p1,p2):
+    global m,n
+    s=state
+    state0 = np.zeros(len(state), complex)
+    state1 = np.zeros(len(state), complex)
+    for i in range(len(points)):
+        (x,y) = points[i]
+        yl = ((p2[1]-p1[1])/(p2[0]-p1[0]))*(x-p1[0])+p1[1]
+        xl = ((p2[0]-p1[0])/(p2[1]-p1[1]))*(y-p1[1])+p1[0]
+        d = ((p1[0]+p2[0])/2-x)**2 + ((p1[1]+p2[1])/2-y)**2
+        md = ((p1[0]+p2[0])/2-p1[0])**2 + ((p1[1]+p2[1])/2-p1[1])**2
+        if x > min([p1[0],p2[0]]) and x < max([p1[0],p2[0]]) and y > min([p1[1],p2[1]]) and y < max([p1[1],p2[1]]):
+            if abs(x-xl) < .5 or abs(y-yl) < .5:
+                state0[2*i] = s[2*i]*(1-d/md)
+                state0[2*i+1] = s[2*i+1]*(1-d/md)
+            else:
+                state0[2*i] = s[2*i] * .1 * (1-d/(m**2+n**2))
+                state0[2*i+1] = s[2*i+1] * .1 * (1-d/(m**2+n**2))
+        else:
+            state0[2*i] = s[2*i] * .1 * (1-d/(m**2+n**2))
+            state0[2*i+1] = s[2*i+1] * .1 * (1-d/(m**2+n**2))
+    if False:
+        for i in range(len(state)):
+            state0[i] = s[i]/(sig*np.sqrt(2*np.pi)) * np.exp(-1/2*((i/(2*m)-y)/sig)**2)
+        for i in range(len(state)):
+            state1[i] = state0[i] / (abs(i%(2*m)/2-x))
+    return state0
 
 def loring_over_e(start,end,frames,title):
     global e
@@ -701,8 +779,8 @@ def grid_graph_loring(H,points):
     #fig = plt.figure()
     leg1 = leg2 = leg3 = None
     X,Y = X_Y(m,n)
-    for i in np.linspace(1,m-2,30):
-        for j in np.linspace(1,n-2,30):
+    for i in np.linspace(0,m-1,30):
+        for j in np.linspace(0,n-1,30):
             analysis = index(X,Y,H,i,j)
             if analysis == 1:
                 plt.scatter(i,j,c='black')
@@ -730,7 +808,7 @@ def grid_graph_eigen_state(h,ind):
     plt.suptitle('Eigenstate and Eigenvectors\n'
                 '$\mu$ = {:.2f}, $t$ = {:.2f}, $\Delta$ = {:.2f},'
                 ' $\lambda_3$ = {:.2f}'.format(mu,t,d,l3))
-    graph_state(Hevects[:,ind].real,m,n,ax=ax0)
+    graph_state(Hevects[:,ind].real,ax=ax0)
     ax1.scatter([0]*len(Hevals),Hevals,c='black')
     ax1.scatter(0,Hevals[ind],c='red')
     ax0.set_xlabel('$m$')
@@ -777,6 +855,15 @@ def grid_graph_loring_periodic(H,points):
 points, _, edge_vert_inds = grid_pointset()
 H = grid_hamiltonian(points, edge_vert_inds)
 grid_graph_loring(H,points)
+print 'PICK WAVE LOCATION'
+loc = plt.ginput(n=2,timeout=-1)
+print loc
+Hevals, Hevects = np.linalg.eigh(H)
+grid_graph_state(normalize(Hevects[:,len(H)/2]),points)
+
+state = normalize(grid_localize(Hevects[:,len(H)/2],points,loc[0],loc[1]))
+grid_graph_state(state,points)
+grid_propagate(H,points,state,30,10,'test19')
 
 print 'DONE'
 plt.show()
