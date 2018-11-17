@@ -577,22 +577,22 @@ def grid_localize(state,points,p1,p2):
     state0 = np.zeros(len(state), complex)
     state1 = np.zeros(len(state), complex)
     for i in range(len(points)):
-        (x,y) = points[i]
-        yl = ((p2[1]-p1[1])/(p2[0]-p1[0]))*(x-p1[0])+p1[1]
-        xl = ((p2[0]-p1[0])/(p2[1]-p1[1]))*(y-p1[1])+p1[0]
-        d = ((p1[0]+p2[0])/2-x)**2 + ((p1[1]+p2[1])/2-y)**2
-        md = ((p1[0]+p2[0])/2-p1[0])**2 + ((p1[1]+p2[1])/2-p1[1])**2
-        if x > min([p1[0],p2[0]]) and x < max([p1[0],p2[0]]) and y > min([p1[1],p2[1]]) and y < max([p1[1],p2[1]]):
-            if abs(x-xl) < .5 or abs(y-yl) < .5:
-                state0[2*i] = s[2*i]*(1-d/md)
+        (x,y) = points[i] #cell on lattice
+        yl = ((p2[1]-p1[1])/(p2[0]-p1[0]))*(x-p1[0])+p1[1] #y-value on line given x
+        xl = ((p2[0]-p1[0])/(p2[1]-p1[1]))*(y-p1[1])+p1[0] #x-value on line given y
+        d = ((p1[0]+p2[0])/2-x)**2 + ((p1[1]+p2[1])/2-y)**2 #distance from x,y to midpoint ^ 2
+        md = ((p1[0]+p2[0])/2-p1[0])**2 + ((p1[1]+p2[1])/2-p1[1])**2 #half the length of the line ^ 2
+        if x > min([p1[0],p2[0]]) and x < max([p1[0],p2[0]]) and y > min([p1[1],p2[1]]) and y < max([p1[1],p2[1]]): #is x,y in the box determined by p1,p2
+            if abs(x-xl) < .5 or abs(y-yl) < .5: #is x,y within .5 units from the line vertically or horizontally
+                state0[2*i] = s[2*i]*(1-d/md) #closer to original value as x,y gets closer to the midpoint
                 state0[2*i+1] = s[2*i+1]*(1-d/md)
-            else:
+            else: #rest of the points are small but even smaller if they are far from the line
                 state0[2*i] = s[2*i] * .1 * (1-d/(m**2+n**2))
                 state0[2*i+1] = s[2*i+1] * .1 * (1-d/(m**2+n**2))
         else:
             state0[2*i] = s[2*i] * .1 * (1-d/(m**2+n**2))
             state0[2*i+1] = s[2*i+1] * .1 * (1-d/(m**2+n**2))
-    if False:
+    if False: #old code
         for i in range(len(state)):
             state0[i] = s[i]/(sig*np.sqrt(2*np.pi)) * np.exp(-1/2*((i/(2*m)-y)/sig)**2)
         for i in range(len(state)):
