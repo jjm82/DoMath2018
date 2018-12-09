@@ -18,6 +18,8 @@
 \usepackage{xcolor}
 
 \newcommand{\aw}[1]{{\color{blue} [AW: #1]}}
+\newcommand{\jm}[1]{{\color{red} [JM: #1]}}
+\newcommand{\ap}[1]{{\color{red} [AP: #1]}}
 
 \title{Non-Periodic Edge States}
 \author{Jonathan Michala and Alexander Pierson}
@@ -31,8 +33,25 @@ Let $\Psi$ be a state in two dimensions with entries $\Psi_{m,n}$, where $m$ des
 Define $X$ and $Y$ to be an operators that act on a state $\Psi$ in the following way:
 $$(X \Psi)_{m,n} = m\Psi_{m,n}, \quad (Y \Psi)_{m,n} = n\Psi_{m,n}.$$
 Eigenstates of these operators are localized in their corresponding dimensions.
-Therefore, when looking for localized eigenstates of a system whose Hamiltonian is $H$, our aim is to find simultaneous eigenstates of all three operators $H$, $X$, and $Y$.
-This is impossible if any of them do not commute with each other.
+Therefore, when looking for localized eigenstates of a system whose Hamiltonian is $H$, our aim is to find simultaneous eigenstates of all three operators $H$, $X$, and $Y$.\\
+This is not always possible, however.
+Suppose $A_1,...,A_n$ are Hermitian matrices that all commute with each other.
+Then, they can be simultaneously diagonalized, i.e. $U^\star A_i U$ is diagonal for all $i \in \{1,...,n\}$ for some unitary matrix $U$.
+So if $H$, $X$, and $Y$ commute, we can find simultaneous eigenstates of them.
+Now, suppose $A_1,...,A_n$ do not all commute, but their commutators are bounded:
+$$[A_i,A_j] \leq \delta \quad \forall\; i,j \in \{1,...,n\}$$
+for some $\delta$.
+If $n = 2$, there must exist some $\widetilde{A}_1, \widetilde{A}_2$ such that they commute and satisfy:
+$$||\widetilde{A}_1 - A_1||, ||\widetilde{A}_2 - A_2|| \leq \epsilon(\delta)$$
+where $\epsilon(\delta) \ll \delta$ \jm{Is this correct?} and where $||M||$ denotes the largest eigenvalue of $M$.\\
+But if $n = 3$, there may or may not exist $\widetilde{A}_1, \widetilde{A}_2, \widetilde{A}_3$ such that they all commute with each other and satisfy:
+$$||\widetilde{A}_i - A_i|| \leq \epsilon(\delta), \quad \i \in \{1,2,3\}.$$
+This existence holds if and only if
+$$\frac{1}{2}\; \text{sig} \begin{pmatrix}
+A_3 & A_1 + iA_2\\
+A_1 - iA_2 & - A_3
+\end{pmatrix} = 0$$
+where sig$(M)$ is the signature, or number of positive eigenvalues minus negative eigenvalues, of $M$. This is known as the Bott Index of three matrices.
  \aw{this is impossible if they do not commute, also they are only diagonalizable if Hermitian, hence you are looking for vectors which are simultaneous \emph{approximate} eigenvectors of all 3 matrices} of all three of these matrices, i.e. finding $v$ such that $(X - \lambda_1)v = 0$, $(Y - \lambda_2)v = 0$, and $(H-\lambda_3)v = 0$, for real $\lambda_1,\lambda_2,\lambda_3$. This is equivalent(Annals of Physics ref) to finding near-zero eigenvalues of the matrix
 $$B(X - \lambda_1, Y - \lambda_2, H - \lambda_3) =
 \begin{pmatrix}
