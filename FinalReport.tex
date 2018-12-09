@@ -61,14 +61,22 @@ H - \lambda_3 & (X - \lambda_1) + i(Y - \lambda_2)\\
 \end{pmatrix}.$$
 If this matrix has an eigenvalue less than a specified norm $\epsilon$, we say that the triple $(\lambda_1,\lambda_2,\lambda_3)$ is in the joint pseudo-spectrum of the given lattice.
 If a triple is not in the pseudo-spectrum, we then compute the Bott index using the above calculation. \aw{Hastings-Loring explains the Loring index a little. The point is that } \\\\
-To compute the signature of $B$ efficiently, we use the $LDL^T$ decomposition of $B$. $D$ is a block diagonal matrix with blocks of either size $1 \times 1$ or $2 \times 2$. Let $a$ and $b$ be the number of positive and negative $1 \times 1$ blocks in $D$, respectively. By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$.
+To compute the signature of $B$ efficiently, we use the $LDL^T$ decomposition of $B$.
+$D$ is a block diagonal matrix with blocks of either size $1 \times 1$ or $2 \times 2$.
+Let $a$ and $b$ be the number of positive and negative $1 \times 1$ blocks in $D$, respectively.
+By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$.
+
 \section{Loring Index in Haldane Model}
 
 In the Haldane Model, $m$ and $n$ are the indices of cells on a hexagonal, atomic lattice, where each cell has two sites, labeled $A$ and $B$.
 Thus we define our $X$ and $Y$ operators as follows:
 $$X_{i,i} = \left\lfloor \frac{i-1}{2} \right\rfloor \;\text{mod}\;m, \quad\quad Y_{i,i} = \left\lfloor \frac{i-1}{2m} \right\rfloor$$
 with $X_{i,j} = Y_{i,j} = 0$ for $i \neq j$. 
-We compute the pseudo-spectrum and Loring index on the Haldane model lattice with complex hopping and see that in the topological case, the Loring index behave much like the Chern number: on a lattice with edges, the index is $+1$ on the interior and transitions to 0 across the edge; on a periodic lattice, the index is $+1$ everywhere. In the trivial case we see a Loring index of 0 everywhere on edged and periodic lattices, which is analogous to the Chern number. This is shown in Figure \ref{fig:Loring Haldane}.
+We compute the pseudo-spectrum and Bott index on the Haldane model lattice with complex hopping and see that in the topological case, the Bott index behave much like the Chern number:
+on a lattice with edges, the index is $+1$ on the interior and transitions to 0 across the edge;
+on a periodic lattice, the index is $+1$ everywhere.
+In the trivial case we see a Bott index of 0 everywhere on edged and periodic lattices, which is analogous to the Chern number.
+This is shown in Figure \ref{fig:Bott Haldane}.
 \begin{figure}
 \centering
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/periodic_triv} }}%
@@ -76,14 +84,18 @@ We compute the pseudo-spectrum and Loring index on the Haldane model lattice wit
 
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/edged_triv} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/edged_top} }}%
-\caption{The top left is a trivial, periodic lattice; the top right is a topological, periodic lattice; the bottom left is a trivial, edged lattice; and the bottom right is a topological, edged lattice. Each site in these figures represents a $(\lambda_1,\lambda_2,\lambda_3)$ triple with $\lambda_3 = 0$. If a site is red, then it is in the pseudo-spectrum, i.e. $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ has a near-zero eigenvalue. If a site is not in the pseudo-spectrum, then it is colored black for Loring index 1 and white for Loring index 0, where the Loring index is defined as the signature of $B$.\\
+\caption{The top left is a trivial, periodic lattice; the top right is a topological, periodic lattice; the bottom left is a trivial, edged lattice; and the bottom right is a topological, edged lattice.
+Each site in these figures represents a $(\lambda_1,\lambda_2,\lambda_3)$ triple with $\lambda_3 = 0$.
+If a site is red, then it is in the pseudo-spectrum, i.e. $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ has a near-zero eigenvalue.
+If a site is not in the pseudo-spectrum, then it is colored black for Bott index 1 and white for Bott index 0, where the Bott index is defined as one half the signature of $B$.\\
 }%
-\label{fig:Loring Haldane}%
+\label{fig:Bott Haldane}%
 \end{figure}
-The advantage of the Loring index compared to the Chern number is that the Chern number can only be defined on a periodic structure, whereas the Loring index can be computed on non-periodic media. We will use this advantage to study the robustness of waves on non-periodic media.
+The advantage of the Bott index compared to the Chern number is that the Chern number can only be defined on a periodic structure, whereas the Bott index can be computed on non-periodic media.
+We will use this advantage to study the robustness of waves on non-periodic media.
 
 \section{Propagation in Haldane Model}
-As expected, we find that localized waves propagate along the boundary of the edged, topological lattice since this is a boundary between Loring index 0 and Loring index 1.
+As expected, we find that localized waves propagate along the boundary of the edged, topological lattice since this is a boundary between Bott index 0 and Bott index 1. Figures to come.
 
 
 \section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
