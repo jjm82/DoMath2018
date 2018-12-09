@@ -27,9 +27,13 @@
 
 \section{Background}
 \section{Loring Index}
-Given a Hamiltonian $H$ of size $2mn \times 2mn$, \aw{what is $m$, $n$?} we define equivalently sized matrices $X$ and $Y$ as such:
+Define $X$ to be an operator that acts on a state $\Psi$ in the following way:
+$$(X \Psi)_{m,n} = m\Psi_{m,n}.$$
+Similarly define $Y$:
+$$(Y \Psi)_{m,n} = n\Psi_{m,n}.$$
+Given a Hamiltonian $H$ of size $2mn \times 2mn$ \aw{what is $m$, $n$?} we define equivalently sized matrices $X$ and $Y$ as such:
 $$X_{ii} = \left\lfloor \frac{i-1}{2} \right\rfloor \;\text{mod}\;m, \quad\quad Y_{ii} = \left\lfloor \frac{i-1}{2m} \right\rfloor$$
-with $X_{ij} = Y_{ij} = 0$ for $i \neq j$. Our aim is to find vectors that are eigenvectors \aw{this is impossible if they do not commute, also they are only diagonalizable if Hermitian, hence you are looking for vectors which are simultaneous \emph{approximate} eigenvectors of all 3 matrices} of all three of these matrices, i.e. finding $v$ such that $(X - \lambda_1)v = 0$, $(Y - \lambda_2)v = 0$, and $(H-\lambda_3)v = 0$, for real $\lambda_1,\lambda_2,\lambda_3$. This is equivalent(Annals of Physics ref) to finding near-zero eigenvalues of the matrix
+with $X_{ij} = Y_{ij} = 0$ for $i \neq j$. Our aim is to find eigenstates of $H$ that are also eigenstates of $X$ and $Y$, for eigenstates of $X$ and $Y$ are localized in  \aw{this is impossible if they do not commute, also they are only diagonalizable if Hermitian, hence you are looking for vectors which are simultaneous \emph{approximate} eigenvectors of all 3 matrices} of all three of these matrices, i.e. finding $v$ such that $(X - \lambda_1)v = 0$, $(Y - \lambda_2)v = 0$, and $(H-\lambda_3)v = 0$, for real $\lambda_1,\lambda_2,\lambda_3$. This is equivalent(Annals of Physics ref) to finding near-zero eigenvalues of the matrix
 $$B(X - \lambda_1, Y - \lambda_2, H - \lambda_3) =
 \begin{pmatrix}
 H - \lambda_3 & (X - \lambda_1) + i(Y - \lambda_2)\\
