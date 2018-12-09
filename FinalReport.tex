@@ -27,13 +27,10 @@
 
 \section{Background}
 \section{Loring Index}
-Define $X$ to be an operator that acts on a state $\Psi$ in the following way:
-$$(X \Psi)_{m,n} = m\Psi_{m,n}.$$
-Similarly define $Y$:
-$$(Y \Psi)_{m,n} = n\Psi_{m,n}.$$
-Given a Hamiltonian $H$ of size $2mn \times 2mn$ \aw{what is $m$, $n$?} we define equivalently sized matrices $X$ and $Y$ as such:
-$$X_{ii} = \left\lfloor \frac{i-1}{2} \right\rfloor \;\text{mod}\;m, \quad\quad Y_{ii} = \left\lfloor \frac{i-1}{2m} \right\rfloor$$
-with $X_{ij} = Y_{ij} = 0$ for $i \neq j$. Our aim is to find eigenstates of $H$ that are also eigenstates of $X$ and $Y$, for eigenstates of $X$ and $Y$ are localized in  \aw{this is impossible if they do not commute, also they are only diagonalizable if Hermitian, hence you are looking for vectors which are simultaneous \emph{approximate} eigenvectors of all 3 matrices} of all three of these matrices, i.e. finding $v$ such that $(X - \lambda_1)v = 0$, $(Y - \lambda_2)v = 0$, and $(H-\lambda_3)v = 0$, for real $\lambda_1,\lambda_2,\lambda_3$. This is equivalent(Annals of Physics ref) to finding near-zero eigenvalues of the matrix
+Let $\Psi$ be a state in two dimensions with entries $\Psi_{m,n}$, where $m$ describes location with respect to one dimension (whether that be an $x$-coordinate in $\mathbb{R}^2$ or a cell index along an edge) and where $n$ describes location with respect to the other dimension.
+Define $X$ and $Y$ to be an operators that act on a state $\Psi$ in the following way:
+$$(X \Psi)_{m,n} = m\Psi_{m,n}, \quad (Y \Psi)_{m,n} = n\Psi_{m,n}.$$
+Our aim is to find eigenstates of $H$ that are also eigenstates of $X$ and $Y$, for eigenstates of $X$ and $Y$ are localized in  \aw{this is impossible if they do not commute, also they are only diagonalizable if Hermitian, hence you are looking for vectors which are simultaneous \emph{approximate} eigenvectors of all 3 matrices} of all three of these matrices, i.e. finding $v$ such that $(X - \lambda_1)v = 0$, $(Y - \lambda_2)v = 0$, and $(H-\lambda_3)v = 0$, for real $\lambda_1,\lambda_2,\lambda_3$. This is equivalent(Annals of Physics ref) to finding near-zero eigenvalues of the matrix
 $$B(X - \lambda_1, Y - \lambda_2, H - \lambda_3) =
 \begin{pmatrix}
 H - \lambda_3 & (X - \lambda_1) + i(Y - \lambda_2)\\
@@ -43,6 +40,10 @@ Thus, if this matrix has an eigenvalue less than a specified norm $\epsilon$, we
 To compute the signature of $B$ efficiently, we use the $LDL^T$ decomposition of $B$. $D$ is a block diagonal matrix with blocks of either size $1 \times 1$ or $2 \times 2$. Let $a$ and $b$ be the number of positive and negative $1 \times 1$ blocks in $D$, respectively. By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$.
 \section{Loring Index in Haldane Model}
 
+In the Haldane Model, $m$ and $n$ are the indices of cells on a hexagonal, atomic lattice, where each cell has two sites, labeled $A$ and $B$.
+Thus we define our $X$ and $Y$ operators as follows:
+$$X_{i,i} = \left\lfloor \frac{i-1}{2} \right\rfloor \;\text{mod}\;m, \quad\quad Y_{i,i} = \left\lfloor \frac{i-1}{2m} \right\rfloor$$
+with $X_{i,j} = Y_{i,j} = 0$ for $i \neq j$. 
 We compute the pseudo-spectrum and Loring index on the Haldane model lattice with complex hopping and see that in the topological case, the Loring index behave much like the Chern number: on a lattice with edges, the index is $+1$ on the interior and transitions to 0 across the edge; on a periodic lattice, the index is $+1$ everywhere. In the trivial case we see a Loring index of 0 everywhere on edged and periodic lattices, which is analogous to the Chern number. This is shown in Figure \ref{fig:Loring Haldane}.
 \begin{figure}
 \centering
