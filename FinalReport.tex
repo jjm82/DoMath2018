@@ -93,7 +93,7 @@ $$[A_i,A_j] \leq \delta \quad \forall\; i,j \in \{1,...,n\}$$
 for some $\delta$.
 If $n = 2$, there must exist some $\widetilde{A}_1, \widetilde{A}_2$ which commute and satisfy:
 $$||\widetilde{A}_1 - A_1||, ||\widetilde{A}_2 - A_2|| \leq \epsilon(\delta)$$
-where $\epsilon(\delta) \ll \delta$ \jm{Is this correct?} \aw{I think better to just say $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$} and where $||M||$ denotes the largest eigenvalue of $M$.\\
+where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$ and where $||M||$ denotes the largest eigenvalue of $M$.\\
 But if $n = 3$, there may or may not exist $\widetilde{A}_1, \widetilde{A}_2, \widetilde{A}_3$ such that they all commute with each other and satisfy:
 $$||\widetilde{A}_i - A_i|| \leq \epsilon(\delta), \quad \i \in \{1,2,3\}.$$
 This existence holds if and only if
@@ -101,29 +101,18 @@ $$\frac{1}{2}\; \text{sig} \begin{pmatrix}
 A_3 & A_1 + iA_2\\
 A_1 - iA_2 & - A_3
 \end{pmatrix} = 0$$
-where sig$(M)$ is the signature, or number of positive eigenvalues minus negative eigenvalues, of $M$. This is known as the Bott Index of three matrices.
- of all three of these matrices, i.e. finding $v$ such that $(X - \lambda_1)v = 0$, $(Y - \lambda_2)v = 0$, and $(H-\lambda_3)v = 0$, for real $\lambda_1,\lambda_2,\lambda_3$. This is equivalent(Annals of Physics ref) to finding near-zero eigenvalues of the matrix
-$$B(X - \lambda_1, Y - \lambda_2, H - \lambda_3) =
-\begin{pmatrix}
-H - \lambda_3 & (X - \lambda_1) + i(Y - \lambda_2)\\
-(X - \lambda_1) - i(Y - \lambda_2) & - (H - \lambda_3)
-\end{pmatrix}.$$
-Thus, if this matrix has an eigenvalue less than a specified norm $\epsilon$, we say that \aw{it is $(\lambda_1,\lambda_2,\lambda_3)$ that is in the joint pseudo-spectrum: the pseudo-spectrum is a generalization of the spectrum (the set of eigenvalues), and the joint pseudo-spectrum is a generalization of the joint spectrum} is in the joint pseudo-spectrum of the given lattice. We can also compute the Loring index of $(\lambda_1,\lambda_2,\lambda_3)$ triples which is defined as the signature of $B$. \aw{This is a good start - you have clearly identified what the index measures. See my comments above, though.} \\\\
-To compute the signature of $B$ efficiently, we use the $LDL^T$ decomposition of $B$. $D$ is a block diagonal matrix with blocks of either size $1 \times 1$ or $2 \times 2$. Let $a$ and $b$ be the number of positive and negative $1 \times 1$ blocks in $D$, respectively. By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$. \aw{we should identify why $L D L^T$ works, e.g. ``it is known (see ref...) that the signature of $B$ equals the signature of the diagaonal matrix $D$ which appears in $L D L^T$ factorization''}
-\jm{is there any reason that $A_3$ is where it is? Are the matrices interchangeable in this matrix?} \aw{Yes they are. The theorems definitely don't rely on a particular ordering.}
-where sig$(M)$ is the signature, or number of positive eigenvalues minus negative eigenvalues, of $M$.
-This is known as the Bott index of three matrices, denoted Bott($A_1,A_2,A_3$).\\
+where sig$(M)$ is the signature, or number of positive eigenvalues minus negative eigenvalues, of $M$. This is known as the Bott Index of three matrices, denoted Bott($A_1,A_2,A_3$).
 Thus, to calculate the index at a particular location, $\lambda_1,\lambda_2$ in our system near an eigenvalue $\lambda_3$ of $H$ \jm{Is this the correct motivation?} we look at
 $$\text{Bott}(X-\lambda_1,Y - \lambda_2, H - \lambda_3) = \frac{1}{2}\; \text{sig}\begin{pmatrix}
 H - \lambda_3 & (X - \lambda_1) + i(Y - \lambda_2)\\
 (X - \lambda_1) - i(Y - \lambda_2) & - (H - \lambda_3)
 \end{pmatrix}.$$
-If this matrix has an eigenvalue less than a specified norm $\epsilon$, we say that the triple $(\lambda_1,\lambda_2,\lambda_3)$ is in the joint pseudo-spectrum of the given lattice.
+If this matrix has an eigenvalue less than a specified norm $\epsilon$, we say that the triple $(\lambda_1,\lambda_2,\lambda_3)$ is in the joint pseudo-spectrum of the given lattice.\aw{it is $(\lambda_1,\lambda_2,\lambda_3)$ that is in the joint pseudo-spectrum: the pseudo-spectrum is a generalization of the spectrum (the set of eigenvalues), and the joint pseudo-spectrum is a generalization of the joint spectrum}
 If a triple is not in the pseudo-spectrum, we then compute the Bott index using the above calculation. \aw{Hastings-Loring explains the Loring index a little. The point is that } \\\\
 To compute the signature of $B$ efficiently, we use the $LDL^T$ decomposition of $B$.
 $D$ is a block diagonal matrix with blocks of either size $1 \times 1$ or $2 \times 2$.
 Let $a$ and $b$ be the number of positive and negative $1 \times 1$ blocks in $D$, respectively.
-By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$.
+By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$. \aw{we should identify why $L D L^T$ works, e.g. ``it is known (see ref...) that the signature of $B$ equals the signature of the diagaonal matrix $D$ which appears in $L D L^T$ factorization''}
 
 \section{Loring Index in Haldane Model}
 
