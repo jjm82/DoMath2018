@@ -33,7 +33,8 @@
 \item A couple of things which need to be worked out at some point (I think after we submit the writeup):
 \begin{itemize}
 \item In addition to mapping out the ``local index'' at each point, we should map out the size of the ``local gap'': the size of the smallest eigenvalue of the matrix $B$. This should give us a sense of when the edge states will actually be stable.
-\item When we consider disorder of the atom positions, we should replace $t \rightarrow t e^{1 - r/r_0}$ where $r$ is the distance between atoms and $r_0$ is the distance between atoms *without disorder* and do the same for complex hopping too. 
+\item When we consider disorder of the atom positions, we should replace $t \rightarrow t e^{1 - r/r_0}$ where $r$ is the distance between atoms and $r_0$ is the distance between atoms *without disorder* and do the same for complex hopping too.
+\item We should also consider the effect of the localization parameter
 \end{itemize}
 \end{itemize}
 \aw{Nature of final report from Duke math website:} \\
@@ -109,8 +110,7 @@ H - \lambda_3 & (X - \lambda_1) + i(Y - \lambda_2)\\
 \end{pmatrix}.$$
 Thus, if this matrix has an eigenvalue less than a specified norm $\epsilon$, we say that \aw{it is $(\lambda_1,\lambda_2,\lambda_3)$ that is in the joint pseudo-spectrum: the pseudo-spectrum is a generalization of the spectrum (the set of eigenvalues), and the joint pseudo-spectrum is a generalization of the joint spectrum} is in the joint pseudo-spectrum of the given lattice. We can also compute the Loring index of $(\lambda_1,\lambda_2,\lambda_3)$ triples which is defined as the signature of $B$. \aw{This is a good start - you have clearly identified what the index measures. See my comments above, though.} \\\\
 To compute the signature of $B$ efficiently, we use the $LDL^T$ decomposition of $B$. $D$ is a block diagonal matrix with blocks of either size $1 \times 1$ or $2 \times 2$. Let $a$ and $b$ be the number of positive and negative $1 \times 1$ blocks in $D$, respectively. By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$. \aw{we should identify why $L D L^T$ works, e.g. ``it is known (see ref...) that the signature of $B$ equals the signature of the diagaonal matrix $D$ which appears in $L D L^T$ factorization''}
-=======
-\jm{is there any reason that $A_3$ is where it is? Are the matrices interchangeable in this matrix?}
+\jm{is there any reason that $A_3$ is where it is? Are the matrices interchangeable in this matrix?} \aw{Yes they are. The theorems definitely don't rely on a particular ordering.}
 where sig$(M)$ is the signature, or number of positive eigenvalues minus negative eigenvalues, of $M$.
 This is known as the Bott index of three matrices, denoted Bott($A_1,A_2,A_3$).\\
 Thus, to calculate the index at a particular location, $\lambda_1,\lambda_2$ in our system near an eigenvalue $\lambda_3$ of $H$ \jm{Is this the correct motivation?} we look at
@@ -164,6 +164,79 @@ As expected, we find that localized waves propagate along the boundary of the ed
 
 \section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
 \aw{We should mention why we work with a different model: the point is that it is unclear how to generalize the Haldane model to disordered media.}
+
+\aw{Copy pasted notes on this model from overleaf} 
+
+\noindent Generate a network of $N$ nodes (to be more consistent with physics we henceforth refer to nodes as sites) connected by edges. Define a Hilbert space $\mathcal{H}$ by associating to each site a copy of $\mathbb{C}^2$. The dimension of this space is clearly $2 N$. We denote vectors in $\mathcal{H}$ by:
+\begin{equation}
+	\psi = \left( \psi_1, \psi_2, ... \psi_N \right)^\top
+\end{equation}
+where each $\psi_j \in \mathbb{C}^2$:
+\begin{equation}
+	\psi_j = \left( \psi_j^A , \psi_j^B \right)^\top.
+\end{equation}
+We define a Hamiltonian acting on the $j$th site of the network by:
+\begin{equation}
+	( H \psi )_j = H_{jj} \psi_j + \sum_{ k \text{ nearest neighbors of } j } H_{jk} \psi_k,
+\end{equation}
+where $H_{jj}$ and $H_{jk}$ are $2 \times 2$ matrices defined by:
+\begin{equation}
+	H_{jj} = - \mu \sigma_z,
+\end{equation}
+\begin{equation}
+	H_{jk} = - t \sigma_z - \frac{ i }{ 2 } \Delta \sigma_x \cos( \alpha_{jk} ) - \frac{ i }{ 2 } \Delta \sigma_y \sin( \alpha_{jk} ).
+\end{equation}
+Here, $\mu, t, \Delta$ are real parameters,
+\begin{equation}
+	\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad \sigma_y = \begin{pmatrix} 0 & - i \\ i & 0 \end{pmatrix}, \quad \sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix},
+\end{equation}
+denote the Pauli matrices, and $\alpha_{jk}$ denotes the angle of the edge between the $j$ and $k$th site relative to the $x$ axis (see second slide of \verb|Loring_slides.pdf| in \verb|related_papers| directory).
+
+Compared with the Haldane model, $\mu$ plays the role of $V^A$ (onsite potential difference between $A$ and $B$ sites, assuming $V^B = - V^A$), $t$ plays the role of $t$ (real nearest neighbor hopping), and $\Delta$ plays the role of $t'$ (strength of complex hopping). The nice thing about this model is that it involves only nearest neighbor hopping, so it is relatively easy to generalize to structures without periodicity.
+
+In the case of a perfect square lattice the model simplifies to the following: 
+\begin{equation}
+\begin{split}
+	(H \psi)_{mn} &= - \mu \sigma_z \psi_{mn} - t \sigma_z \left( \psi_{m+1,n} + \psi_{m-1,n} + \psi_{m,n+1} + \psi_{m,n-1} \right) \\
+	&+ \frac{ i \Delta }{ 2 } \left( - \sigma_x \psi_{m+1,n} - \sigma_y \psi_{m,n+1} + \sigma_x \psi_{m-1,n} + \sigma_y \psi_{m,n-1} \right),
+\end{split}
+\end{equation}
+where $m$ denotes the co-ordinate in the $x$ direction and $n$ denotes that in the $y$ direction. Imposing the Bloch-periodic boundary condition yields:
+\begin{equation}
+\begin{split}
+	H(k) \psi &= \left[ - \mu \sigma_z - t \left( e^{i k_1} + e^{- i k_1} + e^{i k_2} + e^{- i k_2} \right) \sigma_z \right. \\
+	&\left. + \frac{ i \Delta }{ 2 } \left( -  e^{i k_1} + e^{- i k_1} \right) \sigma_x + \frac{ i \Delta }{ 2 } \left( - e^{i k_2} + e^{- i k_2} \right) \sigma_y \right] \psi,
+\end{split}
+\end{equation}
+\begin{equation}
+	H(k) \psi = \left[ - \mu \sigma_z - 2 t \left( \cos(k_1) + \cos(k_2) \right) \sigma_z + \Delta \sin(k_1) \sigma_x + \Delta \sin(k_2) \sigma_y \right] \psi. 
+\end{equation}
+So:
+\begin{equation}
+	H(k) = \begin{pmatrix} - \mu - 2 t ( \cos k_1 + \cos k_2 ) & \Delta ( \sin k_1 - i \sin k_2 ) \\ \Delta ( \sin k_1 + i \sin k_2 ) & \mu + 2 t ( \cos k_1 + \cos k_2 ) \end{pmatrix}.
+\end{equation}
+Eigenvalues $E$ satisfy the characteristic equation:
+\begin{equation}
+	( - \mu - 2 t ( \cos k_1 + \cos k_2 ) - E )( \mu + 2 t ( \cos k_1 + \cos k_2 ) - E ) - \Delta^2 ( \sin^2 k_1 + \sin^2 k_2 ) = 0
+\end{equation}
+which has the solution:
+\begin{equation}
+	E = \pm 2 t \sqrt{ (\Delta')^2 \sin^2 k_1 + (\Delta')^2 \sin^2 k_2 + \left( \mu' + \cos k_1 + \cos k_2 \right)^2 },
+\end{equation}
+where:
+\begin{equation}
+	\Delta' := \frac{\Delta}{2 t} \quad \mu' := \frac{ \mu }{ 2 t }
+\end{equation}
+and now under the square root is a sum of non-negative terms. For the bands to touch (i.e. for what is under the spectral gap to vanish) it must be that:
+\begin{equation}
+	k_1 = m \pi \quad k_2 = n \pi
+\end{equation}
+for $m \in \{0,1\}$ and $n \in \{0,1\}$, and:
+\begin{equation}
+	\mu' + \cos m \pi + \cos n \pi = 0.
+\end{equation}
+This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$, or if $m = n = 0$ and $\mu' = - 2$. These are the only values of $\mu'$ such that a topological transition (a change in the Chern number) can happen. \aw{it would be nice to check this numerically. We should be able to use the code we wrote in the summer to compute the Chern number of the Haldane model. I believe that the Chern number is 1 for $0 \leq \mu' \leq 2$, -1 for $- 2 \leq \mu' \leq 0$, and 0 otherwise. But we should check this.}
+
 \section{Loring Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
 \section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
 \aw{This is a good ordering of things.}
