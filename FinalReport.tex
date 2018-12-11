@@ -2,7 +2,7 @@
 
 %% Language and font encodings
 \usepackage[english]{babel}
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
 %% Sets page size and margins
@@ -17,6 +17,11 @@
 \usepackage{subfig}
 \usepackage{xcolor}
 
+% bibliography
+\usepackage[backend=bibtex,style=numeric,citestyle=numeric,maxbibnames=99]{biblatex}
+\renewbibmacro{in:}{\ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+\bibliography{DoMath_bibliography.bib}
+
 \newcommand{\aw}[1]{{\color{blue} [AW: #1]}}
 \newcommand{\jm}[1]{{\color{red} [JM: #1]}}
 \newcommand{\ap}[1]{{\color{red} [AP: #1]}}
@@ -30,6 +35,7 @@
 \begin{itemize}
 \item We have to make the bibliography: I can show you how to do this (it's a pain) using BibDesk
 \item Deadline for report is December 17th (the last day of finals)
+\item Bibliography test: A good book for solid state physics is \cite{1976AshcroftMermin}.
 \item A couple of things which need to be worked out at some point (I think after we submit the writeup):
 \begin{itemize}
 \item In addition to mapping out the ``local index'' at each point, we should map out the size of the ``local gap'': the size of the smallest eigenvalue of the matrix $B$. This should give us a sense of when the edge states will actually be stable.
@@ -230,5 +236,7 @@ This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$,
 For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as before in the Haldane model. Nodes in the \texorpdfstring{$p_x + ip_y$}{px + ipy} model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size 2*m*m. We also compute pseudo-spectrum and Bott index as before, and get a similar result of a topological case which exhibits a transition from Bott index 0 at the edge to +1 on the interior. Again, this is a situation in which the system is general and not periodic so the Bott index is useful, as we cannot use the Chern number. The fact that we see very similar behavior in this model is very significant and supports the idea that the Bott index is a general invariant than can be calculated regardless of periodicity or structure.
 \section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
 \aw{This is a good ordering of things.}
+
+\printbibliography
 
 \end{document}
