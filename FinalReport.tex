@@ -5,6 +5,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
+%% AW ADDED:
+\usepackage{soul} % good for highlighting and underlining text
+
 %% Sets page size and margins
 \usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
@@ -241,13 +244,67 @@ For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as befo
 \section{Future Work}
 
 \section{Notes from Monday Meeting}
-Let $A$ be an $n \times n$ matrix. entries in $\mathbb{C}$.
-$$\sigma(A) := \{\lambda \in \mathbb{C} : A - \lambda I \text{ is not invertible}\}$$
-is called the spectrum of $A$. If $A$ is Hermitian, i.e. $A = \{a_{ij}\}_{1 \leq i \leq n, \; 1 \leq j \leq n}$ with $\overline{a}_{ji} = a_{ij}$ for each $1 \leq i \leq n, \; 1 \leq j \leq n$.\\
+
+\subsection{Fundamentals: commuting Hermitian matrices can be simultaneously diagonalized} Let $A$ denote any $n \times n$ matrix with entries in $\mathbb{C}$. The set:
+\begin{equation}
+	\sigma(A) := \{\lambda \in \mathbb{C} : A - \lambda I \text{ is not invertible}\}
+\end{equation}
+is called the \ul{spectrum} of $A$. For matrices, this is equal to the set of \ul{eigenvalues} of $A$:
+\begin{equation}
+	\{ \lambda \in \mathbb{C} : A v = \lambda v \text{ for some $v \in \mathbb{C}^n, v \neq 0$}\}.
+\end{equation}
+
+When $A$ is \ul{Hermitian}, i.e. $A^* = A$ where $A^*$ denotes the conjugate transpose of $A$, we can say more. In particular, if $A$ is Hermitian then there always exists a basis of $\mathbb{C}^n$ consisting of eigenvectors of $A$. Equivalently, there always exists an $n \times n$ matrix $U$ which is \ul{unitary}, i.e. $U^* = U^{-1}$, such that
+\begin{equation} \label{eq:conj_diag}
+	U^{-1} A U = D
+\end{equation}
+where $D$ is diagonal. The columns of the matrix $U$ appearing in \eqref{eq:conj_diag} are precisely the basis of eigenvectors of $A$ and the entries of $D$ their associated eigenvalues.
+
+Now suppose we are given a set of $m$ Hermitian matrices $\{ A_i \}_{1 \leq i \leq m}$ which \ul{pair-wise commute}:
+\begin{equation}
+	[A_i,A_j] = 0 \text{ for each } 1 \leq i \leq m, \; 1 \leq j \leq m,
+\end{equation}
+where the \ul{commutator} of two $n \times n$ matrices $A$ and $B$ is defined as:
+\begin{equation}
+	[ A, B ] := A B - B A.
+\end{equation}
+Then it can be shown that there exists a basis of \ul{simultaneous eigenvectors} of all of the $A_i$, i.e. a basis such that every element $v$ of the basis satisfies:
+\begin{equation}
+	A_i v = \lambda_i v \text{ for each } 1 \leq i \leq m
+\end{equation}
+for some set $\{\lambda_i\}_{1 \leq i \leq m} \in \mathbb{C}^m$ depending on $v$. Equivalently, there always exists a unitary $n \times n$ matrix $U$ such that:
+\begin{equation}
+	U^{-1} A_i U = D_i \text{ for each } 1 \leq i \leq m
+\end{equation}
+for some set $\{ D_i \}_{1 \leq i \leq m}$ of diagonal matrices.
+
+We close this section by introducing some notation and an identity. The \ul{matrix norm} of a diagonalizable matrix $A$ is defined as:
+\begin{equation}
+	\| A \| := \text{$|\lambda|$, where $\lambda$ is the eigenvalue of $A$ with largest norm.}
+\end{equation}
+Suppose $A$ is invertible, i.e. has no eigenvalues equal to $0$. Then the eigenvalues of $A^{-1}$ are simply the inverses of each eigenvalue of $A$:
+\begin{equation}
+	\text{$\lambda$ is an eigenvalue of $A$ } \iff \text{$\lambda^{-1}$ is an eigenvalue of $A^{-1}$}.
+\end{equation}
+It then follows immediately that for invertible matrices $A$:
+\begin{equation}
+	\| A^{-1} \| = \| A \|^{-1}.
+\end{equation}
+
+\subsection{Almost commuting matrices and approximate eigenvectors}
+
+We have seen that a set of commuting Hermitian matrices can be simultaneously diagonalized: there exists a basis of $\mathbb{C}^n$ such that each element of the basis is an eigenvector of every matrix in the set. Suppose we are given a set of matrices $\{ A_i \}_{1 \leq i \leq m}$ which \ul{almost commute}, i.e.:
+\begin{equation}
+	[A_i,A_j] \leq \delta \text{ for each } 1 \leq i \leq m, 1 \leq j \leq m	
+\end{equation}
+where $\delta > 0$ is \aw{to be continued...}
+
+
+If $A$ is Hermitian, i.e. $A = \{a_{ij}\}_{1 \leq i \leq n, \; 1 \leq j \leq n}$ with $\overline{a}_{ji} = a_{ij}$ for each $1 \leq i \leq n, \; 1 \leq j \leq n$.\\
 Then: $\sigma(A) \in \mathbb{R}$, and there exists a basis of $\mathbb{C}^n$ of eigenvectors of $A$, i.e. there exists $Q$ unitary such that $\overline{Q}^TAQ$ is diagonal.\\
 The $\epsilon$-pseudo spectrum of an $n\times n$ matrix $A$ is:
 $$\sigma_\epsilon (A) := \{\lambda \in \mathbb{C} : ||(A - \lambda I)^{-1}|| \geq \epsilon\}$$
-where $||B||$ denotes the operator norm, which for Hermitian matrices is the norm of the largest eigenvalue on $B$. We define $||(A - \lambda I)^{-1}|| = \infty$, when $A - \lambda I$ is not invertible.\\
+where $||B||$ denotes the operator norm, which for Hermitian matrices is the norm of the largest eigenvalue on $B$. We define $||(A - \lambda I)^{-1}|| = \infty$, when $A - \lambda I$ is not invertible.	\\
 E.g. $A = \begin{pmatrix}2&0\\0&-1\end{pmatrix}, \lambda = 1.9$ is in $\sigma_\epsilon(A)$ if $\epsilon \geq .1$.\\
 Joint spectrum:\\
 Let $\{A_i\}_{1 \leq i \leq m}$ denote Hermitian matrices which pairwise commute:
@@ -255,7 +312,8 @@ $$[A_i,A_j] = A_iA_j - A_jA_i = 0 \text{ for each } 1 \leq i \leq m, \; 1 \leq j
 Then, there exists a unitary $Q$ such that $\overline{Q}^TA_iQ$ is diagonal for all $1 \leq i \leq m$. The joint spectrum of $\{A_i\}_{1 \leq i \leq m}$ is the set:
 $$\sigma_{\text{joint}}(A_1,...,A_m) := \{(\lambda_1,...,\lambda_n) \in \mathbb(C)^m : A_i - \lambda_i I \text{ is not invertible for all } 1 \leq i \leq m\}.$$
 Joint $\epsilon$-pseudospectrum of $\{A_i\}$ is the set:
-$$\sigma_{\epsilon,\text{joint}} (A_1,...,A_m) := \{(\lambda_1,...,\lambda_n) \in \mathbb(C)^m : ||(A_i - \lambda_i I)^{-1}|| \geq \epsilon^{-1} \text{ for all } 1 \leq i \leq m\}.$$
+$$\sigma_{\epsilon,\text{joint}} (A_1,...,A_m) := \{(\lambda_1,...,\lambda_n) \in \mathbb(C)^m : ||(A_i - \lambda_i I)^{-1}|| \geq \epsilon^{-1} \text{ for all } 1 \leq i \leq m\},$$
+where we again define $\| (A - \lambda I)^{-1} \| = \infty$ whenever $A - \lambda I$ is not invertible. 
 A natural question: (1) suppose $\{A_i\}$ are Hermitian matrices which almost commute:
 $$||[A_i, A_j]|| \leq \delta \text{ for all } 1 \leq i \leq m,\; 1 \leq j \leq m$$
 Do there exist $\{\widetilde{A}_i\}_{1 \leq i \le1 m}$ which commute such that $||A_i - \widetilde{A}_i||$ is small, i.e. such that $||A_i - \widetilde{A}_i|| \rightarrow 0$ as $\delta \rightarrow 0$?\\
