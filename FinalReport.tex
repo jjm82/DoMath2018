@@ -362,7 +362,7 @@ Since the left-hand side is a sum of positive numbers we conclude that:
 \end{equation}
 where $\hat{v} \neq 0$, i.e. that $\hat{v}$ is an $\epsilon$-approximate simultaneous eigenvector of the $A_i$s with associated eigenvalues $\lambda_i$ with $\epsilon(\delta) = \sqrt{3} \delta^{\frac{1}{2}}$. Note that it clearly holds that $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$.
 
-\subsection{The Clifford index: a guide to the location of Clifford spectrum}
+\subsection{The Clifford index: a guide to the location of Clifford spectrum} \label{sec:clif_ind}
 
 We can associate an index to any position in parameter space $(\lambda_1,\lambda_2,\lambda_3) \in \mathbb{R}^3$ not in the Clifford spectrum (i.e. where $B(A_1 - \lambda_1,...)$ does not have a zero eigenvalue) as follows. We define the \ul{Clifford index} of such a point to be:
 \begin{equation} \label{eq:index}
@@ -374,7 +374,9 @@ The Clifford index can be used to detect the approximate locations of zero eigen
 \begin{equation}
 	\left(\lambda_1(t),...\right) := \left(t \lambda_1 + (1 - t) \lambda_1',...\right) \quad t \in [0,1].
 \end{equation}
-Since the path is assumed continuous, the eigenvalues of $B(A_1 - \lambda_1,...)$ must vary continuously along the path, and hence the index \eqref{eq:index} must also vary continuously wherever it is defined along the path. Since any function equal to an integer which is continuous must actually be constant, we conclude that \emph{there must be a point along the path where the index is not well-defined}, i.e. there must be a point along the path which is in the Clifford spectrum (where the matrix $B(A_1 - \lambda_1,...)$ has a zero eigenvalue). The values of the index \eqref{eq:index} as $\lambda_1, \lambda_2, \lambda_3$ is varied can therefore be a guide to the location of points in the Clifford spectrum which, as we have seen in the previous section, correspond to ``eigenvalues'' of $\epsilon$-approximate simultaneous eigenvectors of the matrices $\{ A_i \}_{1 \leq i \leq 3}$ (in the sense of \eqref{eq:app_evec}) where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$.
+Since the path is assumed continuous, the eigenvalues of $B(A_1 - \lambda_1,...)$ must vary continuously along the path, and hence the index \eqref{eq:index} must also vary continuously wherever it is defined along the path. Since any function equal to an integer which is continuous must actually be constant, we can conclude immediately that \emph{there must be a point along the path where the index is not well-defined}, i.e. there must be a point along the path which is in the Clifford spectrum (where the matrix $B(A_1 - \lambda_1,...)$ has a zero eigenvalue). In fact, we can make the stronger statement that at some point it must be that an eigenvalue actually transitions along the path from being a positive to a negative eigenvalue (or vice versa). If this were not the case then the index \eqref{eq:index} would not change between the ends of the path. 
+
+The values of the index \eqref{eq:index} as $\lambda_1, \lambda_2, \lambda_3$ is varied can therefore be a guide to the location of points in the Clifford spectrum which, as we have seen in the previous section, correspond to ``eigenvalues'' of $\epsilon$-approximate simultaneous eigenvectors of the matrices $\{ A_i \}_{1 \leq i \leq 3}$ (in the sense of \eqref{eq:app_evec}) where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$.
 
 \subsection{The Clifford pseudo-spectrum: a more easily computable alternative to the Clifford spectrum}
 
@@ -388,7 +390,7 @@ where $\mu > 0$ is assumed small, with its precise value to be chosen depending 
 \end{equation}
 which clearly $\rightarrow 0$ as $\mu \rightarrow 0$ and $\delta \rightarrow 0$. 
 
-We note finally that to ensure that the Clifford index is truly well defined whenever we numerically compute it we should assign a Clifford index only to points not in the $\mu$-Clifford pseudo-spectrum for $\mu > 0$.
+We note finally that to ensure that the Clifford index is truly well defined whenever we numerically compute it we should assign a Clifford index only to points not in the $\mu$-Clifford \emph{pseudo}-spectrum for $\mu > 0$. Note that this doesn't change the conclusion of the argument given at the end of Section \ref{sec:clif_ind}. If the Clifford index differs at the ends of a continuous path in parameter space, at least one point along the path must lie in the Clifford \emph{spectrum}, since for the index to change it must be that an eigenvalue transitions from being positive to negative (or vice versa). Since the eigenvalues of $B(A_1 - \lambda_1,...)$ must vary continuously as a function of the parameters $\lambda_i$, we conclude that there must be a point along the path where $B$ has an eigenvalue which is precisely zero.
 
 %We first note that the existence of such a basis follows if we can find a set of Hermitian matrices $\{\tilde{A}_i\}_{1 \leq i \leq m}$ which pairwise commute and are $\epsilon$-close (in the sense of the operator norm) to the set $\{ A_i \}_{1 \leq i \leq m}$:
 %\begin{equation} \label{eq:close}
