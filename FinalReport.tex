@@ -7,6 +7,7 @@
 
 %% AW ADDED:
 \usepackage{soul} % good for highlighting and underlining text
+\usepackage[notref,notcite]{showkeys} % equation labels appear next to equations 
 
 %% Sets page size and margins
 \usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
@@ -24,6 +25,9 @@
 \usepackage[backend=bibtex,style=numeric,citestyle=numeric,maxbibnames=99]{biblatex}
 \renewbibmacro{in:}{\ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
 \bibliography{DoMath_bibliography.bib}
+
+% AW added
+\newcommand{\ip}[2]{\ensuremath{ \left< \left. #1 \right| #2 \right> } } % nice command to make an inner product
 
 \newcommand{\aw}[1]{{\color{blue} [AW: #1]}}
 \newcommand{\jm}[1]{{\color{red} [JM: #1]}}
@@ -245,80 +249,199 @@ For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as befo
 
 \section{Notes from Monday Meeting}
 
-\subsection{Fundamentals: commuting Hermitian matrices can be simultaneously diagonalized} Let $A$ denote any $n \times n$ matrix with entries in $\mathbb{C}$. The set:
-\begin{equation}
-	\sigma(A) := \{\lambda \in \mathbb{C} : A - \lambda I \text{ is not invertible}\}
-\end{equation}
-is called the \ul{spectrum} of $A$. For matrices, this is equal to the set of \ul{eigenvalues} of $A$:
+\subsection{Fundamentals: commuting Hermitian matrices can be simultaneously diagonalized} 
+
+Let $A$ denote any $n \times n$ \ul{Hermitian} matrix, i.e. $A^* = A$ where $A^*$ denotes the conjugate transpose of $A$. The set of \ul{eigenvalues} of $A$ is the set:
 \begin{equation}
 	\{ \lambda \in \mathbb{C} : A v = \lambda v \text{ for some $v \in \mathbb{C}^n, v \neq 0$}\}.
 \end{equation}
+%The set of eigenvalues is equal to the \ul{spectrum} of $A$, defined by: 
+%\begin{equation}
+	%\sigma(A) := \{\lambda \in \mathbb{C} : A - \lambda I \text{ is not invertible}\}.
+%\end{equation}
+It can be easily shown that all of the eigenvalues of $A$ are real. 
 
-When $A$ is \ul{Hermitian}, i.e. $A^* = A$ where $A^*$ denotes the conjugate transpose of $A$, we can say more. In particular, if $A$ is Hermitian then there always exists a basis of $\mathbb{C}^n$ consisting of eigenvectors of $A$. Equivalently, there always exists an $n \times n$ matrix $U$ which is \ul{unitary}, i.e. $U^* = U^{-1}$, such that
+NB. We assume throughout this section that all eigenvectors and basis vectors $v$ are normalized: $|v| = 1$, where $|v|$ denotes the usual Euclidean norm in $\mathbb{C}^n$. 
+
+It is well-known that there always exists an orthonormal basis of $\mathbb{C}^n$ consisting of eigenvectors of $A$. Equivalently, there always exists an $n \times n$ matrix $U$ which is \ul{unitary}, i.e. $U^* = U^{-1}$, which \ul{diagonalizes} $A$ in the sense that:
 \begin{equation} \label{eq:conj_diag}
 	U^{-1} A U = D
 \end{equation}
-where $D$ is diagonal. The columns of the matrix $U$ appearing in \eqref{eq:conj_diag} are precisely the basis of eigenvectors of $A$ and the entries of $D$ their associated eigenvalues.
+where $D$ is diagonal. The columns of the matrix $U$ appearing in \eqref{eq:conj_diag} are precisely the orthonormal basis of eigenvectors of $A$ and the entries of $D$ their associated eigenvalues.
 
-Now suppose we are given a set of $m$ Hermitian matrices $\{ A_i \}_{1 \leq i \leq m}$ which \ul{pair-wise commute}:
-\begin{equation}
+Now suppose we are given a set of $m$ Hermitian matrices $\{ A_i \}_{1 \leq i \leq m}$ which \ul{pairwise commute}:
+\begin{equation} \label{eq:pw_comm}
 	[A_i,A_j] = 0 \text{ for each } 1 \leq i \leq m, \; 1 \leq j \leq m,
 \end{equation}
 where the \ul{commutator} of two $n \times n$ matrices $A$ and $B$ is defined as:
 \begin{equation}
 	[ A, B ] := A B - B A.
 \end{equation}
-Then it can be shown that there exists a basis of \ul{simultaneous eigenvectors} of all of the $A_i$, i.e. a basis such that every element $v$ of the basis satisfies:
+Then it can be shown that there exists an orthonormal basis of \ul{simultaneous eigenvectors} of all of the $A_i$, i.e. a basis such that every element $v$ of the basis satisfies:
 \begin{equation}
 	A_i v = \lambda_i v \text{ for each } 1 \leq i \leq m
 \end{equation}
-for some set $\{\lambda_i\}_{1 \leq i \leq m} \in \mathbb{C}^m$ depending on $v$. Equivalently, there always exists a unitary $n \times n$ matrix $U$ such that:
+for some set $\{\lambda_i\}_{1 \leq i \leq m} \in \mathbb{C}^m$ depending on $v$. Equivalently, there always exists a unitary $n \times n$ matrix $U$ which \ul{simultaneously diagonalizes} the set in the sense that:
 \begin{equation}
 	U^{-1} A_i U = D_i \text{ for each } 1 \leq i \leq m
 \end{equation}
-for some set $\{ D_i \}_{1 \leq i \leq m}$ of diagonal matrices.
+where $\{ D_i \}_{1 \leq i \leq m}$ is a set of diagonal matrices. Note that the columns of the matrix $U$ are now the orthonormal basis of simultaneous eigenvectors of the set of $A_i$s and the entries of each $D_i$ simply the eigenvalues of each $A_i$. 
 
-We close this section by introducing some notation and an identity. The \ul{matrix norm} of a diagonalizable matrix $A$ is defined as:
+\subsection{$\delta$-commuting Hermitian matrices and computation of $\epsilon$-approximate eigenvectors via computation of the Clifford spectrum}
+
+Suppose now that we are given a set of matrices $\{ A_i \}_{1 \leq i \leq m}$ which \emph{do not commute}, but which \ul{pairwise $\delta$-commute}, in the sense that: 
+\begin{equation} \label{eq:alm_comm}
+	\| [A_i,A_j] \| \leq \delta \text{ for each } 1 \leq i \leq m, 1 \leq j \leq m	
+\end{equation}
+where $\delta \geq 0$ is some positive number. Here $\| A \|$ denotes the \ul{operator norm} of a matrix $A$, defined as:
+\begin{equation}
+	\| A \| := \text{sup}_{v \in \mathbb{C}^n} \frac{ | A v | }{ | v | }.
+\end{equation}
+Note that it follows immediately from the definition that for any $v \in \mathbb{C}^n$:
+\begin{equation}
+	| A v | \leq \| A \| | v |.
+\end{equation}
+We remark that whenever $A$ is diagonalizable, the operator norm can alternately be defined in terms of the spectrum of $A$: 
 \begin{equation}
 	\| A \| := \text{$|\lambda|$, where $\lambda$ is the eigenvalue of $A$ with largest norm.}
 \end{equation}
-Suppose $A$ is invertible, i.e. has no eigenvalues equal to $0$. Then the eigenvalues of $A^{-1}$ are simply the inverses of each eigenvalue of $A$:
-\begin{equation}
-	\text{$\lambda$ is an eigenvalue of $A$ } \iff \text{$\lambda^{-1}$ is an eigenvalue of $A^{-1}$}.
+
+Note that when $\delta = 0$ in \eqref{eq:alm_comm} we recover the definition of pairwise commuting matrices \eqref{eq:pw_comm} as a special case. When $\delta \neq 0$, there is no hope of finding a basis of simultaneous eigenvectors of all of the $A_i$. We ask instead if we can find \ul{$\epsilon$-approximate simultaneous eigenvectors} of the set $\{A_i\}_{1 \leq i \leq m}$ in the sense that: 
+\begin{equation} \label{eq:app_evec}
+	| A_i v - \lambda_i v | \leq \epsilon(\delta) \text{ for each } 1 \leq i \leq m
 \end{equation}
-It then follows immediately that for invertible matrices $A$:
+where $v \neq 0$ for some set $\{\lambda_i\}_{1 \leq i \leq m} \in \mathbb{C}^m$ depending on $v$, where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$. 
+
+We focus on the case $m = 3$ since this is the case which will be relevant for the physical application we have in mind. Following Loring \cite{need ref}, we consider the family of matrices: 
 \begin{equation}
-	\| A^{-1} \| = \| A \|^{-1}.
+	B(A_1 - \lambda_1,A_2 - \lambda_2,A_3 - \lambda_3) := \begin{pmatrix} (A_1 - \lambda_1) & (A_2 - \lambda_2) - i (A_3 - \lambda_3) \\ (A_2 - \lambda_2) + i (A_3 - \lambda_3) & - (A_1 - \lambda_1) \end{pmatrix},
 \end{equation}
+parameterized by real numbers $\lambda_1, \lambda_2, \lambda_3$. We claim that \emph{whenever $B(A_1-\lambda_1,...)$ has a zero eigenvalue}, we can find an $\epsilon$-approximate simultaneous eigenvector of the matrices $A_i$ with associated eigenvalues $\lambda_i$ such that $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$. We refer to the set of $(\lambda_1,\lambda_2,\lambda_3) \in \mathbb{R}^3$ such that $B(A_1 - \lambda_1,...)$ has a zero eigenvalue as the \ul{Clifford spectrum} of the matrices $\{ A_i \}_{1 \leq i \leq 3}$.
 
-\subsection{Almost commuting matrices and approximate eigenvectors}
-
-We have seen that a set of commuting Hermitian matrices can be simultaneously diagonalized: there exists a basis of $\mathbb{C}^n$ such that each element of the basis is an eigenvector of every matrix in the set. Suppose we are given a set of matrices $\{ A_i \}_{1 \leq i \leq m}$ which \ul{almost commute}, i.e.:
+Suppose that for some value of $\lambda_1, \lambda_2$, and $\lambda_3$ such a zero eigenvalue exists: 
 \begin{equation}
-	[A_i,A_j] \leq \delta \text{ for each } 1 \leq i \leq m, 1 \leq j \leq m	
+	B(A_1 - \lambda_1,...) \begin{pmatrix} v \\ w \end{pmatrix} = 0,
 \end{equation}
-where $\delta > 0$ is \aw{to be continued...}
+for some $v$, $w \in \mathbb{C}^n$ where at least one of $v$ and $w$ is $\neq 0$. We first apply the matrix $B(A_1 - \lambda_1,...)$ again to both sides of this equation to see that: 
+\begin{equation} \label{eq:B_sq_eq}
+	B(A_1 - \lambda_1,...)^2 \begin{pmatrix} v \\ w \end{pmatrix} = 0.
+\end{equation}
+Because of the special form of $B(A_1 - \lambda_1,...)$, the matrix $B(A_1 - \lambda_1,...)^2$ has the form:
+\begin{equation}
+	\begin{pmatrix} (A_1 - \lambda_1)^2 + (A_2 - \lambda_2)^2 + (A_3 - \lambda_3)^2 + i [A_2,A_3] & [A_1,A_2] + i [A_1,A_3] \\ - [A_1,A_2] + i [A_3,A_1] & (A_1 - \lambda_1)^2 + (A_2 - \lambda_2)^2 + (A_3 - \lambda_3)^2 - i [A_2,A_3] \end{pmatrix}.
+\end{equation}
+We at this point assume (without loss of generality since the case where $|w| \geq |v|$ is similar) that $|v| \geq |w|$. Observe that the first entry of the vector identity \eqref{eq:B_sq_eq} can be written: 
+\begin{equation}
+	\left( (A_1 - \lambda_1)^2 + (A_2 - \lambda_2)^2 + (A_3 - \lambda_3)^2 \right) v = - i [A_2,A_3] v - \left( [A_1,A_2] + i [A_1,A_3] \right) w.
+\end{equation}
+Dividing both sides of this equation by $|v|$ yields:
+\begin{equation}
+	\left( (A_1 - \lambda_1)^2 + (A_2 - \lambda_2)^2 + (A_3 - \lambda_3)^2 \right) \hat{v} = - i [A_2,A_3] \hat{v} - \left( [A_1,A_2] + i [A_1,A_3] \right) \frac{w}{|v|},
+\end{equation}
+where $\hat{v} := \frac{v}{|v|}$. Taking the inner product of both sides of this equation gives:
+\begin{equation}
+\begin{split}
+	&\ip{ \hat{v} }{ (A_1 - \lambda_1)^2 \hat{v} } + \ip{ \hat{v} }{ (A_2 - \lambda_2)^2 \hat{v} } + \ip{\hat{v}}{ (A_3 - \lambda_3)^2 \hat{v} } \\
+	&= - i \ip{\hat{v}}{ [A_2,A_3] \hat{v}} - \ip{\hat{v}}{ [A_1,A_2] \frac{w}{|v|} } - i \ip{\hat{v}}{ [A_1,A_3] \frac{w}{|v|} }.
+\end{split}
+\end{equation}
+Using the facts that: (1) $A_1 - \lambda_1$ is Hermitian (2) $\ip{v}{v} = |v|^2$ for any vector $v \in \mathbb{C}^n$ we find that:
+\begin{equation}
+\begin{split}
+	&|(A_1 - \lambda_1) \hat{v}|^2 + |(A_2 - \lambda_2) \hat{v}|^2 + |(A_3 - \lambda_3) \hat{v}|^2 	\\
+	&= - i \ip{\hat{v}}{ [A_2,A_3] \hat{v}} - \ip{\hat{v}}{ [A_1,A_2] \frac{w}{|v|} } - i \ip{\hat{v}}{ [A_1,A_3] \frac{w}{|v|} }.
+\end{split}
+\end{equation}
+We now bound the right-hand side using the Cauchy-Schwarz inequality $\ip{v}{w} \leq |v| |w|$ for any $v, w \in \mathbb{C}^n$ and the bound \eqref{eq:alm_comm} on the operator norm of the commutators:
+\begin{equation}
+	\left| (A_1 - \lambda_1) \hat{v} \right|^2 + \left| (A_2 - \lambda_2) \hat{v} \right|^2 + \left| (A_3 - \lambda_3) \hat{v} \right|^2 \leq \| [A_2,A_3] \| + \| [A_1,A_2] \| + \| [A_1,A_3] \| \leq 3 \delta.
+\end{equation}
+Since the left-hand side is a sum of positive numbers we conclude that: 
+\begin{equation}
+	\left| A_i \hat{v} - \lambda_i \hat{v} \right| \leq \sqrt{3} \delta^{\frac{1}{2}} \text{ for each $1 \leq i \leq m$},
+\end{equation}
+where $\hat{v} \neq 0$, i.e. that $\hat{v}$ is an $\epsilon$-approximate simultaneous eigenvector of the $A_i$s with associated eigenvalues $\lambda_i$ with $\epsilon(\delta) = \sqrt{3} \delta^{\frac{1}{2}}$. Note that it clearly holds that $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$.
+
+\subsection{The Clifford index: a guide to the location of Clifford spectrum}
+
+We can associate an index to any position in parameter space $(\lambda_1,\lambda_2,\lambda_3) \in \mathbb{R}^3$ not in the Clifford spectrum (i.e. where $B(A_1 - \lambda_1,...)$ does not have a zero eigenvalue) as follows. We define the \ul{Clifford index} of such a point to be:
+\begin{equation} \label{eq:index}
+	\text{ind}(\lambda_1,\lambda_2,\lambda_3) := \frac{1}{2} \left( \left\{ \text{number of $+$ve eigenvalues of $B$} \right\} - \left\{ \text{number of $-$ve eigenvalues of $B$} \right\} \right).
+\end{equation}
+Note that whenever the index is well-defined it must be equal to an integer.
+
+The Clifford index can be used to detect the approximate locations of zero eigenvalues of $B(A_1 - \lambda_1,...)$ as follows. We first note that the eigenvalues of a Hermitian matrix which depends on parameters vary continuously as the parameters are varied \cite{need ref}. Now suppose that we can identify two locations in parameter space $(\lambda_1,\lambda_2,\lambda_3) \in \mathbb{R}^3$ and $(\lambda_1',\lambda_2',\lambda_3') \in \mathbb{R}^3$ such that $\text{ind}(\lambda_1,...) = 1$ but $\text{ind}(\lambda_1',...) = 0$, and consider any continuous path in parameter space which starts at $(\lambda_1,\lambda_2,\lambda_3)$ and ends at $(\lambda_1',\lambda_2',\lambda_3')$. For example, we can take the straight line path:
+\begin{equation}
+	\left(\lambda_1(t),...\right) := \left(t \lambda_1 + (1 - t) \lambda_1',...\right) \quad t \in [0,1].
+\end{equation}
+Since the path is assumed continuous, the eigenvalues of $B(A_1 - \lambda_1,...)$ must vary continuously along the path, and hence the index \eqref{eq:index} must also vary continuously wherever it is defined along the path. Since any function equal to an integer which is continuous must actually be constant, we conclude that \emph{there must be a point along the path where the index is not well-defined}, i.e. there must be a point along the path which is in the Clifford spectrum (where the matrix $B(A_1 - \lambda_1,...)$ has a zero eigenvalue). The values of the index \eqref{eq:index} as $\lambda_1, \lambda_2, \lambda_3$ is varied can therefore be a guide to the location of points in the Clifford spectrum which, as we have seen in the previous section, correspond to ``eigenvalues'' of $\epsilon$-approximate simultaneous eigenvectors of the matrices $\{ A_i \}_{1 \leq i \leq 3}$ where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$.
 
 
-If $A$ is Hermitian, i.e. $A = \{a_{ij}\}_{1 \leq i \leq n, \; 1 \leq j \leq n}$ with $\overline{a}_{ji} = a_{ij}$ for each $1 \leq i \leq n, \; 1 \leq j \leq n$.\\
-Then: $\sigma(A) \in \mathbb{R}$, and there exists a basis of $\mathbb{C}^n$ of eigenvectors of $A$, i.e. there exists $Q$ unitary such that $\overline{Q}^TAQ$ is diagonal.\\
-The $\epsilon$-pseudo spectrum of an $n\times n$ matrix $A$ is:
-$$\sigma_\epsilon (A) := \{\lambda \in \mathbb{C} : ||(A - \lambda I)^{-1}|| \geq \epsilon\}$$
-where $||B||$ denotes the operator norm, which for Hermitian matrices is the norm of the largest eigenvalue on $B$. We define $||(A - \lambda I)^{-1}|| = \infty$, when $A - \lambda I$ is not invertible.	\\
-E.g. $A = \begin{pmatrix}2&0\\0&-1\end{pmatrix}, \lambda = 1.9$ is in $\sigma_\epsilon(A)$ if $\epsilon \geq .1$.\\
-Joint spectrum:\\
-Let $\{A_i\}_{1 \leq i \leq m}$ denote Hermitian matrices which pairwise commute:
-$$[A_i,A_j] = A_iA_j - A_jA_i = 0 \text{ for each } 1 \leq i \leq m, \; 1 \leq j \leq m$$
-Then, there exists a unitary $Q$ such that $\overline{Q}^TA_iQ$ is diagonal for all $1 \leq i \leq m$. The joint spectrum of $\{A_i\}_{1 \leq i \leq m}$ is the set:
-$$\sigma_{\text{joint}}(A_1,...,A_m) := \{(\lambda_1,...,\lambda_n) \in \mathbb(C)^m : A_i - \lambda_i I \text{ is not invertible for all } 1 \leq i \leq m\}.$$
-Joint $\epsilon$-pseudospectrum of $\{A_i\}$ is the set:
-$$\sigma_{\epsilon,\text{joint}} (A_1,...,A_m) := \{(\lambda_1,...,\lambda_n) \in \mathbb(C)^m : ||(A_i - \lambda_i I)^{-1}|| \geq \epsilon^{-1} \text{ for all } 1 \leq i \leq m\},$$
-where we again define $\| (A - \lambda I)^{-1} \| = \infty$ whenever $A - \lambda I$ is not invertible. 
-A natural question: (1) suppose $\{A_i\}$ are Hermitian matrices which almost commute:
-$$||[A_i, A_j]|| \leq \delta \text{ for all } 1 \leq i \leq m,\; 1 \leq j \leq m$$
-Do there exist $\{\widetilde{A}_i\}_{1 \leq i \le1 m}$ which commute such that $||A_i - \widetilde{A}_i||$ is small, i.e. such that $||A_i - \widetilde{A}_i|| \rightarrow 0$ as $\delta \rightarrow 0$?\\
-Another natural question: (2) can we find approximate simultaneous eigenvectors of $\{A_i\}$? Call $v$ an approximate simultaneous eigenvector if
-$$||(A_i - \lambda_i I)v|| \text{ is small for all } 1 \leq i \leq m \text{ for some } (\lambda_1,...,\lambda_n) \in \mathbb(C)^m$$
+%We first note that the existence of such a basis follows if we can find a set of Hermitian matrices $\{\tilde{A}_i\}_{1 \leq i \leq m}$ which pairwise commute and are $\epsilon$-close (in the sense of the operator norm) to the set $\{ A_i \}_{1 \leq i \leq m}$:
+%\begin{equation} \label{eq:close}
+	%\| A_i - \tilde{A}_i \| \leq \epsilon(\delta) \text{ for each $1 \leq i \leq m$.}
+%\end{equation}
+%To see this, suppose such a set $\{ \tilde{A}_i \}_{1 \leq i \leq m}$ exists. Then there exists a basis of simultaneous eigenvectors of every matrix in this set. Let $v$ be an element of this basis, and let $\lambda_i$ denote its associated eigenvalue as an eigenvector of $\tilde{A}_i$. Then it is trivial to see that: 
+%\begin{equation}
+	%| A_i v - \lambda_i v | = | A_i v - \tilde{A}_i v + \tilde{A}_i v - \lambda_i v | = | A_i v - \tilde{A}_i v |
+%\end{equation}
+%since $v$ is by definition an eigenvector of $\tilde{A}_i$ with eigenvalue $\lambda_i$. \eqref{eq:app_evec} now follows from \eqref{eq:close} as follows:
+%\begin{equation}
+	%| A_i v - \tilde{A}_i v | = | (A_i - \tilde{A}_i) v | \leq \| A_i - \tilde{A}_i \| |v| = \epsilon(\delta) | v | = \epsilon(\delta)
+%\end{equation}
+%where the last equality follows since $|v|$ is assumed normalized. Thus we see that the existence of a set of commuting Hermitian matrices $\epsilon$-close to a set of $\delta$-commuting Hermitian matrices implies the existence of a basis of $\epsilon$-approximate eigenvectors of the set of $\delta$-commuting Hermitian matrices.
+
+%It was shown by Lin \cite{need ref} that \emph{any} two $\delta$-commuting Hermitian matrices are $\epsilon$-close to a pair of exactly commuting Hermitian matrices, where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$. This result was then strengthened by Hastings \cite{need ref} who showed that:
+%\begin{equation}
+	%\epsilon(\delta) = \mu\left(\frac{1}{\delta}\right) \delta^{\frac{1}{5}}
+%\end{equation}
+%where $\mu(\zeta)$ is a function which grows slower than any power of $\zeta$. Intuitively, $\epsilon \rightarrow 0$ as $\delta \rightarrow 0$ slightly slower than $\delta^{\frac{1}{5}}$.
+
+%For \emph{three or more} $\delta$-commuting Hermitian matrices, the result is \emph{false} in general. Specifically, there exist continuous families of matrices $\{ A_i(\delta) \}_{1 \leq i \leq 3}$ which $\delta$-commute for any $\delta > 0$ which are bounded away from any commuting family of matrices $\{ \tilde{A}_i \}_{1 \leq i \leq 3}$, \emph{uniformly in $\delta$}.
+
+%We close this section by introducing some notation and an identity. The \ul{operator norm} of a matrix $A$ is defined as:
+%\begin{equation}
+	%\| A \| := \text{sup}_{v \in \mathbb{C}^n} \frac{ | A v | }{ | v | }.
+%\end{equation}
+%Note that it follows immediately from the definition that for any $v \in \mathbb{C}^n$:
+%\begin{equation}
+	%| A v | \leq \| A \| | v |.
+%\end{equation}
+%When $A$ is diagonalizable, the operator norm can alternately be defined in terms of the spectrum of $A$: 
+%\begin{equation}
+	%\| A \| := \text{$|\lambda|$, where $\lambda$ is the eigenvalue of $A$ with largest norm.}
+%\end{equation}
+%If $A$ is additionally invertible, i.e. has no eigenvalues equal to $0$, then the eigenvalues of $A^{-1}$ are simply the inverses of each eigenvalue of $A$:
+%\begin{equation}
+	%\text{$\lambda$ is an eigenvalue of $A$ } \iff \text{$\lambda^{-1}$ is an eigenvalue of $A^{-1}$}.
+%\end{equation}
+%It then follows immediately that for invertible matrices $A$:
+%\begin{equation}
+	%\| A^{-1} \| = \| A \|^{-1}.
+%\end{equation}
+
+
+%In particular, this is known to always hold when $m = 2$, with 
+
+%If $A$ is Hermitian, i.e. $A = \{a_{ij}\}_{1 \leq i \leq n, \; 1 \leq j \leq n}$ with $\overline{a}_{ji} = a_{ij}$ for each $1 \leq i \leq n, \; 1 \leq j \leq n$.\\
+%Then: $\sigma(A) \in \mathbb{R}$, and there exists a basis of $\mathbb{C}^n$ of eigenvectors of $A$, i.e. there exists $Q$ unitary such that $\overline{Q}^TAQ$ is diagonal.\\
+%The $\epsilon$-pseudo spectrum of an $n\times n$ matrix $A$ is:
+%$$\sigma_\epsilon (A) := \{\lambda \in \mathbb{C} : ||(A - \lambda I)^{-1}|| \geq \epsilon\}$$
+%where $||B||$ denotes the operator norm, which for Hermitian matrices is the norm of the largest eigenvalue on $B$. We define $||(A - \lambda I)^{-1}|| = \infty$, when $A - \lambda I$ is not invertible.	\\
+%E.g. $A = \begin{pmatrix}2&0\\0&-1\end{pmatrix}, \lambda = 1.9$ is in $\sigma_\epsilon(A)$ if $\epsilon \geq .1$.\\
+%Joint spectrum:\\
+%Let $\{A_i\}_{1 \leq i \leq m}$ denote Hermitian matrices which pairwise commute:
+%$$[A_i,A_j] = A_iA_j - A_jA_i = 0 \text{ for each } 1 \leq i \leq m, \; 1 \leq j \leq m$$
+%Then, there exists a unitary $Q$ such that $\overline{Q}^TA_iQ$ is diagonal for all $1 \leq i \leq m$. The joint spectrum of $\{A_i\}_{1 \leq i \leq m}$ is the set:
+%$$\sigma_{\text{joint}}(A_1,...,A_m) := \{(\lambda_1,...,\lambda_n) \in \mathbb(C)^m : A_i - \lambda_i I \text{ is not invertible for all } 1 \leq i \leq m\}.$$
+%Joint $\epsilon$-pseudospectrum of $\{A_i\}$ is the set:
+%$$\sigma_{\epsilon,\text{joint}} (A_1,...,A_m) := \{(\lambda_1,...,\lambda_n) \in \mathbb(C)^m : ||(A_i - \lambda_i I)^{-1}|| \geq \epsilon^{-1} \text{ for all } 1 \leq i \leq m\},$$
+%where we again define $\| (A - \lambda I)^{-1} \| = \infty$ whenever $A - \lambda I$ is not invertible. 
+%A natural question: (1) suppose $\{A_i\}$ are Hermitian matrices which almost commute:
+%$$||[A_i, A_j]|| \leq \delta \text{ for all } 1 \leq i \leq m,\; 1 \leq j \leq m$$
+%Do there exist $\{\widetilde{A}_i\}_{1 \leq i \le1 m}$ which commute such that $||A_i - \widetilde{A}_i||$ is small, i.e. such that $||A_i - \widetilde{A}_i|| \rightarrow 0$ as $\delta \rightarrow 0$?\\
+%Another natural question: (2) can we find approximate simultaneous eigenvectors of $\{A_i\}$? Call $v$ an approximate simultaneous eigenvector if
+%$$||(A_i - \lambda_i I)v|| \text{ is small for all } 1 \leq i \leq m \text{ for some } (\lambda_1,...,\lambda_n) \in \mathbb(C)^m$$
 
 \printbibliography
 
