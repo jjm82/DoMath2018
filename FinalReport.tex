@@ -287,7 +287,7 @@ for some set $\{\lambda_i\}_{1 \leq i \leq m} \in \mathbb{C}^m$ depending on $v$
 \end{equation}
 where $\{ D_i \}_{1 \leq i \leq m}$ is a set of diagonal matrices. Note that the columns of the matrix $U$ are now the orthonormal basis of simultaneous eigenvectors of the set of $A_i$s and the entries of each $D_i$ simply the eigenvalues of each $A_i$. 
 
-\subsection{$\delta$-commuting Hermitian matrices and computation of $\epsilon$-approximate eigenvectors via computation of the Clifford spectrum}
+\subsection{$\delta$-commuting Hermitian matrices and computation of $\epsilon$-approximate eigenvectors via computation of the Clifford spectrum} \label{sec:spec_app}
 
 Suppose now that we are given a set of matrices $\{ A_i \}_{1 \leq i \leq m}$ which \emph{do not commute}, but which \ul{pairwise $\delta$-commute}, in the sense that: 
 \begin{equation} \label{eq:alm_comm}
@@ -313,7 +313,7 @@ Note that when $\delta = 0$ in \eqref{eq:alm_comm} we recover the definition of 
 where $v \neq 0$ for some set $\{\lambda_i\}_{1 \leq i \leq m} \in \mathbb{C}^m$ depending on $v$, where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$. 
 
 We focus on the case $m = 3$ since this is the case which will be relevant for the physical application we have in mind. Following Loring \cite{need ref}, we consider the family of matrices: 
-\begin{equation}
+\begin{equation} \label{eq:B_matrix}
 	B(A_1 - \lambda_1,A_2 - \lambda_2,A_3 - \lambda_3) := \begin{pmatrix} (A_1 - \lambda_1) & (A_2 - \lambda_2) - i (A_3 - \lambda_3) \\ (A_2 - \lambda_2) + i (A_3 - \lambda_3) & - (A_1 - \lambda_1) \end{pmatrix},
 \end{equation}
 parameterized by real numbers $\lambda_1, \lambda_2, \lambda_3$. We claim that \emph{whenever $B(A_1-\lambda_1,...)$ has a zero eigenvalue}, we can find an $\epsilon$-approximate simultaneous eigenvector of the matrices $A_i$ with associated eigenvalues $\lambda_i$ such that $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$. We refer to the set of $(\lambda_1,\lambda_2,\lambda_3) \in \mathbb{R}^3$ such that $B(A_1 - \lambda_1,...)$ has a zero eigenvalue as the \ul{Clifford spectrum} of the matrices $\{ A_i \}_{1 \leq i \leq 3}$.
@@ -368,14 +368,27 @@ We can associate an index to any position in parameter space $(\lambda_1,\lambda
 \begin{equation} \label{eq:index}
 	\text{ind}(\lambda_1,\lambda_2,\lambda_3) := \frac{1}{2} \left( \left\{ \text{number of $+$ve eigenvalues of $B$} \right\} - \left\{ \text{number of $-$ve eigenvalues of $B$} \right\} \right).
 \end{equation}
-Note that whenever the index is well-defined it must be equal to an integer.
+Note that whenever the index is well-defined it must be equal to an integer. The difference of the number of positive eigenvalues and the number of negative eigenvalues of a matrix is known as the \ul{signature} of the matrix.
 
 The Clifford index can be used to detect the approximate locations of zero eigenvalues of $B(A_1 - \lambda_1,...)$ as follows. We first note that the eigenvalues of a Hermitian matrix which depends on parameters vary continuously as the parameters are varied \cite{need ref}. Now suppose that we can identify two locations in parameter space $(\lambda_1,\lambda_2,\lambda_3) \in \mathbb{R}^3$ and $(\lambda_1',\lambda_2',\lambda_3') \in \mathbb{R}^3$ such that $\text{ind}(\lambda_1,...) = 1$ but $\text{ind}(\lambda_1',...) = 0$, and consider any continuous path in parameter space which starts at $(\lambda_1,\lambda_2,\lambda_3)$ and ends at $(\lambda_1',\lambda_2',\lambda_3')$. For example, we can take the straight line path:
 \begin{equation}
 	\left(\lambda_1(t),...\right) := \left(t \lambda_1 + (1 - t) \lambda_1',...\right) \quad t \in [0,1].
 \end{equation}
-Since the path is assumed continuous, the eigenvalues of $B(A_1 - \lambda_1,...)$ must vary continuously along the path, and hence the index \eqref{eq:index} must also vary continuously wherever it is defined along the path. Since any function equal to an integer which is continuous must actually be constant, we conclude that \emph{there must be a point along the path where the index is not well-defined}, i.e. there must be a point along the path which is in the Clifford spectrum (where the matrix $B(A_1 - \lambda_1,...)$ has a zero eigenvalue). The values of the index \eqref{eq:index} as $\lambda_1, \lambda_2, \lambda_3$ is varied can therefore be a guide to the location of points in the Clifford spectrum which, as we have seen in the previous section, correspond to ``eigenvalues'' of $\epsilon$-approximate simultaneous eigenvectors of the matrices $\{ A_i \}_{1 \leq i \leq 3}$ where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$.
+Since the path is assumed continuous, the eigenvalues of $B(A_1 - \lambda_1,...)$ must vary continuously along the path, and hence the index \eqref{eq:index} must also vary continuously wherever it is defined along the path. Since any function equal to an integer which is continuous must actually be constant, we conclude that \emph{there must be a point along the path where the index is not well-defined}, i.e. there must be a point along the path which is in the Clifford spectrum (where the matrix $B(A_1 - \lambda_1,...)$ has a zero eigenvalue). The values of the index \eqref{eq:index} as $\lambda_1, \lambda_2, \lambda_3$ is varied can therefore be a guide to the location of points in the Clifford spectrum which, as we have seen in the previous section, correspond to ``eigenvalues'' of $\epsilon$-approximate simultaneous eigenvectors of the matrices $\{ A_i \}_{1 \leq i \leq 3}$ (in the sense of \eqref{eq:app_evec}) where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$.
 
+\subsection{The Clifford pseudo-spectrum: a more easily computable alternative to the Clifford spectrum}
+
+Recall that the Clifford spectrum is defined as the set of $(\lambda_1,\lambda_2,\lambda_3) \in \mathbb{R}^3$ such that the matrix $B(A_1 - \lambda_1,...)$ \eqref{eq:B_matrix} has a zero eigenvalue. It is common when computing eigenvalues of matrices numerically for the computed eigenvalues to deviate slightly from their true values because of round-off error which is inevitable when doing floating point arithmetic \cite{need ref}. It is therefore much better in practice to compute, instead of the Clifford spectrum, the \ul{$\mu$-Clifford pseudo-spectrum} defined by: 
+\begin{equation}
+	\{ (\lambda_1, \lambda_2, \lambda_3) \in \mathbb{R}^3 : B(A_1 - \lambda_1,...) \text{ has an eigenvalue with norm $\leq \mu$} \},
+\end{equation}
+where $\mu > 0$ is assumed small, with its precise value to be chosen depending on the application. Note that when $\mu = 0$ we recover the definition of the Clifford spectrum. An essentially identical argument to that given in Section \ref{sec:spec_app} then implies that whenever $(\lambda_1, \lambda_2, \lambda_3) \in \mathbb{R}^3$ is in the $\mu$-Clifford pseudo-spectrum, the matrices $\{ A_i \}_{1 \leq i \leq 3}$ have an $\epsilon$-approximate simultaneous eigenvector with:
+\begin{equation}
+	\epsilon(\delta,\mu) = \left( \mu^2 + 3 \delta \right)^{\frac{1}{2}},
+\end{equation}
+which clearly $\rightarrow 0$ as $\mu \rightarrow 0$ and $\delta \rightarrow 0$. 
+
+We note finally that to ensure that the Clifford index is truly well defined whenever we numerically compute it we should assign a Clifford index only to points not in the $\mu$-Clifford pseudo-spectrum for $\mu > 0$.
 
 %We first note that the existence of such a basis follows if we can find a set of Hermitian matrices $\{\tilde{A}_i\}_{1 \leq i \leq m}$ which pairwise commute and are $\epsilon$-close (in the sense of the operator norm) to the set $\{ A_i \}_{1 \leq i \leq m}$:
 %\begin{equation} \label{eq:close}
