@@ -172,7 +172,39 @@ The advantage of the Bott index compared to the Chern number is that the Chern n
 We will use this advantage to study the robustness of waves on non-periodic media.
 
 \section{Propagation in Haldane Model}
-As expected, we find that localized waves propagate along the boundary of the edged, topological lattice since this is a boundary between Bott index 0 and Bott index 1. Figures to come.
+As expected, we find that localized states propagate along the boundary of the edged, topological lattice since this is a boundary between Bott index 0 and Bott index 1.
+
+\begin{figure}
+\centering
+\includegraphics[width=.5\textwidth]{figures/haldane_estate.png}
+\caption{Eigenstate of Haldane Model: this is the smallest magnitude eigenstate of the Hamiltonian of the Haldane hexagonal lattice.
+The absolute value of an entry in the complex state vector, if larger than a specific threshold, is represented by the radius of a red circle.
+Black circles only depict the lattice structure and are unrelated to the values of the eigenstate.
+The sites have no onsite potential, but they do have neighbor and next-nearest neighbor hopping amplitudes: $V_a = V_b = 0,\; t = t' = 1$.
+We see the state located on the edge of the lattice because this is a boundary between a region of Clifford index 0 and a region of Clifford index 1.
+}
+\label{fig:haldane_estate}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img01.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img03.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img05.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img07.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img09.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img11.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img13.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img15.png} }}%
+\caption{Propagation in Haldane Model: we localize the above eigenstate along one edge of the hexagonal lattice and simulate its propagation according to Schr{\"o}dinger's equation.
+As before, the state is plotted in red and $V_a = V_b = 0,\; t = t' = 1$.
+The state hits the corner and continues to propagate along the next edge, showing that it is unable to couple with bulk states.
+}%
+\label{fig:haldane_prop}%
+\end{figure}
 
 \aw{Clarify that this shows that the Bott index and Chern number predict edge states similarly}
 
