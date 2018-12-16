@@ -284,8 +284,70 @@ for $m \in \{0,1\}$ and $n \in \{0,1\}$, and:
 This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$, or if $m = n = 0$ and $\mu' = - 2$. These are the only values of $\mu'$ such that a topological transition (a change in the Chern number) can happen. \aw{it would be nice to check this numerically. We should be able to use the code we wrote in the summer to compute the Chern number of the Haldane model. I believe that the Chern number is 1 for $0 \leq \mu' \leq 2$, -1 for $- 2 \leq \mu' \leq 0$, and 0 otherwise. But we should check this.}
 
 \section{Loring Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+\jm{what should we call this model?}
 For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as before in the Haldane model. Nodes in the \texorpdfstring{$p_x + ip_y$}{px + ipy} model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size 2*m*m. We also compute pseudo-spectrum and Bott index as before, and get a similar result of a topological case which exhibits a transition from Bott index 0 at the edge to +1 on the interior. Again, this is a situation in which the system is general and not periodic so the Bott index is useful, as we cannot use the Chern number. The fact that we see very similar behavior in this model is very significant and supports the idea that the Bott index is a general invariant than can be calculated regardless of periodicity or structure.
+
+\begin{figure}
+\centering
+\includegraphics[width=.9\textwidth]{figures/pxipy_clifford.png}
+\caption{Clifford Index in $p_x + ip_y$ Model: plotted here is the Clifford pseudospectrum.
+The sites which are colored red and blue represent sites in the pseudospectrum.
+A site with $x$-coordinate $\lambda_1$ and $y$-coordinate $\lambda_2$ is in the pseudospectrum if the matrix $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ \eqref{B_matrix} has an eigenvalue with absolute value smaller than a given threshold, in this case $0.25$.
+If a site is not in the psuedospectrum, we calculate its index using \eqref{index}.
+}
+\label{fig:pxipy_ind}%
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=.9\textwidth]{figures/mu_dis_index.png}
+\caption{Clifford Index in $p_x + ip_y$ Model with Onsite Disorder: we plot the pseudospectrum and index of lattice sites with onsite disorder.
+The potential energy of each site on the lattice was chosen randomly from a uniform distribution centered at $\mu$ with the length of the interval equal to a disorder parameter, in this case 4.
+Again, blue and red represents sites in the pseudospectrum, and black indicates index 1, while white circles indicate index 0.
+}
+\label{fig:mu_dis_ind}%
+\end{figure}
+
 \section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img01.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img02.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img03.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img04.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img05.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img06.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img07.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img08.png} }}%
+\caption{Propagation in $p_x + ip_y$ Model: we localize the above eigenstate along one edge of the lattice and simulate its propagation according to Schr{\"o}dinger's equation.
+As before, the state is plotted in red and $\mu = 2,\; t = \Delta = 1$.
+The state propagates along the edge.
+}%
+\label{fig:pxipy_prop}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img01.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img02.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img03.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img04.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img05.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img06.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img07.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img08.png} }}%
+\caption{Propagation in $p_x + ip_y$ Model with Position Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add position disorder to the lattice.
+}%
+\label{fig:pos_dis}%
+\end{figure}
+
 \aw{This is a good ordering of things.}
 
 \section{Future Work}
