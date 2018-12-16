@@ -292,37 +292,44 @@ For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as befo
 \includegraphics[width=.9\textwidth]{figures/pxipy_clifford.png}
 \caption{Clifford Index in $p_x + ip_y$ Model: plotted here is the Clifford pseudospectrum.
 The sites which are colored red and blue represent sites in the pseudospectrum.
-A site with $x$-coordinate $\lambda_1$ and $y$-coordinate $\lambda_2$ is in the pseudospectrum if the matrix $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ \eqref{B_matrix} has an eigenvalue with absolute value smaller than a given threshold, in this case $0.25$.
-If a site is not in the psuedospectrum, we calculate its index using \eqref{index}.
+A site with $x$-coordinate $\lambda_1$ and $y$-coordinate $\lambda_2$ is in the pseudospectrum if the matrix $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ \eqref{eq:B_matrix} has an eigenvalue with absolute value smaller than a given threshold, in this case $0.25$.
+If a site is not in the psuedospectrum, we calculate its index using \eqref{eq:index}.
+(Note that even thought the color bar on the right is only valued on $[-0.17,0.17]$, the threshold for pseudospectrum is still $0.25$.)
 }
-\label{fig:pxipy_ind}%
+\label{fig:pxipy_index}%
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=.9\textwidth]{figures/mu_dis_index.png}
-\caption{Clifford Index in $p_x + ip_y$ Model with Onsite Disorder: we plot the pseudospectrum and index of lattice sites with onsite disorder.
-The potential energy of each site on the lattice was chosen randomly from a uniform distribution centered at $\mu$ with the length of the interval equal to a disorder parameter, in this case 4.
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_index/img01.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_index/img02.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_index/img03.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_index/img04.png} }}%
+
+\caption{Clifford Index in $p_x + ip_y$ Model with Onsite Disorder: we plot the pseudospectrum and index of lattice sites with varying degrees of onsite disorder.
+The potential energy of each site on the lattice is chosen randomly from a uniform distribution centered at $\mu$ with the length of the interval equal to a disorder parameter: 1, 2, 3, and 4 in these plots.
+So going from left to right, top to bottom, $\mu$ was chosen uniformly on $[1.5,2.5],\; [1,3],\;[0.5,3.5],$ and $[0,4]$, respectively.
 Again, blue and red represents sites in the pseudospectrum, and black indicates index 1, while white circles indicate index 0.
-}
-\label{fig:mu_dis_ind}%
+}%
+\label{fig:mu_dis_index}%
 \end{figure}
 
 \section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
 
 \begin{figure}
 \centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/index.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img01.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img02.png} }}%
 
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img02.png} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img03.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img04.png} }}%
 
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img04.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img05.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img06.png} }}%
 
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img06.png} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img07.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img08.png} }}%
 \caption{Propagation in $p_x + ip_y$ Model: we localize the above eigenstate along one edge of the lattice and simulate its propagation according to Schr{\"o}dinger's equation.
 As before, the state is plotted in red and $\mu = 2,\; t = \Delta = 1$.
 The state propagates along the edge.
@@ -332,20 +339,64 @@ The state propagates along the edge.
 
 \begin{figure}
 \centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/index.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img01.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img02.png} }}%
 
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img02.png} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img03.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img04.png} }}%
 
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img04.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img05.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img06.png} }}%
 
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img06.png} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img07.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img08.png} }}%
-\caption{Propagation in $p_x + ip_y$ Model with Position Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add position disorder to the lattice.
+\caption{Propagation in $p_x + ip_y$ Model with Position Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add position disorder to the lattice, i.e. we let the $x$ and $y$ coordinates of each site vary uniformly on an interval centered at its original coordinate in the lattice.
+In this case, sites can deviate up to $0.4$ from its original position in either the $x$ or $y$ direction.
+We see continued propagation around the edge as in the case with no disorder.
 }%
-\label{fig:pos_dis}%
+\label{fig:pos_dis_prop}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/index.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img01.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img02.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img03.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img04.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img05.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img06.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img07.png} }}%
+\caption{Propagation on Edge of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add onsite disorder to the lattice, letting $\mu$ for each site be chosen uniformly at random on $[0.5,3.5]$.
+We initialize a state on the edge of the lattice, where there is still a boundary between the index 1 interior and index 0 exterior.
+And the state successfully propagates along the edge.
+}%
+\label{fig:mu_dis_edge_prop}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/index.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img01.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img02.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img03.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img04.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img05.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img06.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img07.png} }}%
+\caption{Propagation on Interior of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now increase disorder, letting $\mu$ for each site be chosen uniformly at random on $[0,4]$.
+We do this to obtain regions of both index 1 and 0 in the interior of the lattice.
+We initialize a state on the boundary between a region of index 1 on the left and index 0 on the right.
+However we do not see continued propagation along the edge of either of the regions.
+We believe this is because the eigenvalue magnitudes are changing gradually across the boundary, rather than abruptly as in Figures \ref{fig:pxipy_prop},  \ref{fig:pos_dis_prop}, and \ref{fig:mu_dis_edge_prop}.
+}%
+\label{fig:mu_dis_interior_prop}%
 \end{figure}
 
 \aw{This is a good ordering of things.}
