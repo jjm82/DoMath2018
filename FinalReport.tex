@@ -102,309 +102,6 @@ Student will e-mail an electronic copy of their final paper to the Director of U
 
 \aw{We can then talk about physics below ``The Clifford index can be used to define a local topological index in a disordered medium as follows...'' } \\
 
-\aw{Another thing (I apologize for being a little loose when I have talked about this in our meetings): our audience for this report is mathematicians. So let's not talk about ``eigenstates'' until we are talking about physics. At that point we should mention ``it is common in quantum mechanics to refer to eigenvectors of self-adjoint operators as eigenstates''} \\
-
-Let $\Psi$ be a state in two dimensions with entries $\Psi_{m,n}$, where $m$ describes location with respect to one dimension (whether that be an $x$-coordinate in $\mathbb{R}^2$ or a cell index along an edge) and where $n$ describes location with respect to the other dimension.
-Define $X$ and $Y$ to be an operators that act on a state $\Psi$ in the following way:
-$$(X \Psi)_{m,n} = m\Psi_{m,n}, \quad (Y \Psi)_{m,n} = n\Psi_{m,n}.$$
-Eigenstates of these operators are localized in their corresponding dimensions.
-Therefore, when looking for localized eigenstates of a system whose Hamiltonian is $H$, our aim is to find simultaneous eigenstates of all three operators $H$, $X$, and $Y$.\\
-This is not always possible, however.
-Suppose $A_1,...,A_n$ are Hermitian matrices that all commute with each other.
-Then, they can be simultaneously diagonalized, i.e. $U^* A_i U$ is diagonal for all $i \in \{1,...,n\}$ for some unitary matrix $U$.
-So if $H$, $X$, and $Y$ commute, we can find simultaneous eigenstates of them.
-Now, suppose $A_1,...,A_n$ do not all commute, but their commutators are bounded:
-$$[A_i,A_j] \leq \delta \quad \forall\; i,j \in \{1,...,n\}$$
-for some $\delta$.
-If $n = 2$, there must exist some $\widetilde{A}_1, \widetilde{A}_2$ which commute and satisfy:
-$$||\widetilde{A}_1 - A_1||, ||\widetilde{A}_2 - A_2|| \leq \epsilon(\delta)$$
-where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$ and where $||M||$ denotes the largest eigenvalue of $M$.\\
-But if $n = 3$, there may or may not exist $\widetilde{A}_1, \widetilde{A}_2, \widetilde{A}_3$ such that they all commute with each other and satisfy:
-$$||\widetilde{A}_i - A_i|| \leq \epsilon(\delta), \quad \i \in \{1,2,3\}.$$
-This existence holds if and only if
-$$\frac{1}{2}\; \text{sig} \begin{pmatrix}
-A_3 & A_1 + iA_2\\
-A_1 - iA_2 & - A_3
-\end{pmatrix} = 0$$
-where sig$(M)$ is the signature, or number of positive eigenvalues minus negative eigenvalues, of $M$. This is known as the Clifford Index of three matrices, denoted \text{ind}($A_1,A_2,A_3$).
-Thus, to calculate the index at a particular location, $\lambda_1,\lambda_2$ in our system near an eigenvalue $\lambda_3$ of $H$ \jm{Is this the correct motivation?} \aw{We actually don't assume we are near an eigenvalue of $H$. The theory just tells us that we can find approximate eigenvectors of $H, X, Y$ by finding eigenvectors corresponding to zero eigenvalues of the matrix $B$. The reason we look at $\lambda_3 = 0$ is because this is where we expect to see edge states.} we look at
-$$B(X-\lambda_1,Y - \lambda_2, H - \lambda_3) = \frac{1}{2}\; \text{sig}\begin{pmatrix}
-H - \lambda_3 & (X - \lambda_1) + i(Y - \lambda_2)\\
-(X - \lambda_1) - i(Y - \lambda_2) & - (H - \lambda_3)
-\end{pmatrix}.$$
-If this matrix has an eigenvalue less than a specified norm $\epsilon$, we say that the triple $(\lambda_1,\lambda_2,\lambda_3)$ is in the joint pseudo-spectrum of the given lattice.\aw{it is $(\lambda_1,\lambda_2,\lambda_3)$ that is in the joint pseudo-spectrum: the pseudo-spectrum is a generalization of the spectrum (the set of eigenvalues), and the joint pseudo-spectrum is a generalization of the joint spectrum}
-If a triple is not in the pseudo-spectrum, we then compute the Bott index using the above calculation. \aw{Hastings-Loring explains the Clifford index a little. The point is that } \\\\
-To compute the signature of $B$ efficiently, we use the $LDL^T$ decomposition of $B$.
-$D$ is a block diagonal matrix with blocks of either size $1 \times 1$ or $2 \times 2$.
-Let $a$ and $b$ be the number of positive and negative $1 \times 1$ blocks in $D$, respectively.
-By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$. \aw{we should identify why $L D L^T$ works, e.g. ``it is known (see ref...) that the signature of $B$ equals the signature of the diagaonal matrix $D$ which appears in $L D L^T$ factorization''}
-
-\section{Loring Index in Haldane Model}
-
-\aw{Good idea to have this section. We should motivate what we do here, e.g. ``We now show numerically that the Bott index is equal to the Chern number where both are defined (i.e. when the medium is periodic so that the eigenstates of the Hamiltonian are Bloch states)'' }	\\
-
-\aw{We should mention the issue with boundary conditions and having to shift the $X$ and $Y$ operators}
-
-In the Haldane Model, $m$ and $n$ are the indices of cells on a hexagonal, atomic lattice, where each cell has two sites, labeled $A$ and $B$.
-Thus we define our $X$ and $Y$ operators as follows:
-$$X_{i,i} = \left\lfloor \frac{i-1}{2} \right\rfloor \;\text{mod}\;m, \quad\quad Y_{i,i} = \left\lfloor \frac{i-1}{2m} \right\rfloor$$
-with $X_{i,j} = Y_{i,j} = 0$ for $i \neq j$. 
-We compute the pseudo-spectrum and Bott index on the Haldane model lattice with complex hopping and see that in the topological case, the Bott index behave much like the Chern number:
-on a lattice with edges, the index is $+1$ on the interior and transitions to 0 across the edge;
-on a periodic lattice, the index is $+1$ everywhere.
-In the trivial case we see a Bott index of 0 everywhere on edged and periodic lattices, which is analogous to the Chern number.
-This is shown in Figure \ref{fig:Bott Haldane}.
-\begin{figure}
-\centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/periodic_triv} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/periodic_top} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/edged_triv} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/edged_top} }}%
-\caption{The top left is a trivial, periodic lattice; the top right is a topological, periodic lattice; the bottom left is a trivial, edged lattice; and the bottom right is a topological, edged lattice.
-Each site in these figures represents a $(\lambda_1,\lambda_2,\lambda_3)$ triple with $\lambda_3 = 0$.
-If a site is red, then it is in the pseudo-spectrum, i.e. $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ has a near-zero eigenvalue.
-If a site is not in the pseudo-spectrum, then it is colored black for Bott index 1 and white for Bott index 0, where the Bott index is defined as one half the signature of $B$. \aw{very nice figure. It is a little funny that the corners for the Haldane model don't all look the same. I don't quite understand why this would be.} \jm{answer: Note that $B$ site on top right corner is only connected to one other site. Same for $A$ site on bottom left corner.}
-}%
-\label{fig:Bott Haldane}%
-\end{figure}
-The advantage of the Bott index compared to the Chern number is that the Chern number can only be defined on a periodic structure, whereas the Bott index can be computed on non-periodic media.
-We will use this advantage to study the robustness of waves on non-periodic media.
-
-\section{Propagation in Haldane Model}
-As expected, we find that localized states propagate along the boundary of the edged, topological lattice since this is a boundary between Bott index 0 and Bott index 1.
-
-\begin{figure}
-\centering
-\includegraphics[width=.5\textwidth]{figures/haldane_estate.png}
-\caption{Eigenstate of Haldane Model: this is the smallest magnitude eigenstate of the Hamiltonian of the Haldane hexagonal lattice.
-The absolute value of an entry in the complex state vector, if larger than a specific threshold, is represented by the radius of a red circle.
-Black circles only depict the lattice structure and are unrelated to the values of the eigenstate.
-The sites have no onsite potential, but they do have neighbor and next-nearest neighbor hopping amplitudes: $V_a = V_b = 0,\; t = t' = 1$.
-We see the state located on the edge of the lattice because this is a boundary between a region of Clifford index 0 and a region of Clifford index 1.
-}
-\label{fig:haldane_estate}%
-\end{figure}
-
-\begin{figure}
-\centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img01.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img03.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img05.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img07.png} }}%
-
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img09.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img11.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img13.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img15.png} }}%
-\caption{Propagation in Haldane Model: we localize the above eigenstate along one edge of the hexagonal lattice and simulate its propagation according to Schr{\"o}dinger's equation.
-As before, the state is plotted in red and $V_a = V_b = 0,\; t = t' = 1$.
-The state hits the corner and continues to propagate along the next edge, showing that it is unable to couple with bulk states.
-}%
-\label{fig:haldane_prop}%
-\end{figure}
-
-\aw{Clarify that this shows that the Bott index and Chern number predict edge states similarly}
-
-\section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
-\aw{We should mention why we work with a different model: the point is that it is unclear how to generalize the Haldane model to disordered media.}
-
-\aw{Copy pasted notes on this model from overleaf} 
-
-\noindent Generate a network of $N$ nodes (to be more consistent with physics we henceforth refer to nodes as sites) connected by edges. Define a Hilbert space $\mathcal{H}$ by associating to each site a copy of $\mathbb{C}^2$. The dimension of this space is clearly $2 N$. We denote vectors in $\mathcal{H}$ by:
-\begin{equation}
-	\psi = \left( \psi_1, \psi_2, ... \psi_N \right)^\top
-\end{equation}
-where each $\psi_j \in \mathbb{C}^2$:
-\begin{equation}
-	\psi_j = \left( \psi_j^A , \psi_j^B \right)^\top.
-\end{equation}
-We define a Hamiltonian acting on the $j$th site of the network by:
-\begin{equation}
-	( H \psi )_j = H_{jj} \psi_j + \sum_{ k \text{ nearest neighbors of } j } H_{jk} \psi_k,
-\end{equation}
-where $H_{jj}$ and $H_{jk}$ are $2 \times 2$ matrices defined by:
-\begin{equation}
-	H_{jj} = - \mu \sigma_z,
-\end{equation}
-\begin{equation}
-	H_{jk} = - t \sigma_z - \frac{ i }{ 2 } \Delta \sigma_x \cos( \alpha_{jk} ) - \frac{ i }{ 2 } \Delta \sigma_y \sin( \alpha_{jk} ).
-\end{equation}
-Here, $\mu, t, \Delta$ are real parameters,
-\begin{equation}
-	\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad \sigma_y = \begin{pmatrix} 0 & - i \\ i & 0 \end{pmatrix}, \quad \sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix},
-\end{equation}
-denote the Pauli matrices, and $\alpha_{jk}$ denotes the angle of the edge between the $j$ and $k$th site relative to the $x$ axis (see second slide of \verb|Loring_slides.pdf| in \verb|related_papers| directory).
-
-Compared with the Haldane model, $\mu$ plays the role of $V^A$ (onsite potential difference between $A$ and $B$ sites, assuming $V^B = - V^A$), $t$ plays the role of $t$ (real nearest neighbor hopping), and $\Delta$ plays the role of $t'$ (strength of complex hopping). The nice thing about this model is that it involves only nearest neighbor hopping, so it is relatively easy to generalize to structures without periodicity.
-
-In the case of a perfect square lattice the model simplifies to the following: 
-\begin{equation}
-\begin{split}
-	(H \psi)_{mn} &= - \mu \sigma_z \psi_{mn} - t \sigma_z \left( \psi_{m+1,n} + \psi_{m-1,n} + \psi_{m,n+1} + \psi_{m,n-1} \right) \\
-	&+ \frac{ i \Delta }{ 2 } \left( - \sigma_x \psi_{m+1,n} - \sigma_y \psi_{m,n+1} + \sigma_x \psi_{m-1,n} + \sigma_y \psi_{m,n-1} \right),
-\end{split}
-\end{equation}
-where $m$ denotes the co-ordinate in the $x$ direction and $n$ denotes that in the $y$ direction. Imposing the Bloch-periodic boundary condition yields:
-\begin{equation}
-\begin{split}
-	H(k) \psi &= \left[ - \mu \sigma_z - t \left( e^{i k_1} + e^{- i k_1} + e^{i k_2} + e^{- i k_2} \right) \sigma_z \right. \\
-	&\left. + \frac{ i \Delta }{ 2 } \left( -  e^{i k_1} + e^{- i k_1} \right) \sigma_x + \frac{ i \Delta }{ 2 } \left( - e^{i k_2} + e^{- i k_2} \right) \sigma_y \right] \psi,
-\end{split}
-\end{equation}
-\begin{equation}
-	H(k) \psi = \left[ - \mu \sigma_z - 2 t \left( \cos(k_1) + \cos(k_2) \right) \sigma_z + \Delta \sin(k_1) \sigma_x + \Delta \sin(k_2) \sigma_y \right] \psi. 
-\end{equation}
-So:
-\begin{equation}
-	H(k) = \begin{pmatrix} - \mu - 2 t ( \cos k_1 + \cos k_2 ) & \Delta ( \sin k_1 - i \sin k_2 ) \\ \Delta ( \sin k_1 + i \sin k_2 ) & \mu + 2 t ( \cos k_1 + \cos k_2 ) \end{pmatrix}.
-\end{equation}
-Eigenvalues $E$ satisfy the characteristic equation:
-\begin{equation}
-	( - \mu - 2 t ( \cos k_1 + \cos k_2 ) - E )( \mu + 2 t ( \cos k_1 + \cos k_2 ) - E ) - \Delta^2 ( \sin^2 k_1 + \sin^2 k_2 ) = 0
-\end{equation}
-which has the solution:
-\begin{equation}
-	E = \pm 2 t \sqrt{ (\Delta')^2 \sin^2 k_1 + (\Delta')^2 \sin^2 k_2 + \left( \mu' + \cos k_1 + \cos k_2 \right)^2 },
-\end{equation}
-where:
-\begin{equation}
-	\Delta' := \frac{\Delta}{2 t} \quad \mu' := \frac{ \mu }{ 2 t }
-\end{equation}
-and now under the square root is a sum of non-negative terms. For the bands to touch (i.e. for what is under the spectral gap to vanish) it must be that:
-\begin{equation}
-	k_1 = m \pi \quad k_2 = n \pi
-\end{equation}
-for $m \in \{0,1\}$ and $n \in \{0,1\}$, and:
-\begin{equation}
-	\mu' + \cos m \pi + \cos n \pi = 0.
-\end{equation}
-This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$, or if $m = n = 0$ and $\mu' = - 2$. These are the only values of $\mu'$ such that a topological transition (a change in the Chern number) can happen. \aw{it would be nice to check this numerically. We should be able to use the code we wrote in the summer to compute the Chern number of the Haldane model. I believe that the Chern number is 1 for $0 \leq \mu' \leq 2$, -1 for $- 2 \leq \mu' \leq 0$, and 0 otherwise. But we should check this.}
-
-\section{Loring Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
-\jm{what should we call this model?}
-For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as before in the Haldane model. Nodes in the \texorpdfstring{$p_x + ip_y$}{px + ipy} model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size 2*m*m. We also compute pseudo-spectrum and Bott index as before, and get a similar result of a topological case which exhibits a transition from Bott index 0 at the edge to +1 on the interior. Again, this is a situation in which the system is general and not periodic so the Bott index is useful, as we cannot use the Chern number. The fact that we see very similar behavior in this model is very significant and supports the idea that the Bott index is a general invariant than can be calculated regardless of periodicity or structure.
-
-\begin{figure}
-\centering
-\includegraphics[width=.9\textwidth]{figures/pxipy_clifford.png}
-\caption{Clifford Index in $p_x + ip_y$ Model: plotted here is the Clifford pseudospectrum.
-The sites which are colored red and blue represent sites in the pseudospectrum.
-A site with $x$-coordinate $\lambda_1$ and $y$-coordinate $\lambda_2$ is in the pseudospectrum if the matrix $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ \eqref{eq:B_matrix} has an eigenvalue with absolute value smaller than a given threshold, in this case $0.25$.
-If a site is not in the psuedospectrum, we calculate its index using \eqref{eq:index}.
-(Note that even thought the color bar on the right is only valued on $[-0.17,0.17]$, the threshold for pseudospectrum is still $0.25$.)
-}
-\label{fig:pxipy_index}%
-\end{figure}
-
-\begin{figure}
-\centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_index/img01.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_index/img02.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_index/img03.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_index/img04.png} }}%
-
-\caption{Clifford Index in $p_x + ip_y$ Model with Onsite Disorder: we plot the pseudospectrum and index of lattice sites with varying degrees of onsite disorder.
-The potential energy of each site on the lattice is chosen randomly from a uniform distribution centered at $\mu$ with the length of the interval equal to a disorder parameter: 1, 2, 3, and 4 in these plots.
-So going from left to right, top to bottom, $\mu$ was chosen uniformly on $[1.5,2.5],\; [1,3],\;[0.5,3.5],$ and $[0,4]$, respectively.
-Again, blue and red represents sites in the pseudospectrum, and black indicates index 1, while white circles indicate index 0.
-}%
-\label{fig:mu_dis_index}%
-\end{figure}
-
-\section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
-
-\begin{figure}
-\centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/index.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img01.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img02.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img03.png} }}%
-
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img04.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img05.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img06.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img07.png} }}%
-\caption{Propagation in $p_x + ip_y$ Model: we localize the above eigenstate along one edge of the lattice and simulate its propagation according to Schr{\"o}dinger's equation.
-As before, the state is plotted in red and $\mu = 2,\; t = \Delta = 1$.
-The state propagates along the edge.
-}%
-\label{fig:pxipy_prop}%
-\end{figure}
-
-\begin{figure}
-\centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/index.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img01.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img02.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img03.png} }}%
-
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img04.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img05.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img06.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img07.png} }}%
-\caption{Propagation in $p_x + ip_y$ Model with Position Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add position disorder to the lattice, i.e. we let the $x$ and $y$ coordinates of each site vary uniformly on an interval centered at its original coordinate in the lattice.
-In this case, sites can deviate up to $0.4$ from its original position in either the $x$ or $y$ direction.
-We see continued propagation around the edge as in the case with no disorder.
-}%
-\label{fig:pos_dis_prop}%
-\end{figure}
-
-\begin{figure}
-\centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/index.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img01.png} }}%
-
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img02.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img03.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img04.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img05.png} }}%
-
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img06.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img07.png} }}%
-\caption{Propagation on Edge of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add onsite disorder to the lattice, letting $\mu$ for each site be chosen uniformly at random on $[0.5,3.5]$.
-We initialize a state on the edge of the lattice, where there is still a boundary between the index 1 interior and index 0 exterior.
-And the state successfully propagates along the edge.
-}%
-\label{fig:mu_dis_edge_prop}%
-\end{figure}
-
-\begin{figure}
-\centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/index.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img01.png} }}%
-
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img02.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img03.png} }}%
-
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img04.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img05.png} }}%
-
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img06.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img07.png} }}%
-\caption{Propagation on Interior of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now increase disorder, letting $\mu$ for each site be chosen uniformly at random on $[0,4]$.
-We do this to obtain regions of both index 1 and 0 in the interior of the lattice.
-We initialize a state on the boundary between a region of index 1 on the left and index 0 on the right.
-However we do not see continued propagation along the edge of either of the regions.
-We believe this is because the eigenvalue magnitudes are changing gradually across the boundary, rather than abruptly as in Figures \ref{fig:pxipy_prop},  \ref{fig:pos_dis_prop}, and \ref{fig:mu_dis_edge_prop}.
-}%
-\label{fig:mu_dis_interior_prop}%
-\end{figure}
-
-\aw{This is a good ordering of things.}
-
-\section{Future Work}
-
-\section{Notes from Monday Meeting}
-
 \subsection{Fundamentals: commuting Hermitian matrices can be simultaneously diagonalized} 
 
 Let $A$ denote any $n \times n$ \ul{Hermitian} matrix, i.e. $A^* = A$ where $A^*$ denotes the conjugate transpose of $A$. The set of \ul{eigenvalues} of $A$ is the set:
@@ -613,6 +310,313 @@ We note finally that to ensure that the Clifford index is truly well defined whe
 %Do there exist $\{\widetilde{A}_i\}_{1 \leq i \le1 m}$ which commute such that $||A_i - \widetilde{A}_i||$ is small, i.e. such that $||A_i - \widetilde{A}_i|| \rightarrow 0$ as $\delta \rightarrow 0$?\\
 %Another natural question: (2) can we find approximate simultaneous eigenvectors of $\{A_i\}$? Call $v$ an approximate simultaneous eigenvector if
 %$$||(A_i - \lambda_i I)v|| \text{ is small for all } 1 \leq i \leq m \text{ for some } (\lambda_1,...,\lambda_n) \in \mathbb(C)^m$$
+
+\section{Clifford Index as a Local Topological Index in Hexagonal Lattice: Haldane Model}
+
+For the remainder of the report, we examine the Clifford index as a local topological index defined on different media.
+Note that it is common in quantum mechanics to refer to eigenvectors of self-adjoint operators as eigenstates, so in the following sections of the report, we will refer to vectors as states and eigenvectors of the Hamiltonian as eigenstates.
+
+In this section, we show numerically that the Clifford index is equal to the Chern number on the Haldane Model, a periodic, hexagonal medium with complex next-nearest neighbor hopping amplitudes.
+Again, the Chern number is well defined on this lattice because the eigenstates of the Hamiltonian of a periodic medium are Bloch states.
+
+Let $\Psi$ be a state in two dimensions with entries $\Psi_{m,n}$, where $m$ describes location with respect to one dimension (whether that be an $x$-coordinate in $\mathbb{R}^2$ or a cell index along an edge) and where $n$ describes location with respect to the other dimension.
+Define $X$ and $Y$ to be an operators that act on a state $\Psi$ in the following way:
+$$(X \Psi)_{m,n} = m\Psi_{m,n}, \quad (Y \Psi)_{m,n} = n\Psi_{m,n}.$$
+Eigenstates of these operators are localized in their corresponding dimensions.
+Therefore, when looking for localized eigenstates of a system whose Hamiltonian is $H$, our aim is to find simultaneous eigenstates of all three operators $H$, $X$, and $Y$.\\
+This is not always possible, however.
+Suppose $A_1,...,A_n$ are Hermitian matrices that all commute with each other.
+Then, they can be simultaneously diagonalized, i.e. $U^* A_i U$ is diagonal for all $i \in \{1,...,n\}$ for some unitary matrix $U$.
+So if $H$, $X$, and $Y$ commute, we can find simultaneous eigenstates of them.
+Now, suppose $A_1,...,A_n$ do not all commute, but their commutators are bounded:
+$$[A_i,A_j] \leq \delta \quad \forall\; i,j \in \{1,...,n\}$$
+for some $\delta$.
+If $n = 2$, there must exist some $\widetilde{A}_1, \widetilde{A}_2$ which commute and satisfy:
+$$||\widetilde{A}_1 - A_1||, ||\widetilde{A}_2 - A_2|| \leq \epsilon(\delta)$$
+where $\epsilon(\delta) \rightarrow 0$ as $\delta \rightarrow 0$ and where $||M||$ denotes the largest eigenvalue of $M$.\\
+But if $n = 3$, there may or may not exist $\widetilde{A}_1, \widetilde{A}_2, \widetilde{A}_3$ such that they all commute with each other and satisfy:
+$$||\widetilde{A}_i - A_i|| \leq \epsilon(\delta), \quad \i \in \{1,2,3\}.$$
+This existence holds if and only if
+$$\frac{1}{2}\; \text{sig} \begin{pmatrix}
+A_3 & A_1 + iA_2\\
+A_1 - iA_2 & - A_3
+\end{pmatrix} = 0$$
+where sig$(M)$ is the signature, or number of positive eigenvalues minus negative eigenvalues, of $M$. This is known as the Clifford Index of three matrices, denoted \text{ind}($A_1,A_2,A_3$).
+Thus, to calculate the index at a particular location, $\lambda_1,\lambda_2$ in our system near an eigenvalue $\lambda_3$ of $H$ \jm{Is this the correct motivation?} \aw{We actually don't assume we are near an eigenvalue of $H$. The theory just tells us that we can find approximate eigenvectors of $H, X, Y$ by finding eigenvectors corresponding to zero eigenvalues of the matrix $B$. The reason we look at $\lambda_3 = 0$ is because this is where we expect to see edge states.} we look at
+$$B(X-\lambda_1,Y - \lambda_2, H - \lambda_3) = \frac{1}{2}\; \text{sig}\begin{pmatrix}
+H - \lambda_3 & (X - \lambda_1) + i(Y - \lambda_2)\\
+(X - \lambda_1) - i(Y - \lambda_2) & - (H - \lambda_3)
+\end{pmatrix}.$$
+If this matrix has an eigenvalue less than a specified norm $\epsilon$, we say that the triple $(\lambda_1,\lambda_2,\lambda_3)$ is in the joint pseudo-spectrum of the given lattice.\aw{it is $(\lambda_1,\lambda_2,\lambda_3)$ that is in the joint pseudo-spectrum: the pseudo-spectrum is a generalization of the spectrum (the set of eigenvalues), and the joint pseudo-spectrum is a generalization of the joint spectrum}
+If a triple is not in the pseudo-spectrum, we then compute the Bott index using the above calculation. \aw{Hastings-Loring explains the Clifford index a little. The point is that } \\\\
+To compute the signature of $B$ efficiently, we use the $LDL^T$ decomposition of $B$.
+$D$ is a block diagonal matrix with blocks of either size $1 \times 1$ or $2 \times 2$.
+Let $a$ and $b$ be the number of positive and negative $1 \times 1$ blocks in $D$, respectively.
+By J.R. Bunch, L. Kaufman (Need ref), the signature of $B$ is equivalent to the signature of $D$ which is $a - b$. \aw{we should identify why $L D L^T$ works, e.g. ``it is known (see ref...) that the signature of $B$ equals the signature of the diagaonal matrix $D$ which appears in $L D L^T$ factorization''}
+
+\aw{We should mention the issue with boundary conditions and having to shift the $X$ and $Y$ operators}
+In the Haldane Model, $m$ and $n$ are the indices of cells on a hexagonal, atomic lattice, where each cell has two sites, labeled $A$ and $B$.
+Thus we define our $X$ and $Y$ operators as follows:
+$$X_{i,i} = \left\lfloor \frac{i-1}{2} \right\rfloor \;\text{mod}\;m, \quad\quad Y_{i,i} = \left\lfloor \frac{i-1}{2m} \right\rfloor$$
+with $X_{i,j} = Y_{i,j} = 0$ for $i \neq j$. 
+We compute the pseudo-spectrum and Bott index on the Haldane model lattice with complex hopping and see that in the topological case, the Bott index behave much like the Chern number:
+on a lattice with edges, the index is $+1$ on the interior and transitions to 0 across the edge;
+on a periodic lattice, the index is $+1$ everywhere.
+In the trivial case we see a Bott index of 0 everywhere on edged and periodic lattices, which is analogous to the Chern number.
+This is shown in Figure \ref{fig:Bott Haldane}.
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/periodic_triv} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/periodic_top} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/edged_triv} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/edged_top} }}%
+\caption{The top left is a trivial, periodic lattice; the top right is a topological, periodic lattice; the bottom left is a trivial, edged lattice; and the bottom right is a topological, edged lattice.
+Each site in these figures represents a $(\lambda_1,\lambda_2,\lambda_3)$ triple with $\lambda_3 = 0$.
+If a site is red, then it is in the pseudo-spectrum, i.e. $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ has a near-zero eigenvalue.
+If a site is not in the pseudo-spectrum, then it is colored black for Bott index 1 and white for Bott index 0, where the Bott index is defined as one half the signature of $B$. \aw{very nice figure. It is a little funny that the corners for the Haldane model don't all look the same. I don't quite understand why this would be.} \jm{answer: Note that $B$ site on top right corner is only connected to one other site. Same for $A$ site on bottom left corner.}
+\jm{update bottom right with new index plotting if time}
+}%
+\label{fig:haldane_index}%
+\end{figure}
+The advantage of the Clifford index compared to the Chern number is that the Chern number can only be defined on a periodic structure, whereas the Clifford index can be computed on non-periodic media.
+We will use this advantage to study the robustness of waves on disorded media.
+
+\section{Propagation in Haldane Model}
+As expected, we find that localized states propagate along the boundary of the edged, topological lattice since this is a boundary between Bott index 0 and Bott index 1.
+
+\begin{figure}
+\centering
+\includegraphics[width=.5\textwidth]{figures/haldane_estate.png}
+\caption{Eigenstate of Haldane Model: this is the smallest magnitude eigenstate of the Hamiltonian of the Haldane hexagonal lattice.
+The absolute value of an entry in the complex state vector, if larger than a specific threshold, is represented by the radius of a red circle.
+Black circles only depict the lattice structure and are unrelated to the values of the eigenstate.
+The sites have no onsite potential, but they do have neighbor and next-nearest neighbor hopping amplitudes: $V_a = V_b = 0,\; t = t' = 1$.
+We see the state located on the edge of the lattice because this is a boundary between a region of Clifford index 0 and a region of Clifford index 1.
+}
+\label{fig:haldane_estate}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img01.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img03.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img05.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img07.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img09.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/haldane_propagation/img11.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img13.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/haldane_propagation/img15.png} }}%
+\caption{Propagation in Haldane Model: we localize the above eigenstate along one edge of the hexagonal lattice and simulate its propagation according to Schr{\"o}dinger's equation.
+As before, the state is plotted in red and $V_a = V_b = 0,\; t = t' = 1$.
+The state hits the corner and continues to propagate along the next edge, showing that it is unable to couple with bulk states.
+}%
+\label{fig:haldane_prop}%
+\end{figure}
+
+\aw{Clarify that this shows that the Bott index and Chern number predict edge states similarly}
+
+\section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+\aw{We should mention why we work with a different model: the point is that it is unclear how to generalize the Haldane model to disordered media.}
+Having shown that the Clifford index is equivalent to the Chern number as a topological index on periodic media which predicts the existence and robustness of edge states, we now see if the same holds true for disordered media, where the Chern number is not defined.
+It is unclear how to generalize the Haldane model to disordered media, specifically because the hopping amplitudes when neighbors and next-nearest neighbors are no longer defined.
+So we turn to a new model, the $p_x + ip_y$ model.
+\jm{Is this why it is unclear?}
+
+To construct this model, first generate a network of $N$ nodes (to be more consistent with physics we henceforth refer to nodes as sites) connected by edges. Define a Hilbert space $\mathcal{H}$ by associating to each site a copy of $\mathbb{C}^2$. The dimension of this space is clearly $2 N$. We denote vectors in $\mathcal{H}$ by:
+\begin{equation}
+	\psi = \left( \psi_1, \psi_2, ... \psi_N \right)^\top
+\end{equation}
+where each $\psi_j \in \mathbb{C}^2$:
+\begin{equation}
+	\psi_j = \left( \psi_j^A , \psi_j^B \right)^\top.
+\end{equation}
+We define a Hamiltonian acting on the $j$th site of the network by:
+\begin{equation}
+	( H \psi )_j = H_{jj} \psi_j + \sum_{ k \text{ nearest neighbors of } j } H_{jk} \psi_k,
+\end{equation}
+where $H_{jj}$ and $H_{jk}$ are $2 \times 2$ matrices defined by:
+\begin{equation}
+	H_{jj} = - \mu \sigma_z,
+\end{equation}
+\begin{equation}
+	H_{jk} = - t \sigma_z - \frac{ i }{ 2 } \Delta \sigma_x \cos( \alpha_{jk} ) - \frac{ i }{ 2 } \Delta \sigma_y \sin( \alpha_{jk} ).
+\end{equation}
+Here, $\mu, t, \Delta$ are real parameters,
+\begin{equation}
+	\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad \sigma_y = \begin{pmatrix} 0 & - i \\ i & 0 \end{pmatrix}, \quad \sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix},
+\end{equation}
+denote the Pauli matrices, and $\alpha_{jk}$ denotes the angle of the edge between the $j$ and $k$th site relative to the $x$ axis (see second slide of \verb|Loring_slides.pdf| in \verb|related_papers| directory).
+
+Compared with the Haldane model, $\mu$ plays the role of $V^A$ (onsite potential difference between $A$ and $B$ sites, assuming $V^B = - V^A$), $t$ plays the role of $t$ (real nearest neighbor hopping), and $\Delta$ plays the role of $t'$ (strength of complex hopping). The nice thing about this model is that it involves only nearest neighbor hopping, so it is relatively easy to generalize to structures without periodicity.
+
+In the case of a perfect square lattice the model simplifies to the following: 
+\begin{equation}
+\begin{split}
+	(H \psi)_{mn} &= - \mu \sigma_z \psi_{mn} - t \sigma_z \left( \psi_{m+1,n} + \psi_{m-1,n} + \psi_{m,n+1} + \psi_{m,n-1} \right) \\
+	&+ \frac{ i \Delta }{ 2 } \left( - \sigma_x \psi_{m+1,n} - \sigma_y \psi_{m,n+1} + \sigma_x \psi_{m-1,n} + \sigma_y \psi_{m,n-1} \right),
+\end{split}
+\end{equation}
+where $m$ denotes the co-ordinate in the $x$ direction and $n$ denotes that in the $y$ direction. Imposing the Bloch-periodic boundary condition yields:
+\begin{equation}
+\begin{split}
+	H(k) \psi &= \left[ - \mu \sigma_z - t \left( e^{i k_1} + e^{- i k_1} + e^{i k_2} + e^{- i k_2} \right) \sigma_z \right. \\
+	&\left. + \frac{ i \Delta }{ 2 } \left( -  e^{i k_1} + e^{- i k_1} \right) \sigma_x + \frac{ i \Delta }{ 2 } \left( - e^{i k_2} + e^{- i k_2} \right) \sigma_y \right] \psi,
+\end{split}
+\end{equation}
+\begin{equation}
+	H(k) \psi = \left[ - \mu \sigma_z - 2 t \left( \cos(k_1) + \cos(k_2) \right) \sigma_z + \Delta \sin(k_1) \sigma_x + \Delta \sin(k_2) \sigma_y \right] \psi. 
+\end{equation}
+So:
+\begin{equation}
+	H(k) = \begin{pmatrix} - \mu - 2 t ( \cos k_1 + \cos k_2 ) & \Delta ( \sin k_1 - i \sin k_2 ) \\ \Delta ( \sin k_1 + i \sin k_2 ) & \mu + 2 t ( \cos k_1 + \cos k_2 ) \end{pmatrix}.
+\end{equation}
+Eigenvalues $E$ satisfy the characteristic equation:
+\begin{equation}
+	( - \mu - 2 t ( \cos k_1 + \cos k_2 ) - E )( \mu + 2 t ( \cos k_1 + \cos k_2 ) - E ) - \Delta^2 ( \sin^2 k_1 + \sin^2 k_2 ) = 0
+\end{equation}
+which has the solution:
+\begin{equation}
+	E = \pm 2 t \sqrt{ (\Delta')^2 \sin^2 k_1 + (\Delta')^2 \sin^2 k_2 + \left( \mu' + \cos k_1 + \cos k_2 \right)^2 },
+\end{equation}
+where:
+\begin{equation}
+	\Delta' := \frac{\Delta}{2 t} \quad \mu' := \frac{ \mu }{ 2 t }
+\end{equation}
+and now under the square root is a sum of non-negative terms. For the bands to touch (i.e. for what is under the spectral gap to vanish) it must be that:
+\begin{equation}
+	k_1 = m \pi \quad k_2 = n \pi
+\end{equation}
+for $m \in \{0,1\}$ and $n \in \{0,1\}$, and:
+\begin{equation}
+	\mu' + \cos m \pi + \cos n \pi = 0.
+\end{equation}
+This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$, or if $m = n = 0$ and $\mu' = - 2$. These are the only values of $\mu'$ such that a topological transition (a change in the Chern number) can happen. \aw{it would be nice to check this numerically. We should be able to use the code we wrote in the summer to compute the Chern number of the Haldane model. I believe that the Chern number is 1 for $0 \leq \mu' \leq 2$, -1 for $- 2 \leq \mu' \leq 0$, and 0 otherwise. But we should check this.}
+
+\section{Loring Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+\jm{what should we call this model?}
+For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as before in the Haldane model. Nodes in the \texorpdfstring{$p_x + ip_y$}{px + ipy} model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size 2*m*m. We also compute pseudo-spectrum and Bott index as before, and get a similar result of a topological case which exhibits a transition from Bott index 0 at the edge to +1 on the interior. Again, this is a situation in which the system is general and not periodic so the Bott index is useful, as we cannot use the Chern number. The fact that we see very similar behavior in this model is very significant and supports the idea that the Bott index is a general invariant than can be calculated regardless of periodicity or structure.
+
+\begin{figure}
+\centering
+\includegraphics[width=.9\textwidth]{figures/pxipy_clifford.png}
+\caption{Clifford Index in $p_x + ip_y$ Model: plotted here is the Clifford pseudospectrum.
+The sites which are colored red and blue represent sites in the pseudospectrum.
+A site with $x$-coordinate $\lambda_1$ and $y$-coordinate $\lambda_2$ is in the pseudospectrum if the matrix $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ \eqref{eq:B_matrix} has an eigenvalue with absolute value smaller than a given threshold, in this case $0.25$.
+If a site is not in the psuedospectrum, we calculate its index using \eqref{eq:index}.
+(Note that even thought the color bar on the right is only valued on $[-0.17,0.17]$, the threshold for pseudospectrum is still $0.25$.)
+}
+\label{fig:pxipy_index}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_index/img01.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_index/img02.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_index/img03.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_index/img04.png} }}%
+
+\caption{Clifford Index in $p_x + ip_y$ Model with Onsite Disorder: we plot the pseudospectrum and index of lattice sites with varying degrees of onsite disorder.
+The potential energy of each site on the lattice is chosen randomly from a uniform distribution centered at $\mu$ with the length of the interval equal to a disorder parameter: 1, 2, 3, and 4 in these plots.
+So going from left to right, top to bottom, $\mu$ was chosen uniformly on $[1.5,2.5],\; [1,3],\;[0.5,3.5],$ and $[0,4]$, respectively.
+Again, blue and red represents sites in the pseudospectrum, and black indicates index 1, while white circles indicate index 0.
+}%
+\label{fig:mu_dis_index}%
+\end{figure}
+
+\section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/index.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img01.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img02.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img03.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img04.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img05.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img06.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img07.png} }}%
+\caption{Propagation in $p_x + ip_y$ Model: we localize the above eigenstate along one edge of the lattice and simulate its propagation according to Schr{\"o}dinger's equation.
+As before, the state is plotted in red and $\mu = 2,\; t = \Delta = 1$.
+The state propagates along the edge.
+}%
+\label{fig:pxipy_prop}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/index.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img01.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img02.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img03.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img04.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img05.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img06.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img07.png} }}%
+\caption{Propagation in $p_x + ip_y$ Model with Position Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add position disorder to the lattice, i.e. we let the $x$ and $y$ coordinates of each site vary uniformly on an interval centered at its original coordinate in the lattice.
+In this case, sites can deviate up to $0.4$ from its original position in either the $x$ or $y$ direction.
+We see continued propagation around the edge as in the case with no disorder.
+}%
+\label{fig:pos_dis_prop}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/index.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img01.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img02.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img03.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img04.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img05.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img06.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img07.png} }}%
+\caption{Propagation on Edge of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add onsite disorder to the lattice, letting $\mu$ for each site be chosen uniformly at random on $[0.5,3.5]$.
+We initialize a state on the edge of the lattice, where there is still a boundary between the index 1 interior and index 0 exterior.
+And the state successfully propagates along the edge.
+}%
+\label{fig:mu_dis_edge_prop}%
+\end{figure}
+
+\begin{figure}
+\centering
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/index.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img01.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img02.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img03.png} }}%
+
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img04.png} }}%
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img05.png} }}%
+
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img06.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img07.png} }}%
+\caption{Propagation on Interior of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now increase disorder, letting $\mu$ for each site be chosen uniformly at random on $[0,4]$.
+We do this to obtain regions of both index 1 and 0 in the interior of the lattice.
+We initialize a state on the boundary between a region of index 1 on the left and index 0 on the right.
+However we do not see continued propagation along the edge of either of the regions.
+We believe this is because the eigenvalue magnitudes are changing gradually across the boundary, rather than abruptly as in Figures \ref{fig:pxipy_prop},  \ref{fig:pos_dis_prop}, and \ref{fig:mu_dis_edge_prop}.
+}%
+\label{fig:mu_dis_interior_prop}%
+\end{figure}
+
+\aw{This is a good ordering of things.}
+
+\section{Future Work}
+
+\section{Notes from Monday Meeting}
 
 \printbibliography
 
