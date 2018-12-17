@@ -479,14 +479,10 @@ Also, this method of plotting condenses information in that the magnitudes of th
 
 However, this does not affect the overall conclusion that, like the Chern number, the Clifford index can be used as a topological invariant in the Haldane model and is able to predict the existence and propagation of edge states.
 
-\aw{Clarify that this shows that the Bott index and Chern number predict edge states similarly}
-
 \section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
-\aw{We should mention why we work with a different model: the point is that it is unclear how to generalize the Haldane model to disordered media.}
 Having shown that the Clifford index is equivalent to the Chern number as a topological index on periodic media, which predicts the existence and propagation of edge states, we now see if the same holds true for disordered media, where the Chern number is not defined.
 It is unclear how to generalize the Haldane model to disordered media, specifically because the hopping amplitudes when neighbors and next-nearest neighbors are no longer defined.
 So we turn to a new model, the $p_x + ip_y$ model.
-\jm{Is this why it is unclear?}
 
 To construct this model, first generate a network of $N$ nodes (to be more consistent with physics we henceforth refer to nodes as sites) connected by edges. Define a Hilbert space $\mathcal{H}$ by associating to each site a copy of $\mathbb{C}^2$. The dimension of this space is clearly $2 N$. We denote vectors in $\mathcal{H}$ by:
 \begin{equation}
@@ -561,6 +557,7 @@ These are the only values of $\mu'$ such that a topological transition (a change
 So for example, if $t = 1$, a topological transition can only occur at $\mu = \pm4$.
 We check this numerically and produce Figure \ref{fig:pxipy_params}.
 This is close to what we should see as there are topological transitions from zero index systems to nonzero index systems around $\mu = 4$.
+These numerics allow us to choose parameters of topologically significant systems that we will study in the following section.
 
 \begin{figure}
 \centering
@@ -572,7 +569,6 @@ Blue represents index 0, red index 1 and orange index -1.
 \end{figure}
 
 \section{Clifford Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
-\jm{what should we call this model?}
 For the $p_x + ip_y$ model we compute X and Y as before in the Haldane model.
 Nodes in the $p_x + ip_y$ model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size $2mn$.
 We also compute pseudo-spectrum and Clifford index as before, and get a similar result of a topological case which exhibits a transition from index 0 at the edge to 1 on the interior.
