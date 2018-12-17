@@ -108,6 +108,25 @@ In this section we introduce the Clifford index, spectrum, and pseudo-spectrum o
 \subsection{Commuting Hermitian matrices can be simultaneously diagonalized} \label{sec:Cliff_ind_comm}
 
 Let $A$ denote any $n \times n$ Hermitian matrix, i.e. $A^* = A$ where $A^*$ denotes the conjugate transpose of $A$. The set of eigenvalues of $A$ is the set
+
+\aw{Then explain the outline of the report: we introduce the Clifford pseudo-spectrum and Clifford index abstractly, then we explain how this theory is relevant to the physics of a disordered topological insulator...}
+
+\section{Clifford Index} \aw{Note on title: Terry says we should call it the Clifford index. } \\
+
+We start by introducing the Clifford index abstractly, and we will then discuss is relevance to physics below. 
+
+It is well known that given a set of n commuting matrices, they can be simultaneously diagonalized, that is to say that there exists a unitary matrix U such that for each Ai, UAiU-1 is diagonal. Thus we can find a basis of simultaneous eigenvectors of all of these matrices. Now, given a set on n matrices that almost commute, that is to say Ai*Aj-Aj*Ai is small, we know we can find a matrix that almost diagonalizes each Ai, i.e. the off-diagonal terms of UAiU-1 are small. If this is the case we can find a basis of vectors that are approximate eigenvectors of each A¬i. If there exists such a vector we say that it is in the Clifford pseudospectrum. We compute the Clifford index by evaluating the eigenvalues of our B matrix and determining how many eigenvalues are above or below 0. If there exists an eigenvalue close to zero, we merely say that it is within the pseudospectrum and do not calculate the value of the Clifford index.
+
+The Clifford index can be used to define a local topological index on a disordered medium in which the almost commuting matrices are the position matrices, X and Y, and the Hamiltonian H. We can compute the locations in which the Clifford index is zero or nonzero, and where there exist locations such that there is Clifford pseudospectrum. This is useful in determining where there exists an interface between two areas of our medium, because in this case there will be Clifford pseudospectrum and the value of the Clifford index will transition from zero to nonzero.
+
+
+\aw{I would start with e.g. ``We start by introducing the Clifford index abstractly, we discuss its relevance in physics below. (new paragraph) It is well known that a set of $n$ Hermitian matrices which commute may be simultaneously diagonalized, i.e.... Given a set of $n$ Hermitian matrices which \emph{almost} commute, i.e....''} \\
+
+\aw{We can then talk about physics below ``The Clifford index can be used to define a local topological index in a disordered medium as follows...'' } \\
+
+\subsection{Fundamentals: commuting Hermitian matrices can be simultaneously diagonalized} 
+
+Let $A$ denote any $n \times n$ \ul{Hermitian} matrix, i.e. $A^* = A$ where $A^*$ denotes the conjugate transpose of $A$. The set of \ul{eigenvalues} of $A$ is the set:
 \begin{equation}
 	\{ \lambda \in \mathbb{C} : A v = \lambda v \text{ for some $v \in \mathbb{C}^n, v \neq 0$}\}.
 \end{equation}
@@ -614,6 +633,8 @@ We believe this is because the eigenvalue magnitudes are changing gradually acro
 \aw{This is a good ordering of things.}
 
 \section{Future Work}
+
+In terms of directions for future study, we would like to understand the mechanism behind why we failed to see propagation of states around areas of nonzero Clifford index in the bulk. We expected to see such propagation, as the transition from zero to nonzero Clifford index is similar to that at the edge, so understanding where there is a difference in behavior is an interesting problem yet to be solved.
 
 \section{Notes from Monday Meeting}
 
