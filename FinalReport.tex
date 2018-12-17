@@ -483,7 +483,7 @@ However, this does not affect the overall conclusion that, like the Chern number
 
 \section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
 \aw{We should mention why we work with a different model: the point is that it is unclear how to generalize the Haldane model to disordered media.}
-Having shown that the Clifford index is equivalent to the Chern number as a topological index on periodic media which predicts the existence and robustness of edge states, we now see if the same holds true for disordered media, where the Chern number is not defined.
+Having shown that the Clifford index is equivalent to the Chern number as a topological index on periodic media, which predicts the existence and propagation of edge states, we now see if the same holds true for disordered media, where the Chern number is not defined.
 It is unclear how to generalize the Haldane model to disordered media, specifically because the hopping amplitudes when neighbors and next-nearest neighbors are no longer defined.
 So we turn to a new model, the $p_x + ip_y$ model.
 \jm{Is this why it is unclear?}
@@ -511,7 +511,7 @@ Here, $\mu, t, \Delta$ are real parameters,
 \begin{equation}
 	\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad \sigma_y = \begin{pmatrix} 0 & - i \\ i & 0 \end{pmatrix}, \quad \sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix},
 \end{equation}
-denote the Pauli matrices, and $\alpha_{jk}$ denotes the angle of the edge between the $j$ and $k$th site relative to the $x$ axis (see second slide of \verb|Loring_slides.pdf| in \verb|related_papers| directory).
+denote the Pauli matrices, and $\alpha_{jk}$ denotes the angle of the edge between the $j$ and $k$th site relative to the $x$ axis \cite{Loring}.%(see second slide of \verb|Loring_slides.pdf| in \verb|related_papers| directory).
 
 Compared with the Haldane model, $\mu$ plays the role of $V^A$ (onsite potential difference between $A$ and $B$ sites, assuming $V^B = - V^A$), $t$ plays the role of $t$ (real nearest neighbor hopping), and $\Delta$ plays the role of $t'$ (strength of complex hopping). The nice thing about this model is that it involves only nearest neighbor hopping, so it is relatively easy to generalize to structures without periodicity.
 
@@ -556,9 +556,22 @@ for $m \in \{0,1\}$ and $n \in \{0,1\}$, and:
 \begin{equation}
 	\mu' + \cos m \pi + \cos n \pi = 0.
 \end{equation}
-This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$, or if $m = n = 0$ and $\mu' = - 2$. These are the only values of $\mu'$ such that a topological transition (a change in the Chern number) can happen. \aw{it would be nice to check this numerically. We should be able to use the code we wrote in the summer to compute the Chern number of the Haldane model. I believe that the Chern number is 1 for $0 \leq \mu' \leq 2$, -1 for $- 2 \leq \mu' \leq 0$, and 0 otherwise. But we should check this.}
+This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$, or if $m = n = 0$ and $\mu' = - 2$.
+These are the only values of $\mu'$ such that a topological transition (a change in the Chern number) can happen.
+So for example, if $t = 1$, a topological transition can only occur at $\mu = \pm4$.
+We check this numerically and produce Figure \ref{fig:pxipy_params}.
+This is close to what we should see as there are topological transitions from zero index systems to nonzero index systems around $\mu = 4$.
 
-\section{Loring Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+\begin{figure}
+\centering
+\includegraphics[width=.9\textwidth]{figures/pxipy_index_by_param.png}
+\caption{Clifford Index in $p_x + ip_y$ Model with Varying Parameters: we fix $t = 1$ and let $\mu$ and $\Delta$ vary, computing the index of a point in the center of the lattice (where $\lambda_1 = \lambda_2 = 5$).
+Blue represents index 0, red index 1 and orange index -1.
+}
+\label{fig:pxipy_params}%
+\end{figure}
+
+\section{Clifford Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
 \jm{what should we call this model?}
 For the $p_x + ip_y$ model we compute X and Y as before in the Haldane model.
 Nodes in the $p_x + ip_y$ model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size $2mn$.
