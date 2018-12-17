@@ -499,6 +499,8 @@ This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$,
 \jm{what should we call this model?}
 For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as before in the Haldane model. Nodes in the \texorpdfstring{$p_x + ip_y$}{px + ipy} model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size 2*m*m. We also compute pseudo-spectrum and Bott index as before, and get a similar result of a topological case which exhibits a transition from Bott index 0 at the edge to +1 on the interior. Again, this is a situation in which the system is general and not periodic so the Bott index is useful, as we cannot use the Chern number. The fact that we see very similar behavior in this model is very significant and supports the idea that the Bott index is a general invariant than can be calculated regardless of periodicity or structure.
 
+When we vary the onsite potential and atomic position, we see behavior in the Clifford index that looks less and less like the case with no disorder. If the disorder is small, we get behavior that looks similar to the case with no disorder. The Clifford index is 0 around the edge and 1 in the middle with pseudospectrum in between. The only difference is that there might be some slight perturbations in where the transition occurs. The real differences in the behavior of the system occurs when the disorder is increased(See figure 5). When the disorder is high enough, we see that there are locations in the bulk where there exists pseudospectrum and sections where the Clifford index is 0. This is significant because we can now study both behavior of states along the edge with perturbations and states that exist along the interface between sections of the bulk where there is differing Chern number.
+
 \begin{figure}
 \centering
 \includegraphics[width=.9\textwidth]{figures/pxipy_clifford.png}
@@ -531,6 +533,9 @@ Again, white represents points in the pseudospectrum, red represents points of i
 \end{figure}
 
 \section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+
+We will now discuss the propagation of states along interfaces in the {$p_x + ip_y$} model. When there exists no disorder, we see propagation of states localized at the edge along the interface between the areas of zero and nonzero Clifford index(See Figure 6). The state becomes more dispersed as time increases, but remains localized along the interface of the structure. When we increase disorder, both in position and in onsite potential, we see similar behavior of states localized around the edge(See Figures 7,8). The state propagates in the same way around the edge of the lattice, remaining on the interface between zero and nonzero Clifford index. The state dissipates faster than the case in which there is no disorder, but the fact that the state still propagates around the edge suggests that even with disorder, the propagation of the edge state is still protected. When we attempted to see propagation of states around interfaces in the bulk of the medium, we saw that they dissipated very quickly throughout the medium, so it appears this propagation is not protected(See Figure 9). We believe that this is because here there is not as quick a change in the Clifford index, so the interface is not as well-defined, but more research is required to determine exactly why we fail to see this behavior.
+
 
 \begin{figure}
 \centering
