@@ -22,7 +22,7 @@
 \usepackage{xcolor}
 
 % bibliography
-\usepackage[backend=bibtex,style=numeric,citestyle=numeric,maxbibnames=99]{biblatex}
+\usepaackage[backend=bibtex,style=numeric,citestyle=numeric,maxbibnames=99]{biblatex}
 \renewbibmacro{in:}{\ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
 \bibliography{DoMath_bibliography.bib}
 
@@ -430,7 +430,7 @@ We will use this advantage to study the robustness of waves on disorded media.
 Computing the signature of $B$ can be done simply by finding all of the eigenvalues and calculating the number of positive minus the number of negative values.
 However we can compute this more efficiently by exploiting a useful decomposition.
 Let $B = LDL^t$, where $L$ is unit lower triangular and $D$ is block diagonal with blocks of order 1 or 2.
-It is known (see \cite{BunchKaufman}) that the signature of $B$ equals the signature of $D$.
+It is known (see \jm{BunchKaufman}) that the signature of $B$ equals the signature of $D$.
 And the signature of $D$ is the number of positive $1 \times 1$ blocks minus the number of negative $1 \times 1$ blocks.
 This greatly speeds up the computations of the Clifford index.
 
@@ -507,7 +507,7 @@ Here, $\mu, t, \Delta$ are real parameters,
 \begin{equation}
 	\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad \sigma_y = \begin{pmatrix} 0 & - i \\ i & 0 \end{pmatrix}, \quad \sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix},
 \end{equation}
-denote the Pauli matrices, and $\alpha_{jk}$ denotes the angle of the edge between the $j$ and $k$th site relative to the $x$ axis \cite{Loring}.%(see second slide of \verb|Loring_slides.pdf| in \verb|related_papers| directory).
+denote the Pauli matrices, and $\alpha_{jk}$ denotes the angle of the edge between the $j$ and $k$th site relative to the $x$ axis \jm{Fulga}.%(see second slide of \verb|Loring_slides.pdf| in \verb|related_papers| directory).
 
 Compared with the Haldane model, $\mu$ plays the role of $V^A$ (onsite potential difference between $A$ and $B$ sites, assuming $V^B = - V^A$), $t$ plays the role of $t$ (real nearest neighbor hopping), and $\Delta$ plays the role of $t'$ (strength of complex hopping). The nice thing about this model is that it involves only nearest neighbor hopping, so it is relatively easy to generalize to structures without periodicity.
 
@@ -621,8 +621,8 @@ When there exists no disorder, we see propagation of states localized at the edg
 The state becomes more dispersed as time increases, but remains localized along the interface of the structure. 
 When we increase disorder, both in position and in onsite potential, we see similar behavior of states localized around the edge (See Figures \ref{fig:pos_dis_prop} and \ref{fig:mu_dis_edge_prop}).
 The state propagates in the same way around the edge of the lattice, remaining on the interface between zero and nonzero Clifford index.
-The state dissipates faster than the case in which there is no disorder, but the fact that the state still propagates around the edge suggests that even with disorder, the propagation of the edge state is still protected.
-When we attempted to see propagation of states around interfaces in the bulk of the medium, we saw that they dissipated very quickly throughout the medium, so it appears this propagation is not protected (See Figure \ref{fig:mu_dis_interior_prop}).
+The state disperses faster than the case in which there is no disorder, but the fact that the state still propagates around the edge suggests that even with disorder, the propagation of the edge state is still protected.
+When we attempted to see propagation of states around interfaces in the bulk of the medium, we saw that they dispersed very quickly throughout the medium, so it appears this propagation is not protected (See Figure \ref{fig:mu_dis_interior_prop}).
 We believe that this is because here there is not as quick a change in the Clifford index, so the interface is not as well-defined, but more research is required to determine exactly why we fail to see this behavior.
 
 
@@ -697,7 +697,7 @@ The state disperses more so than in Figures \ref{fig:pxipy_prop} and \ref{fig:po
 \caption{Propagation on Interior of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now increase disorder, letting $\mu$ for each site be chosen uniformly at random on $[-.5,4.5]$.
 We do this to obtain points of both index 1 and 0 in the interior of the lattice.
 We initialize a state in the interior and hope to see propagation along the edge of the index 1 region to its right.
-However the state dissipates into bulk states almost immediately.
+However the state disperses into bulk states almost immediately.
 We believe this is because there is not an abrupt change of index in the interior, failing to create a coherent boundary as in Figures \ref{fig:pxipy_prop},  \ref{fig:pos_dis_prop}, and \ref{fig:mu_dis_edge_prop}.
 }%
 \label{fig:mu_dis_interior_prop}%
