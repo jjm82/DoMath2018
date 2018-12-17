@@ -319,10 +319,12 @@ We note finally that to ensure that the Clifford index is truly well defined whe
 \section{Clifford Index as a Local Topological Index in Hexagonal Lattice: Haldane Model}
 
 For the remainder of the report, we examine the Clifford index as a local topological index defined on different media.
-Note that it is common in quantum mechanics to refer to eigenvectors of self-adjoint operators as eigenstates, so in the following sections of the report, we will refer to vectors as states and eigenvectors of the Hamiltonian as eigenstates.
+Note that it is common in quantum mechanics to refer to eigenvectors of self-adjoint operators as eigenstates, so in the following sections, we will refer to vectors as states and eigenvectors of the Hamiltonian as eigenstates.
 
 In this section, we show numerically that the Clifford index is equal to the Chern number on the Haldane Model, a periodic, hexagonal medium with complex next-nearest neighbor hopping amplitudes.
 Again, the Chern number is well defined on this lattice because the eigenstates of the Hamiltonian of a periodic medium are Bloch states.
+
+
 
 Let $\Psi$ be a state in two dimensions with entries $\Psi_{m,n}$, where $m$ describes location with respect to one dimension (whether that be an $x$-coordinate in $\mathbb{R}^2$ or a cell index along an edge) and where $n$ describes location with respect to the other dimension.
 Define $X$ and $Y$ to be an operators that act on a state $\Psi$ in the following way:
@@ -368,19 +370,18 @@ We compute the pseudo-spectrum and Bott index on the Haldane model lattice with 
 on a lattice with edges, the index is $+1$ on the interior and transitions to 0 across the edge;
 on a periodic lattice, the index is $+1$ everywhere.
 In the trivial case we see a Bott index of 0 everywhere on edged and periodic lattices, which is analogous to the Chern number.
-This is shown in Figure \ref{fig:Bott Haldane}.
+This is shown in Figure \ref{fig:haldane_index}.
 \begin{figure}
 \centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/periodic_triv} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/periodic_top} }}%
-
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/edged_triv} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/edged_top} }}%
-\caption{The top left is a trivial, periodic lattice; the top right is a topological, periodic lattice; the bottom left is a trivial, edged lattice; and the bottom right is a topological, edged lattice.
-Each site in these figures represents a $(\lambda_1,\lambda_2,\lambda_3)$ triple with $\lambda_3 = 0$.
-If a site is red, then it is in the pseudo-spectrum, i.e. $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ has a near-zero eigenvalue.
-If a site is not in the pseudo-spectrum, then it is colored black for Bott index 1 and white for Bott index 0, where the Bott index is defined as one half the signature of $B$. \aw{very nice figure. It is a little funny that the corners for the Haldane model don't all look the same. I don't quite understand why this would be.} \jm{answer: Note that $B$ site on top right corner is only connected to one other site. Same for $A$ site on bottom left corner.}
-\jm{update bottom right with new index plotting if time}
+\caption{Clifford Index on Trivial and Topological Haldane Lattices: the left is a trivial lattice, and the right is a topological lattice, in that the parameters $V_a, t,$ and $t'$, when put on a periodic lattice, yield a Chern number of 0 and 1 respectively.
+Each point in these figures represents a $(\lambda_1,\lambda_2,\lambda_3)$ triple with $\lambda_3 = 0$.
+If a point is not plotted, then it is in the pseudo-spectrum, i.e. $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ has a near-zero eigenvalue.
+If a site is not in the pseudo-spectrum, then it is colored red for index 1 and blue for index 0.
+The intensity of the color represents the absolute value of the smallest eigenvalue of $B$.
+So a more intense color means a larger spectral gap at that location in the lattice.
+We see that in the topological case, the interior is a region of index 1, whereas in the trivial case, there are only points of index 0.
 }%
 \label{fig:haldane_index}%
 \end{figure}
@@ -508,11 +509,14 @@ For the \texorpdfstring{$p_x + ip_y$}{px + ipy} model we compute X and Y as befo
 \begin{figure}
 \centering
 \includegraphics[width=.9\textwidth]{figures/pxipy_clifford.png}
-\caption{Clifford Index in $p_x + ip_y$ Model: plotted here is the Clifford pseudospectrum.
-The sites which are colored red and blue represent sites in the pseudospectrum.
-A site with $x$-coordinate $\lambda_1$ and $y$-coordinate $\lambda_2$ is in the pseudospectrum if the matrix $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ \eqref{eq:B_matrix} has an eigenvalue with absolute value smaller than a given threshold, in this case $0.25$.
-If a site is not in the psuedospectrum, we calculate its index using \eqref{eq:index}.
-(Note that even thought the color bar on the right is only valued on $[-0.17,0.17]$, the threshold for pseudospectrum is still $0.25$.)
+\caption{Clifford Index in $p_x + ip_y$ Model: plotted here is the Clifford pseudospectrum and index of sites not in the pseudospectrum.
+A point in parameter space with $x$-coordinate $\lambda_1$ and $y$-coordinate $\lambda_2$ is in the pseudospectrum if the matrix $B(X - \lambda_1, Y - \lambda_2, H - \lambda_3)$ \eqref{eq:B_matrix} has an eigenvalue with absolute value smaller than a given threshold.
+Throughout the report, this threshold is $0.1$.
+If a point is in the pseudospectrum it is not plotted and appears white on the figure.
+If a point is not in the psuedospectrum, we calculate its index using \eqref{eq:index}.
+Points with index 1 are plotted in red, and sites of index 0 are plotted in blue.
+The intensity of the color represents the absolute value of the smallest eigenvalue of $B$.
+So a more intense color means a larger spectral gap at that location in the lattice.
 }
 \label{fig:pxipy_index}%
 \end{figure}
@@ -525,10 +529,10 @@ If a site is not in the psuedospectrum, we calculate its index using \eqref{eq:i
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_index/img03.png} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_index/img04.png} }}%
 
-\caption{Clifford Index in $p_x + ip_y$ Model with Onsite Disorder: we plot the pseudospectrum and index of lattice sites with varying degrees of onsite disorder.
+\caption{Clifford Index in $p_x + ip_y$ Model with Onsite Disorder: we plot the pseudospectrum and index of lattice points with varying degrees of onsite disorder.
 The potential energy of each site on the lattice is chosen randomly from a uniform distribution centered at $\mu$ with the length of the interval equal to a disorder parameter: 1, 2, 3, and 4 in these plots.
 So going from left to right, top to bottom, $\mu$ was chosen uniformly on $[1.5,2.5],\; [1,3],\;[0.5,3.5],$ and $[0,4]$, respectively.
-Again, blue and red represents sites in the pseudospectrum, and black indicates index 1, while white circles indicate index 0.
+Again, white represents points in the pseudospectrum, red represents points of index 1, and blue represents points of index 0.
 }%
 \label{fig:mu_dis_index}%
 \end{figure}
@@ -537,82 +541,77 @@ Again, blue and red represents sites in the pseudospectrum, and black indicates 
 
 \begin{figure}
 \centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/index.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img01.png} }}%
-
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img02.png} }}%
+
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img03.png} }}%
-
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img04.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img05.png} }}%
 
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_prop/img05.png} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img06.png} }}%
+
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img07.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_prop/img08.png} }}%
 \caption{Propagation in $p_x + ip_y$ Model: we localize the above eigenstate along one edge of the lattice and simulate its propagation according to Schr{\"o}dinger's equation.
-As before, the state is plotted in red and $\mu = 2,\; t = \Delta = 1$.
-The state propagates along the edge.
+As before, the state is plotted in gray and $\mu = 2,\; t = \Delta = 1$.
+We see the state propagate around the edge, and gradually become more dispersed as time increases.
+We attribute this propagation to the fact that the edge is a boundary between a region of index 1 and a region of index 0.
 }%
 \label{fig:pxipy_prop}%
 \end{figure}
 
 \begin{figure}
 \centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/index.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img01.png} }}%
-
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img02.png} }}%
+
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img03.png} }}%
-
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img04.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img05.png} }}%
 
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/pxipy_posdis/img05.png} }}%
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img06.png} }}%
+
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img07.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/pxipy_posdis/img08.png} }}%
 \caption{Propagation in $p_x + ip_y$ Model with Position Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add position disorder to the lattice, i.e. we let the $x$ and $y$ coordinates of each site vary uniformly on an interval centered at its original coordinate in the lattice.
-In this case, sites can deviate up to $0.4$ from its original position in either the $x$ or $y$ direction.
-We see continued propagation around the edge as in the case with no disorder.
+In this case, sites can deviate up to $0.4$ from its original position in either the $x$ or $y$ direction, as shown by the placement of the black x's on the plot.
+We initialize a state on the edge and see continued propagation along the boundary as in the case with no disorder, however the state disperses sooner than in the case with no disorder.
 }%
 \label{fig:pos_dis_prop}%
 \end{figure}
 
 \begin{figure}
 \centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/index.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img01.png} }}%
-
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img02.png} }}%
+
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img03.png} }}%
-
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img04.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img05.png} }}%
 
+\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img05.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_edge/img06.png} }}%
+
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img07.png} }}%
+\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_edge/img08.png} }}%
 \caption{Propagation on Edge of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now add onsite disorder to the lattice, letting $\mu$ for each site be chosen uniformly at random on $[0.5,3.5]$.
-We initialize a state on the edge of the lattice, where there is still a boundary between the index 1 interior and index 0 exterior.
-And the state successfully propagates along the edge.
+We initialize a state on the edge of the lattice, where there is still somewhat of a boundary between the index 1 interior and index 0 exterior.
+The state disperses more so than in Figures \ref{fig:pxipy_prop} and \ref{fig:pos_dis_prop}, but it still propagates along the edge.
 }%
 \label{fig:mu_dis_edge_prop}%
 \end{figure}
 
 \begin{figure}
 \centering
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/index.png} }}%
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img01.png} }}%
-
 \subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img02.png} }}%
+
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img03.png} }}%
-
 \subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img04.png} }}%
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img05.png} }}%
-
-\subfloat{{\includegraphics[width=.45\linewidth]{figures/mu_dis_interior/img06.png} }}%
-\subfloat{{\includegraphics[width =.45\linewidth]{figures/mu_dis_interior/img07.png} }}%
-\caption{Propagation on Interior of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now increase disorder, letting $\mu$ for each site be chosen uniformly at random on $[0,4]$.
-We do this to obtain regions of both index 1 and 0 in the interior of the lattice.
-We initialize a state on the boundary between a region of index 1 on the left and index 0 on the right.
-However we do not see continued propagation along the edge of either of the regions.
-We believe this is because the eigenvalue magnitudes are changing gradually across the boundary, rather than abruptly as in Figures \ref{fig:pxipy_prop},  \ref{fig:pos_dis_prop}, and \ref{fig:mu_dis_edge_prop}.
+\caption{Propagation on Interior of $p_x + ip_y$ Model with Onsite Disorder: with parameters as in Figure \ref{fig:pxipy_prop}, we now increase disorder, letting $\mu$ for each site be chosen uniformly at random on $[-.5,4.5]$.
+We do this to obtain points of both index 1 and 0 in the interior of the lattice.
+We initialize a state in the interior and hope to see propagation along the edge of the index 1 region to its right.
+However the state dissipates into bulk states almost immediately.
+We believe this is because there is not an abrupt change of index in the interior, failing to create a coherent boundary as in Figures \ref{fig:pxipy_prop},  \ref{fig:pos_dis_prop}, and \ref{fig:mu_dis_edge_prop}.
 }%
 \label{fig:mu_dis_interior_prop}%
 \end{figure}
