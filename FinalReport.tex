@@ -7,7 +7,7 @@
 
 %% AW ADDED:
 \usepackage{soul} % good for highlighting and underlining text
-\usepackage[notref,notcite]{showkeys} % equation labels appear next to equations 
+%\usepackage[notref,notcite]{showkeys} % equation labels appear next to equations 
 
 %% Sets page size and margins
 \usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
@@ -38,44 +38,6 @@
 
 \begin{document}
 
-\begin{itemize}
-\item fix $px + i py$ model figure
-\item A couple of things which need to be worked out at some point (*after* we submit this writeup):
-\begin{itemize}
-\item When we consider disorder of the atom positions, we should replace $t \rightarrow t e^{1 - r/r_0}$ where $r$ is the distance between atoms and $r_0$ is the distance between atoms *without disorder* and do the same for complex hopping too.
-\item We should also consider the effect of the localization parameter
-\end{itemize}
-\end{itemize}
-\aw{Nature of final report from Duke math website:} \\
-
-Nature of Final Product \\
-
-The final product for your research independent study will be a formal paper (as opposed to an informal report) that meets the criteria listed below. \\
-
-1. The paper describes important aspects of the work done during the course. \\
-
-2. The paper is thoughtful, well organized, and well written. It should be carefully proofread. \\
-
-3. The paper communicates well to as broad an audience as would reasonably be assumed to have interest in your research topic. \\
-
-4. The first part of the paper (two pages minimum) describes the broader context in which the project took place. This section should be written in a way that is understandable to an individual who has no specialized knowledge beyond the standard course content regularly offered by the Duke math department. \\
-
-Specialized technical terms should be defined or avoided. \\
-
-If your project involved a particular problem in a field of pure mathematics, it should be related to broader questions within that field. \\
-
-If your project involved an application of mathematics, appropriate background material should be explained to motivate the problem and set it in a suitable context. \\
-
-If non-standard mathematical techniques are used, they should be compared to standard techniques. \\
-
-The final paper may, at the discretion of the instructor, include relevant excerpts from any paper or report that you had written for a previous related independent study course or in connection with a previous related research project. However, such excerpts may only constitute a small portion of your final paper. \\
-
-Work on the final paper, especially on that part that explains the broader context of the research, may be begun early in the semester. \\
-
-Student will e-mail an electronic copy of their final paper to the Director of Undergraduate Studies of mathematics on or before the last day of final exams. \\
-
-\newpage
-
 \maketitle
 
 \section{Introduction}
@@ -94,9 +56,9 @@ Because the system we are studying is no longer periodic the Chern number is no 
 
 \subsection{Summary of results and outline of report}
 
-In this paper we will present the several major results that we found. First, we found that when both values are defined (i.e. when the medium is periodic), the Chern number agrees with the Clifford index. This is significant because it shows that the Clifford index can indeed be thought of as a generalization of the Chern number to non-periodic systems. Second, we found that states propagate around the edge of a material when the Clifford index is nonzero on the interior. This behavior is resistant to perturbations and exists even when there is disorder in onsite potentials and atomic positions. Third, we could not exhibit behavior of states propagating around locations on the interior of the medium when the Clifford index is nonzero. We believed that we would be able to see evidence of protected propagation around such interfaces between areas of differing Clifford index, but we were unable to see such propagation. In our systems, it seems that topologically protected propagation is limited to the edge.
+In this paper we will present several results. First, we found that when both values are defined (i.e. when the medium is periodic), the Chern number agrees with the Clifford index. This is significant because it shows that the Clifford index can indeed be thought of as a generalization of the Chern number to non-periodic systems. Second, we found that states propagate around the edge of a material when the Clifford index is nonzero on the interior. This behavior is resistant to perturbations and exists even when there is disorder in onsite potentials and atomic positions. Third, we could not exhibit behavior of states propagating around locations on the interior of the medium when the Clifford index is nonzero. We believed that we would be able to see evidence of protected propagation around such interfaces between areas of differing Clifford index, but we were unable to see such propagation. In our systems, it seems that topologically protected propagation is limited to the physical edge of the system.
 
-The outline of this report is as follows. We will begin by introducing the Clifford pseudo-spectrum and the Clifford index of three almost-commuting matrices without reference to physics (Section \ref{sec:Cliff_ind}). We will then consider the Clifford index in the context of the Haldane model, a well-studied model of a Chern insulator. We will show that the Clifford index behaves very similarly to the Chern number, predicting the existence of robust edge states (Section \ref{sec:Hald}). In order to explore the effects of more general perturbations of the material, we then introduce a second model of a Chern insulator, the $p_x + ip_y$ model. We then proceed in the same way as in the Haldane model, discussing the Clifford index in the context of this model, and determining how it predicts propagation of edge states (Section \ref{sec:Cliff_px}). Finally, we will end with discussion of future directions of study (Section \ref{sec:fut}).
+The outline of this report is as follows. We will begin by introducing the Clifford pseudo-spectrum and the Clifford index of three almost-commuting matrices without reference to physics (Section \ref{sec:Cliff_ind}). We will then consider the Clifford index in the context of the Haldane model, a well-studied model of a Chern insulator. We will show that the Clifford index behaves very similarly to the Chern number, predicting the existence of robust edge states (Sections \ref{sec:Hald} and \ref{sec:prop_Hald}). In order to explore the effects of more general perturbations of the material, we then introduce a second model of a Chern insulator, the $p_x + ip_y$ model. We then proceed in the same way as in the Haldane model, discussing the Clifford index in the context of this model, and determining how it predicts propagation of edge states (Sections \ref{sec:px}-\ref{sec:prop_px}). Finally, we will end with discussion of future directions of study (Section \ref{sec:fut}).
 
 \section{Clifford Index} \label{sec:Cliff_ind}	 
 
@@ -194,7 +156,7 @@ where $\hat{v} := \frac{v}{|v|}$. Taking the inner product of both sides of this
 	&= - i \ip{\hat{v}}{ [A_2,A_3] \hat{v}} - \ip{\hat{v}}{ [A_1,A_2] \frac{w}{|v|} } - i \ip{\hat{v}}{ [A_1,A_3] \frac{w}{|v|} }.
 \end{split}
 \end{equation}
-Using the facts that: (1) $A_1 - \lambda_1$ is Hermitian (2) $\ip{v}{v} = |v|^2$ for any vector $v \in \mathbb{C}^n$ we find that:
+Using the facts that: (1) $A_i - \lambda_i$ is Hermitian (2) $\ip{v}{v} = |v|^2$ for any vector $v \in \mathbb{C}^n$ we find that:
 \begin{equation}
 \begin{split}
 	&|(A_1 - \lambda_1) \hat{v}|^2 + |(A_2 - \lambda_2) \hat{v}|^2 + |(A_3 - \lambda_3) \hat{v}|^2 	\\
@@ -396,7 +358,7 @@ When we compute the Clifford pseudospectrum and index on the Haldane model latti
 We examine two parameter settings, one we call trivial and the other topological.
 In the trivial setting, our parameters are:
 \begin{equation}
-V_A = 1, V_B = - V_A, t = 1, t' = 0, \phi = \frac{\pi}{2}.
+V_A = 1, V_B = - V_A, t = 1, t' = 0.
 \end{equation}
 In this case we see a Clifford index of 0 everywhere, which is also what we see with the Chern number.
 In the topological setting, our parameters are:
@@ -420,7 +382,7 @@ We see that in the topological case, the interior is a region of index 1, wherea
 \label{fig:haldane_index}%
 \end{figure}
 The advantage of the Clifford index compared to the Chern number is that the Chern number can only be defined on a periodic structure, whereas the Clifford index can be computed on non-periodic media.
-We will use this advantage to study the robustness of waves on disorded media.
+We will use this advantage to study the robustness of waves on disorded media in Sections \ref{sec:px}-\ref{sec:prop_px}.
 
 \subsection{Computational Efficiency in Computing the Clifford Index}
 
@@ -431,7 +393,7 @@ It is known \cite{bunch1977some} that the signature of $B$ equals the signature 
 And the signature of $D$ is the number of positive $1 \times 1$ blocks minus the number of negative $1 \times 1$ blocks.
 This greatly speeds up the computations of the Clifford index.
 
-\section{Propagation of States Along Index Boundary in the Haldane Model}
+\section{Propagation of States Along Index Boundary in the Haldane Model} \label{sec:prop_Hald}
 
 Having verified numerically that the Clifford index and Chern number agree on the Haldane model lattice, we now show the significance of these indices.
 Assume there are two regions of differing index in the lattice, near to each other such that there is a boundary between them.
@@ -442,7 +404,7 @@ This eigenstate is the larger of $v$ and $w$, satisfying:
 B(X-\lambda_1,Y-\lambda_2,H-\lambda_3) \begin{pmatrix}v\\w\end{pmatrix} = 0
 \end{equation}
 as shown by the calculation starting with \eqref{eq:B_eq}.
-Note that it is the larger of $v$ and $w$ because in the previous calculation we assumed without loss of generality that $v > w$, even though this need not be the case.
+%Note that it is the larger of $v$ and $w$ because in the previous calculation we assumed without loss of generality that $v > w$, even though this need not be the case.
  
 In the previous section we looked at the edged Haldane model with topological parameters which gave it an interior region of index 1 and an exterior region of index 0.
 Hence, we can find approximate eigenstates of the Hamiltonian localized along the edge of the lattice.
@@ -476,9 +438,9 @@ Also, this method of plotting condenses information in that the magnitudes of th
 
 However, this does not affect the overall conclusion that, like the Chern number, the Clifford index can be used as a topological invariant in the Haldane model and is able to predict the existence and propagation of edge states.
 
-\section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model} 
+\section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model} \label{sec:px}
 Having shown that the Clifford index is equivalent to the Chern number as a topological index on periodic media, which predicts the existence and propagation of edge states, we now see if the same holds true for disordered media, where the Chern number is not defined.
-It is unclear how to generalize the Haldane model to disordered media, specifically because the hopping amplitudes when neighbors and next-nearest neighbors are no longer defined.
+It is unclear how to generalize the Haldane model to disordered media, specifically because it is unclear how to generalize the concept of nearest-neighbor and next-nearest neighbor sites to this case.
 So we turn to a new model which involves only nearest neighbor hopping, the $p_x + ip_y$ model as introduced in \cite{fulga2016aperiodic}.
 
 To construct this model, first generate a network of $N$ nodes (to be more consistent with physics we henceforth refer to nodes as sites) connected by edges. Define a Hilbert space $\mathcal{H}$ by associating to each site a copy of $\mathbb{C}^2$. The dimension of this space is clearly $2 N$. We denote vectors in $\mathcal{H}$ by:
@@ -549,32 +511,29 @@ for $m \in \{0,1\}$ and $n \in \{0,1\}$, and:
 \begin{equation}
 	\mu' + \cos m \pi + \cos n \pi = 0.
 \end{equation}
-This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$, or if $m = n = 0$ and $\mu' = - 2$.
-These are the only values of $\mu'$ such that a topological transition (a change in the Chern number/Clifford index) can happen.
-So for example, if $t = 1$, a topological transitions can only occur at $\mu = 0$ or $\pm 4$.
-We checked the values of the Clifford index and Chern numbers numerically and found that these computations agreed. The Clifford index computation is shown in Figure \ref{fig:pxipy_params}. These numerics allow us to choose parameters of topologically significant systems that we will study in the following section.
+This can only occur if $m = n = 1$ and $\mu' = 2$, if $m \neq n$ and $\mu' = 0$, or if $m = n = 0$ and $\mu' = - 2$. These are the only values of $\mu'$ such that a topological transition (a change in the Chern number) can happen. So for example, if $t = 1$, a topological transition can only occur at $\mu = 0$ or $\pm 4$. When we computed the Clifford index of a finite system numerically we found that the results agreed with these observations (see Figure \ref{fig:pxipy_params}). These numerics show how to choose the parameters of the model in such a way that we expect to see edge states. We will study this in the following section.
 
 \begin{figure}
 \centering
-\includegraphics[width=.9\textwidth]{figures/pxipy_index_by_param.png}
-\caption{Clifford Index in $p_x + ip_y$ Model with Varying Parameters: we fix $t = 1$ and let $\mu$ and $\Delta$ vary, computing the index of a point in the center of the lattice (where $\lambda_1 = \lambda_2 = 5$).
+\includegraphics[width=.9\textwidth]{figures/phase_diagram.png}
+\caption{Clifford index in $p_x + ip_y$ model at $\lambda_3 = 0$ with varying parameters: we fix $t = 1$ and let $\mu$ and $\Delta$ vary, computing the index of a point in the center of the lattice.
 Blue represents index 0, red index 1 and orange index -1.
 }
 \label{fig:pxipy_params}%
 \end{figure}
 
 \section{Clifford Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model} \label{sec:Cliff_px}
-For the $p_x + ip_y$ model we compute X and Y as before in the Haldane model.
+For the $p_x + ip_y$ model we compute $X$ and $Y$ as before in the Haldane model.
 Nodes in the $p_x + ip_y$ model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size $2mn$.
 We also compute pseudo-spectrum and Clifford index as before, and get a similar result of a topological case which exhibits a transition from index 0 at the edge to 1 on the interior.
 Again, this is a situation in which the system is general and not periodic so the Clifford index is useful, as we cannot use the Chern number.
-The fact that we see very similar behavior in this model is very significant and supports the idea that the Clifford index is a general invariant than can be calculated regardless of periodicity or structure.
+The fact that we see very similar behavior in this model is significant and supports the idea that the Clifford index can be thought of as a suitable generalization of the Chern number to structures which are not periodic.
 
 When we vary the onsite potential and atomic position, we see behavior in the Clifford index that looks less and less like the case with no disorder.
 If the disorder is small, we get behavior that looks similar to the case with no disorder.
 The Clifford index is 0 around the edge and 1 in the middle with pseudospectrum in between.
 The only difference is that there might be some slight perturbations in where the transition occurs.
-The real differences in the behavior of the system occurs when the disorder is increased (See figure \ref{fig:pxipy_index}).
+The real differences in the behavior of the system occurs when the disorder is increased (See Figure \ref{fig:pxipy_index}).
 When the disorder is high enough, we see that there are locations in the bulk where there exists pseudospectrum and sections where the Clifford index is 0.
 This is significant because we can now study both behavior of states along the edge with perturbations and states that exist along the interface between sections of the bulk where there is differing Chern number.
 
@@ -609,7 +568,7 @@ Again, white represents points in the pseudospectrum, red represents points of i
 \label{fig:mu_dis_index}%
 \end{figure}
 
-\section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+\section{Propagation in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model} \label{sec:prop_px}
 
 We will now discuss the propagation of states along interfaces in the $p_x + ip_y$ model.
 When there exists no disorder, we see propagation of states localized at the edge along the interface between the areas of zero and nonzero Clifford index (See Figure \ref{fig:pxipy_prop}).
@@ -617,7 +576,7 @@ The state becomes more dispersed as time increases, but remains localized along 
 When we increase disorder, both in position and in onsite potential, we see similar behavior of states localized around the edge (See Figures \ref{fig:pos_dis_prop} and \ref{fig:mu_dis_edge_prop}).
 The state propagates in the same way around the edge of the lattice, remaining on the interface between zero and nonzero Clifford index.
 The state disperses faster than the case in which there is no disorder, but the fact that the state still propagates around the edge suggests that even with disorder, the propagation of the edge state is still protected.
-When we attempted to see propagation of states around interfaces in the bulk of the medium, we saw that they dispersed very quickly throughout the medium, so it appears this propagation is not protected (See Figure \ref{fig:mu_dis_interior_prop}).
+When we attempted to see propagation of states around interfaces in the interior of the medium, we saw that they dispersed very quickly throughout the medium, so it appears this propagation is not protected (See Figure \ref{fig:mu_dis_interior_prop}).
 We believe that this is because here there is not as quick a change in the Clifford index, so the interface is not as well-defined, but more research is required to determine exactly why we fail to see this behavior.
 
 
