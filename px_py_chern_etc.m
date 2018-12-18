@@ -7,7 +7,7 @@ set(groot, 'defaultAxesTickLabelInterpreter','latex'); set(groot, 'defaultLegend
 % parameters of the model. NB band functions degenerate when mu/2t = 2,0,-2
 t = 1;
 d = 1; % delta
-m = 2; % mu
+m = -4; % mu
 
 % numerical parameter: number of k points in each direction 
 k_points = 60;

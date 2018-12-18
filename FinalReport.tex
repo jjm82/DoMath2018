@@ -39,12 +39,8 @@
 \begin{document}
 
 \begin{itemize}
-\item We have to make the bibliography: I can show you how to do this (it's a pain) using BibDesk
-\item Deadline for report is December 17th (the last day of finals)
-\item Bibliography test: A good book for solid state physics is \cite{1976AshcroftMermin}.
 \item A couple of things which need to be worked out at some point (*after* we submit this writeup):
 \begin{itemize}
-\item In addition to mapping out the ``local index'' at each point, we should map out the size of the ``local gap'': the size of the smallest eigenvalue of the matrix $B$. This should give us a sense of when the edge states will actually be stable.
 \item When we consider disorder of the atom positions, we should replace $t \rightarrow t e^{1 - r/r_0}$ where $r$ is the distance between atoms and $r_0$ is the distance between atoms *without disorder* and do the same for complex hopping too.
 \item We should also consider the effect of the localization parameter
 \end{itemize}
@@ -85,7 +81,7 @@ Student will e-mail an electronic copy of their final paper to the Director of U
 
 \subsection{Motivation from physics}
 
-In this paper we study the propagation of waves localized at an edge of a two-dimensional disordered (i.e. not periodic) medium. Controlling propagation of waves in different media is of significant interest for applications. Similar systems can be modeled for quantum mechanics, photonics, acoustics, and electromagnetics. Of particular interest are ways in which waves can be controlled to be robust against imperfections in the medium in which they propagate. This has practical applications in terms of constructing a wave guide that will allow waves to continue to propagate even if there are perturbations in the system. In materials known as topological insulators, it has been shown that waves which propagate around the edge of the material can be highly robust against perturbations. This robustness has been theoretically explained when the material is periodic by relating these edge channels with topological invariants associated with the periodic structure, a correspondence known as ``bulk-edge correspondence''. In Chern insulators, a class of topological insulator, the relevant topological invariant is the Chern number associated to the Bloch functions in the medium.
+In this paper we study the propagation of waves localized at an edge of a two-dimensional disordered (i.e. not periodic) medium. Controlling propagation of waves in different media is of significant interest for applications. Similar systems can be modeled for quantum mechanics, photonics, acoustics, and electromagnetics. Of particular interest are ways in which waves can be controlled to be robust against imperfections in the medium in which they propagate. This has practical applications in terms of constructing a wave guide that will allow waves to continue to propagate even if there are perturbations in the system. In materials known as topological insulators, it has been shown that waves which propagate around the edge of the material can be highly robust against perturbations. This robustness has been theoretically explained when the material is periodic by relating these edge channels with topological invariants associated with the periodic structure, a link known as ``bulk-edge correspondence''. In Chern insulators, a class of topological insulator, the relevant topological invariant is the Chern number associated to the Bloch functions in the medium.
 
 The purpose of this paper is to determine to what extent this phenomenon can be generalized to situations in which the medium is strongly disordered. We consider media in which both the positions of lattice points and the onsite potential defined at each point are strongly varied, so that the system is not periodic and cannot even be approximated by a periodic structure. This is in contrast to much of the present literature on the subject which considers the effect of localized disorder on wave propagation in topological insulators. 
 
@@ -99,7 +95,7 @@ Because the system we are studying is no longer periodic the Chern number is no 
 
 In this paper we will present the several major results that we found. First, we found that when both values are defined (i.e. when the medium is periodic), the Chern number agrees with the Clifford index. This is significant because it shows that the Clifford index can indeed be thought of as a generalization of the Chern number to non-periodic systems. Second, we found that states propagate around the edge of a material when the Clifford index is nonzero on the interior. This behavior is resistant to perturbations and exists even when there is disorder in onsite potentials and atomic positions. Third, we could not exhibit behavior of states propagating around locations on the interior of the medium when the Clifford index is nonzero. We believed that we would be able to see evidence of protected propagation around such interfaces between areas of differing Clifford index, but we were unable to see such propagation. In our systems, it seems that topologically protected propagation is limited to the edge.
 
-The outline of this report is as follows. We will begin by introducing the Clifford pseudo-spectrum and the Clifford index of three almost-commuting matrices without reference to physics (Section \ref{sec:Cliff_ind}). We will then consider the Clifford index in the context of the Haldane model, a well-studied model of a Chern insulator. We will show that the Clifford index behaves very similarly to the Chern number, predicting the existence of robust edge states (Section \ref{sec:}). In order to explore the effects of more general perturbations of the material, we then introduce a second model of a Chern insulator, the $p_x + ip_y$ model. We then proceed in the same way as in the Haldane model, discussing the Clifford index in the context of this model, and determining how it predicts propagation of edge states (Section \ref{sec:}). Finally, we will end with discussion of future directions of study (Section \ref{sec:}).
+The outline of this report is as follows. We will begin by introducing the Clifford pseudo-spectrum and the Clifford index of three almost-commuting matrices without reference to physics (Section \ref{sec:Cliff_ind}). We will then consider the Clifford index in the context of the Haldane model, a well-studied model of a Chern insulator. We will show that the Clifford index behaves very similarly to the Chern number, predicting the existence of robust edge states (Section \ref{sec:Hald}). In order to explore the effects of more general perturbations of the material, we then introduce a second model of a Chern insulator, the $p_x + ip_y$ model. We then proceed in the same way as in the Haldane model, discussing the Clifford index in the context of this model, and determining how it predicts propagation of edge states (Section \ref{sec:Cliff_px}). Finally, we will end with discussion of future directions of study (Section \ref{sec:fut}).
 
 \section{Clifford Index} \label{sec:Cliff_ind}	 
 
@@ -339,12 +335,12 @@ $A$-site is the left atom and the $B$-site is the right atom. We show basis vect
 \label{fig:hopping amplitudes}%
 \end{figure}
 
-We depict the hopping amplitudes of the Haldane Model in figure \ref{fig:hopping amplitudes}. We label on-site potentials $V_A, V_B \in \mathbb{R}$, nearest-neighbor hopping amplitudes $t\in \mathbb{R}$, and complex next-nearest neighbor hopping amplitude $t'e^{\pm i\phi}$, with $t'\in\mathbb{R}$ and $\phi\in[0,2\pi]$.
+We depict the hopping amplitudes of the Haldane Model in figure \ref{fig:hopping amplitudes}. We label on-site potentials $V_A, V_B \in \mathbb{R}$, nearest-neighbor hopping amplitudes $t\in \mathbb{R}$, and complex next-nearest neighbor hopping amplitude $t'e^{\pm i\phi}$, with $t'\in\mathbb{R}$ and $\phi\in[0,2\pi]$. We denote the Hamiltonian of the system $H$. We denote states of the system as vectors $\psi$ with entries $\psi_{m,n} \in \mathbb{C}^2$ where the first component of $\psi_{m,n}$ represents the part of the state at the $A$ site of the $m$, $n$th cell and the second represents the part at the $B$ site of the $m$, $n$th cell.
 
 \subsection{Clifford Index on Lattice}
 Defining the Clifford index on this system so that it is equivalent to the Chern number requires us to first define two position matrices $X$ and $Y$ as follows.
 
-We consider a quantum mechanical system with Hamiltonian $H$. Let $\Psi$ be a state in two dimensions with entries $\Psi_{m,n}$, where $m$ describes location with respect to one dimension (whether that be an $x$-coordinate in $\mathbb{R}^2$ or a cell index along an edge) and where $n$ describes location with respect to the other dimension.
+%We consider a quantum mechanical system with Hamiltonian $H$. Let $\Psi$ be a state in two dimensions with entries $\Psi_{m,n}$, where $m$ describes location with respect to one dimension (whether that be an $x$-coordinate in $\mathbb{R}^2$ or a cell index along an edge) and where $n$ describes location with respect to the other dimension.
 Define $X$ and $Y$ to be the operators that act on a state $\Psi$ in the following way:
 \begin{equation}\label{eq:xy}
 (X \Psi)_{m,n} = m\Psi_{m,n}, \quad (Y \Psi)_{m,n} = n\Psi_{m,n}.
@@ -389,11 +385,11 @@ We seek approximate simultaneous eigenstates of the three operators $X$, $Y$, an
 %If this matrix has an eigenvalue less than a specified norm $\epsilon$, we say that the triple $(\lambda_1,\lambda_2,\lambda_3)$ is in the joint pseudo-spectrum of the given lattice.\aw{it is $(\lambda_1,\lambda_2,\lambda_3)$ that is in the joint pseudo-spectrum: the pseudo-spectrum is a generalization of the spectrum (the set of eigenvalues), and the joint pseudo-spectrum is a generalization of the joint spectrum}
 %If a triple is not in the pseudo-spectrum, we then compute the Bott index using the above calculation. \aw{Hastings-Loring explains the Clifford index a little. The point is that } \\\\
 
-In the Haldane model specifically, we define our $X$ and $Y$ operators as follows (so that they may satisfy \eqref{eq:xy}).
-\begin{equation}
-X_{i,i} = \left\lfloor \frac{i-1}{2} \right\rfloor \;\text{mod}\;m, \quad\quad Y_{i,i} = \left\lfloor \frac{i-1}{2m} \right\rfloor
-\end{equation}
-with $X_{i,j} = Y_{i,j} = 0$ for $i \neq j$.
+%In the Haldane model specifically, we define our $X$ and $Y$ operators as follows (so that they may satisfy \eqref{eq:xy}).
+%\begin{equation}
+%X_{i,i} = \left\lfloor \frac{i-1}{2} \right\rfloor \;\text{mod}\;m, \quad\quad Y_{i,i} = \left\lfloor \frac{i-1}{2m} \right\rfloor
+%\end{equation}
+%with $X_{i,j} = Y_{i,j} = 0$ for $i \neq j$.
 
 We compute the Clifford pseudospectrum and index on the Haldane model lattice and see that the Clifford index is equivalent to the Chern number.
 We examine two parameter settings, one we call trivial and the other topological.
@@ -479,7 +475,7 @@ Also, this method of plotting condenses information in that the magnitudes of th
 
 However, this does not affect the overall conclusion that, like the Chern number, the Clifford index can be used as a topological invariant in the Haldane model and is able to predict the existence and propagation of edge states.
 
-\section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+\section{\texorpdfstring{$p_x + ip_y$}{px + ipy} Model} 
 Having shown that the Clifford index is equivalent to the Chern number as a topological index on periodic media, which predicts the existence and propagation of edge states, we now see if the same holds true for disordered media, where the Chern number is not defined.
 It is unclear how to generalize the Haldane model to disordered media, specifically because the hopping amplitudes when neighbors and next-nearest neighbors are no longer defined.
 So we turn to a new model, the $p_x + ip_y$ model.
@@ -568,7 +564,7 @@ Blue represents index 0, red index 1 and orange index -1.
 \label{fig:pxipy_params}%
 \end{figure}
 
-\section{Clifford Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model}
+\section{Clifford Index in \texorpdfstring{$p_x + ip_y$}{px + ipy} Model} \label{sec:Cliff_px}
 For the $p_x + ip_y$ model we compute X and Y as before in the Haldane model.
 Nodes in the $p_x + ip_y$ model consist of two sites (labeled A and B) just as in the Haldane model the X and Y matrices represent this in that they are diagonal matrices of size $2mn$.
 We also compute pseudo-spectrum and Clifford index as before, and get a similar result of a topological case which exhibits a transition from index 0 at the edge to 1 on the interior.
@@ -703,7 +699,7 @@ We believe this is because there is not an abrupt change of index in the interio
 \label{fig:mu_dis_interior_prop}%
 \end{figure}
 
-\section{Future Work}
+\section{Future Work} \label{sec:fut}
 
 In terms of directions for future study, we would like to understand the mechanism behind why we failed to see propagation of states around areas of nonzero Clifford index in the bulk. We expected to see such propagation, as the transition from zero to nonzero Clifford index is similar to that at the edge, so understanding where there is a difference in behavior is an interesting problem yet to be solved.
 
